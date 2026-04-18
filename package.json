@@ -1,5 +1,27 @@
 {
+  "name": "nafahath",
+  "version": "1.0.0",
+  "description": "Perfume e-commerce backend API",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SinanCoder1819/NAFAHATH.git"
+  },
+  "author": "Muhammed Sinan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SinanCoder1819/NAFAHATH/issues"
+  },
+  "homepage": "https://github.com/SinanCoder1819/NAFAHATH#readme",
   "dependencies": {
     "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
