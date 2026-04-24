@@ -1,0 +1,123 @@
+<main class="min-h-screen bg-[#060606] text-white py-16 px-6 relative overflow-hidden">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl">
+        <div class="absolute top-[-10%] right-[-10%] w-[400px] h-[400px] bg-[#C5A267]/5 blur-[120px] rounded-full"></div>
+        <div class="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-[#00FFFF]/5 blur-[120px] rounded-full"></div>
+    </div>
+
+    <div class="max-w-3xl mx-auto relative z-10">
+        <div class="text-center mb-16">
+            <h1 class="text-5xl font-serif tracking-tight mb-4 italic">Edit Profile</h1>
+            <p class="text-gray-500 text-sm tracking-[0.2em] uppercase">Refine your personal profile</p>
+        </div>
+
+        <div class="bg-[#0f0f0f]/80 backdrop-blur-xl border border-gray-800 rounded-[2.5rem] p-8 md:p-16 shadow-2xl">
+            
+            <form id="editProfileForm" class="space-y-12">
+                
+                <div class="flex flex-col items-center group">
+                    <div class="relative">
+                        <div class="w-36 h-36 rounded-full border-2 border-[#C5A267]/30 p-1.5 transition-transform duration-500 group-hover:scale-105">
+                            <div class="w-full h-full rounded-full bg-black overflow-hidden relative">
+                                <img id="avatar-preview" 
+                                     src="<%= user.profileImage || '/images/default-avatar.png' %>" 
+                                     alt="Profile" 
+                                     class="w-full h-full object-cover">
+                                
+                                <div onclick="document.getElementById('profileImageInput').click()" 
+                                     class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                    <svg class="w-8 h-8 text-[#00FFFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" 
+                                onclick="document.getElementById('profileImageInput').click()"
+                                class="absolute bottom-1 right-1 bg-[#C5A267] text-black p-2 rounded-full shadow-lg hover:bg-white transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </button>
+                    </div>
+                    <input type="file" id="profileImageInput" class="hidden" accept="image/*">
+                    <p class="mt-4 text-[10px] text-gray-500 uppercase tracking-widest">Tap to change portrait</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+                    
+                    <div class="space-y-3 relative">
+                        <label class="text-[10px] uppercase tracking-[0.3em] text-[#C5A267] font-bold ml-1">Full Name</label>
+                        <input type="text" name="fullname" value="<%= user.fullname %>" 
+                               class="w-full bg-transparent border-b border-gray-800 py-3 px-1 focus:border-[#00FFFF] outline-none transition-all font-light text-xl tracking-wide placeholder-gray-700"
+                               placeholder="Enter your name">
+                    </div>
+
+                    <div class="space-y-3 relative">
+                        <label class="text-[10px] uppercase tracking-[0.3em] text-[#C5A267] font-bold ml-1">Phone Number</label>
+                        <input type="tel" name="phone" value="<%= user.phone %>" 
+                               class="w-full bg-transparent border-b border-gray-800 py-3 px-1 focus:border-[#00FFFF] outline-none transition-all font-light text-xl tracking-wide placeholder-gray-700"
+                               placeholder="+91 0000000000">
+                    </div>
+
+                </div>
+
+                <div class="flex flex-col md:flex-row items-center justify-center gap-6 pt-8">
+                    <a href="/profile" class="text-[11px] uppercase tracking-widest text-gray-500 hover:text-white transition-colors order-2 md:order-1">
+                        Cancel Changes
+                    </a>
+                    <button type="submit" 
+                            class="w-full md:w-72 bg-white text-black py-5 rounded-full font-bold uppercase tracking-[0.2em] text-xs hover:bg-[#00FFFF] hover:shadow-[0_0_30px_rgba(0,255,255,0.3)] transition-all transform active:scale-95 order-1 md:order-2">
+                        Save Portrait
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script>
+    // Preview Image Logic
+    document.getElementById('profileImageInput').onchange = function(evt) {
+        const [file] = this.files;
+        if (file) {
+            const preview = document.getElementById('avatar-preview');
+            preview.src = URL.createObjectURL(file);
+            preview.classList.add('animate-pulse');
+            setTimeout(() => preview.classList.remove('animate-pulse'), 1000);
+        }
+    };
+
+    // AJAX Submission Logic
+    document.getElementById('editProfileForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const saveBtn = e.target.querySelector('button[type="submit"]');
+        saveBtn.innerText = "Processing...";
+        saveBtn.disabled = true;
+
+        const formData = new FormData(e.target);
+        const imageFile = document.getElementById('profileImageInput').files[0];
+        if(imageFile) formData.append('profileImage', imageFile);
+
+        try {
+            const response = await fetch('/profile/edit', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            
+            if(result.success) {
+                window.location.href = '/profile';
+            } else {
+                alert(result.message || 'Error updating profile');
+                saveBtn.innerText = "Save Portrait";
+                saveBtn.disabled = false;
+            }
+        } catch (err) {
+            console.error('Update failed:', err);
+            saveBtn.innerText = "Save Portrait";
+            saveBtn.disabled = false;
+        }
+    };
+</script>

@@ -1,0 +1,104 @@
+<section class="min-h-screen bg-[#0a0a0a] flex items-center justify-center font-sans text-white p-6">
+
+    <div class="w-full max-w-4xl">
+        <h1 class="text-4xl font-serif text-center mb-12 italic tracking-wide">Edit Profile</h1>
+
+        <form id="editProfileForm" class="space-y-12" enctype="multipart/form-data">
+            <div class="flex flex-col items-center gap-6">
+                <div class="relative group">
+                    <div class="w-32 h-32 rounded-full border-2 border-gray-700 p-1 flex items-center justify-center bg-[#1a1a1a] overflow-hidden">
+                        <img id="avatar-preview" 
+                             src="<%= (user && user.profileImage) ? user.profileImage : '/images/default-avatar.png' %>" 
+                             alt="Profile" 
+                             class="w-full h-full rounded-full object-cover">
+                    </div>
+                </div>
+                
+                <input type="file" id="imageInput" name="profileImage" accept="image/*" class="hidden">
+                <button type="button" onclick="document.getElementById('imageInput').click()" 
+                        class="bg-cyan-400 text-black px-6 py-2 rounded-md font-bold text-xs uppercase tracking-widest hover:bg-cyan-300 transition-all">
+                    Edit Photo
+                </button>
+            </div>
+
+            <hr class="border-gray-800">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+                <div class="space-y-2">
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">Name</label>
+                    <input type="text" name="name" value="<%= user ? user.name : '' %>" 
+                           class="w-full bg-transparent border-b border-gray-700 py-3 outline-none focus:border-cyan-400 transition-colors text-lg">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">Phone Number</label>
+                    <input type="tel" name="phone" value="<%= user ? user.phone : '' %>" 
+                           class="w-full bg-transparent border-b border-gray-700 py-3 outline-none focus:border-cyan-400 transition-colors text-lg">
+                </div>
+            </div>
+
+            <div class="flex justify-center pt-10">
+                <button type="submit" 
+                        class="w-full md:w-80 bg-cyan-400 text-black py-4 rounded-xl font-bold uppercase tracking-[0.2em] text-xs hover:bg-cyan-300 hover:shadow-[0_0_30px_rgba(34,211,238,0.3)] transition-all">
+                    Save
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // 1. Image Preview Logic
+        const imageInput = document.getElementById('imageInput');
+        const preview = document.getElementById('avatar-preview');
+
+        imageInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 2. Form Submission Logic
+        document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            
+            try {
+                const response = await fetch('/user/update-profile', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Profile Updated',
+                        background: '#111',
+                        color: '#fff',
+                        confirmButtonColor: '#22d3ee'
+                    }).then(() => {
+                        window.location.href = '/user/profile';
+                    });
+                } else {
+                    throw new Error(data.message || 'Update failed');
+                }
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Update Failed',
+                    text: err.message,
+                    background: '#111',
+                    color: '#fff'
+                });
+            }
+        });
+    </script>
+</section>

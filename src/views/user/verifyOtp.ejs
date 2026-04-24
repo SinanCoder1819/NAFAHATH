@@ -1,0 +1,224 @@
+<section class="flex items-center justify-center px-6 py-12 md:py-24">
+    <div class="w-full max-w-[480px] border border-gray-800 rounded-[40px] p-10 md:p-12 flex flex-col items-center bg-black">
+        
+        <div class="text-center mb-8">
+            <h2 class="text-2xl font-semibold mb-3 text-white">Verify Your Email</h2>
+            <p class="text-gray-400 text-sm leading-relaxed max-w-[280px] mx-auto">
+                Enter the 6-digit code sent to your new email address to complete the verification process.
+            </p>
+        </div>
+
+        <form id="otpForm" class="w-full space-y-8">
+            <div id="responseMessage" class="hidden p-3 rounded-lg text-sm text-center mb-4"></div>
+
+            <div class="flex justify-between gap-2 sm:gap-4">
+                <input type="text" name="otp" maxlength="1" required class="otp-input w-12 h-14 sm:w-14 sm:h-16 bg-transparent border border-gray-700 rounded-xl text-center text-xl font-semibold text-white outline-none focus:border-[#00FFFF] focus:shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all">
+                <input type="text" name="otp" maxlength="1" required class="otp-input w-12 h-14 sm:w-14 sm:h-16 bg-transparent border border-gray-700 rounded-xl text-center text-xl font-semibold text-white outline-none focus:border-[#00FFFF] focus:shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all">
+                <input type="text" name="otp" maxlength="1" required class="otp-input w-12 h-14 sm:w-14 sm:h-16 bg-transparent border border-gray-700 rounded-xl text-center text-xl font-semibold text-white outline-none focus:border-[#00FFFF] focus:shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all">
+                <input type="text" name="otp" maxlength="1" required class="otp-input w-12 h-14 sm:w-14 sm:h-16 bg-transparent border border-gray-700 rounded-xl text-center text-xl font-semibold text-white outline-none focus:border-[#00FFFF] focus:shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all">
+                <input type="text" name="otp" maxlength="1" required class="otp-input w-12 h-14 sm:w-14 sm:h-16 bg-transparent border border-gray-700 rounded-xl text-center text-xl font-semibold text-white outline-none focus:border-[#00FFFF] focus:shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all">
+                <input type="text" name="otp" maxlength="1" required class="otp-input w-12 h-14 sm:w-14 sm:h-16 bg-transparent border border-gray-700 rounded-xl text-center text-xl font-semibold text-white outline-none focus:border-[#00FFFF] focus:shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all">
+            </div>
+
+            <div>
+                <button type="submit" id="submitBtn" class="w-full bg-[#00FFFF] text-black font-bold py-3.5 rounded-xl hover:bg-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.2)] transition-all text-sm uppercase tracking-widest">
+                    Verify Email
+                </button>
+            </div>
+        </form>
+
+    <div class="mt-8 text-center">
+        <p class="text-xs text-gray-500">
+            Didn't receive the code?
+            <button id="resendBtn" type="button" disabled
+                class="text-cyan-500 hover:text-cyan-400 font-medium transition-colors disabled:text-gray-600 disabled:cursor-not-allowed ml-1">
+                Resend Code <span id="timerContainer" class="hidden">in <span id="timer">0:30</span> sec</span>
+            </button>
+        </p>
+    </div>
+    </div>
+</section>
+
+<div id="loadingModal" class="fixed inset-0 z-50 hidden flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm">
+    <div class="flex flex-col items-center bg-gray-900 border border-gray-800 p-10 rounded-[32px] shadow-2xl">
+        <div class="w-12 h-12 border-4 border-[#00FFFF]/20 border-t-[#00FFFF] rounded-full animate-spin mb-4"></div>
+        <h3 class="text-white font-semibold text-lg">Verifying Code</h3>
+        <p class="text-gray-400 text-xs mt-2">Please wait a moment...</p>
+    </div>
+</div>
+
+<script>
+    const inputs = document.querySelectorAll('.otp-input');
+    const otpForm = document.getElementById('otpForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const resendBtn = document.getElementById('resendBtn');
+    const timerSpan = document.getElementById('timer');
+    const timerContainer = document.getElementById('timerContainer');
+    const msgDiv = document.getElementById('responseMessage');
+    const loadingModal = document.getElementById('loadingModal');
+
+    let timerId;
+    const TIMER_DURATION = 30; 
+
+    // --- 1. Persistent Timer Logic ---
+
+    function startTimer(duration = TIMER_DURATION) {
+        const endTime = Date.now() + duration * 1000;
+        localStorage.setItem('otpExpiry', endTime);
+        // Mark that the timer has been initialized at least once
+        localStorage.setItem('timerHasStarted', 'true'); 
+        runCountdown();
+    }
+
+    function runCountdown() {
+        clearInterval(timerId);
+        
+        timerId = setInterval(() => {
+            const endTime = localStorage.getItem('otpExpiry');
+            if (!endTime) return clearInterval(timerId);
+
+            const now = Date.now();
+            const timeLeft = Math.round((endTime - now) / 1000);
+
+            if (timeLeft <= 0) {
+                clearInterval(timerId);
+                resendBtn.disabled = false;
+                timerContainer.classList.add('hidden');
+                localStorage.removeItem('otpExpiry');
+            } else {
+                resendBtn.disabled = true;
+                timerContainer.classList.remove('hidden');
+                timerSpan.innerText = `0:${timeLeft < 10 ? '0' : ''}${timeLeft}`;
+            }
+        }, 1000);
+    }
+
+    // --- 2. Load Logic (First Time vs Reload) ---
+    window.addEventListener('load', () => {
+        const storedExpiry = localStorage.getItem('otpExpiry');
+        const hasStartedBefore = localStorage.getItem('timerHasStarted');
+
+        if (storedExpiry && storedExpiry > Date.now()) {
+            // Timer is currently active, keep it running
+            runCountdown();
+        } else if (!hasStartedBefore) {
+            // Page is loading for the very first time (no history)
+            startTimer(TIMER_DURATION);
+        } else {
+            // Timer finished previously; do NOT restart on reload
+            resendBtn.disabled = false;
+            timerContainer.classList.add('hidden');
+        }
+    });
+
+    // --- 3. Input Logic (Typing, Backspace, Paste) ---
+    inputs.forEach((input, index) => {
+        input.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            if (e.target.value.length === 1 && index < inputs.length - 1) {
+                inputs[index + 1].focus();
+            }
+        });
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                inputs[index - 1].focus();
+            }
+        });
+
+        input.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const pasteData = e.clipboardData.getData('text').slice(0, 6).split('');
+            pasteData.forEach((char, i) => {
+                if (inputs[i] && /^[0-9]$/.test(char)) {
+                    inputs[i].value = char;
+                }
+            });
+            const nextIndex = pasteData.length >= 6 ? 5 : pasteData.length;
+            inputs[nextIndex].focus();
+            if (pasteData.length === 6) otpForm.requestSubmit(); 
+        });
+    });
+
+    // --- 4. Resend OTP Logic ---
+    resendBtn.addEventListener('click', async () => {
+        try {
+            resendBtn.disabled = true;
+            const originalText = resendBtn.innerText;
+            resendBtn.innerText = "Sending...";
+
+            const response = await fetch('/auth/resend-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                showMessage(result.message || "New OTP sent!", "success");
+                resendBtn.innerText = "Resend Code";
+                // Explicitly restart timer on click
+                startTimer(TIMER_DURATION); 
+            } else {
+                showMessage(result.message || "Failed to resend.", "error");
+                resendBtn.disabled = false;
+                resendBtn.innerText = originalText;
+            }
+        } catch (error) {
+            showMessage("Network error. Could not resend OTP.", "error");
+            resendBtn.disabled = false;
+        }
+    });
+
+    // --- 5. OTP Verification Submission ---
+    otpForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const otpValue = Array.from(inputs).map(input => input.value).join('');
+
+        if (otpValue.length < 6) {
+            showMessage("Please enter the full 6-digit code.", "error");
+            return;
+        }
+
+        try {
+            loadingModal.classList.remove('hidden');
+            submitBtn.disabled = true;
+
+            const response = await fetch('/auth/verify-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ otp: otpValue })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // Clear all timer tracking on success
+                localStorage.removeItem('otpExpiry');
+                localStorage.removeItem('timerHasStarted');
+                showMessage(result.message || "Verified successfully!", "success");
+                setTimeout(() => window.location.href = result.redirectUrl || "/auth/login", 1500);
+            } else {
+                loadingModal.classList.add('hidden');
+                showMessage(result.message || "Invalid code.", "error");
+                submitBtn.disabled = false;
+            }
+        } catch (error) {
+            loadingModal.classList.add('hidden');
+            showMessage("A network error occurred.", "error");
+            submitBtn.disabled = false;
+        }
+    });
+
+    function showMessage(text, type) {
+        msgDiv.innerText = text;
+        msgDiv.classList.remove('hidden', 'bg-red-900/50', 'text-red-200', 'bg-green-900/50', 'text-green-200');
+        msgDiv.classList.add('block', 'p-3', 'rounded-lg', 'text-sm', 'mb-4');
+        
+        if (type === "error") {
+            msgDiv.classList.add('bg-red-900/50', 'text-red-200', 'border', 'border-red-800');
+        } else {
+            msgDiv.classList.add('bg-green-900/50', 'text-green-200', 'border', 'border-green-800');
+        }
+    }
+</script>

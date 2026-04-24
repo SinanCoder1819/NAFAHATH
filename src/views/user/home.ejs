@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: white; }
+        .font-serif-italic { font-family: 'Playfair Display', serif; font-style: italic; }
+        .neon-btn { background-color: #00FFFF; color: black; transition: all 0.3s ease; }
+        .neon-btn:hover { box-shadow: 0 0 20px rgba(0, 255, 255, 0.6); transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+
+  
+
+    <section class="max-w-7xl mx-auto px-8 py-12 md:py-24 flex flex-col md:flex-row items-center">
+        <div class="md:w-1/2 space-y-8 text-center md:text-left">
+            <h2 class="text-6xl md:text-8xl font-serif-italic leading-tight">The<br>Essence<br>of You.</h2>
+            <div class="w-16 h-[1px] bg-gray-500 mx-auto md:mx-0"></div>
+            <p class="text-[10px] tracking-[0.3em] text-gray-400 uppercase">Crafted Fragrances for Timeless Elegance</p>
+            <a href="#" class="inline-flex items-center space-x-4 text-xs tracking-widest hover:text-cyan-400 transition">
+                <span>Explore the Collection</span>
+                <span class="text-xl">→</span>
+            </a>
+        </div>
+        <div class="md:w-1/2 mt-12 md:mt-0 flex justify-center">
+            <img src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=800" alt="Hero Perfume" class="w-full max-w-md object-contain drop-shadow-2xl">
+        </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-8 py-16">
+        <div class="flex items-center space-x-4 mb-12">
+            <div class="h-[1px] bg-gray-800 flex-grow"></div>
+            <h3 class="text-xs tracking-[0.4em] uppercase font-semibold">Browse Categories</h3>
+            <div class="h-[1px] bg-gray-800 flex-grow"></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="relative group cursor-pointer flex flex-col items-center">
+                <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=500" alt="Women" class="w-64 h-80 object-contain transition group-hover:scale-105">
+                <span class="absolute left-10 bottom-10 text-4xl font-serif-italic text-indigo-500">Women</span>
+            </div>
+            <div class="relative group cursor-pointer flex flex-col items-center">
+                <img src="https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&q=80&w=500" alt="Men" class="w-64 h-80 object-contain transition group-hover:scale-105">
+                <span class="absolute left-10 bottom-10 text-4xl font-serif-italic text-blue-600">Men</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-8 py-16">
+        <div class="flex items-center space-x-4 mb-12">
+            <div class="h-[1px] bg-gray-800 flex-grow"></div>
+            <h3 class="text-xs tracking-[0.4em] uppercase font-semibold">Best Sellers</h3>
+            <div class="h-[1px] bg-gray-800 flex-grow"></div>
+        </div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="space-y-4">
+                <div class="bg-[#111] p-4 rounded-sm flex justify-center h-64">
+                    <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=300" class="object-contain hover:scale-105 transition duration-500">
+                </div>
+                <div class="space-y-1">
+                    <h4 class="text-xs font-semibold">Golden Oud</h4>
+                    <p class="text-[10px] text-gray-500">Royal Attar House</p>
+                    <p class="text-xs mt-2">₹4,999</p>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-[#111] p-4 rounded-sm flex justify-center h-64">
+                    <img src="https://images.unsplash.com/photo-1557170334-a9632e77c6e4?auto=format&fit=crop&q=80&w=300" class="object-contain hover:scale-105 transition">
+                </div>
+                <div class="space-y-1">
+                    <h4 class="text-xs font-semibold">Midnight Oudh</h4>
+                    <p class="text-[10px] text-gray-500">Noir Essence</p>
+                    <p class="text-xs mt-2">₹4,299</p>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-[#111] p-4 rounded-sm flex justify-center h-64">
+                    <img src="https://images.unsplash.com/photo-1585232351009-aa87416fca90?auto=format&fit=crop&q=80&w=300" class="object-contain hover:scale-105 transition">
+                </div>
+                <div class="space-y-1">
+                    <h4 class="text-xs font-semibold">Urban Spice</h4>
+                    <p class="text-[10px] text-gray-500">MetroNotes</p>
+                    <p class="text-xs mt-2">₹2,999</p>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-[#111] p-4 rounded-sm flex justify-center h-64">
+                    <img src="https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=300" class="object-contain hover:scale-105 transition">
+                </div>
+                <div class="space-y-1">
+                    <h4 class="text-xs font-semibold">Silver Musk</h4>
+                    <p class="text-[10px] text-gray-500">Zenith Aromatics</p>
+                    <p class="text-xs mt-2">₹2,450</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-8 py-16">
+        <div class="flex items-center space-x-4 mb-12">
+            <div class="h-[1px] bg-gray-800 flex-grow"></div>
+            <h3 class="text-xs tracking-[0.4em] uppercase font-semibold">New Arrivals</h3>
+            <div class="h-[1px] bg-gray-800 flex-grow"></div>
+        </div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="space-y-4">
+                <div class="bg-[#111] p-4 rounded-sm flex justify-center h-64">
+                    <img src="https://images.unsplash.com/photo-1519669011783-4eaa95fa1b7d?auto=format&fit=crop&q=80&w=300" class="object-contain hover:scale-105 transition">
+                </div>
+                <div class="space-y-1">
+                    <h4 class="text-xs font-semibold">Midnight Ember</h4>
+                    <p class="text-[10px] text-gray-500">Obsidian Scents</p>
+                    <p class="text-xs mt-2">₹3,250</p>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-[#111] p-4 rounded-sm flex justify-center h-64">
+                    <img src="https://images.unsplash.com/photo-1615033161185-2f9a00e0b04c?auto=format&fit=crop&q=80&w=300" class="object-contain hover:scale-105 transition">
+                </div>
+                <div class="space-y-1">
+                    <h4 class="text-xs font-semibold">Vanilla Dusk</h4>
+                    <p class="text-[10px] text-gray-500">SoftScent Lab</p>
+                    <p class="text-xs mt-2">₹1,750</p>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-[#111] p-4 rounded-sm flex justify-center h-64">
+                    <img src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=300" class="object-contain hover:scale-105 transition">
+                </div>
+                <div class="space-y-1">
+                    <h4 class="text-xs font-semibold">Velour Night</h4>
+                    <p class="text-[10px] text-gray-500">Noir Essence</p>
+                    <p class="text-xs mt-2">₹2,799</p>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-[#111] p-4 rounded-sm flex justify-center h-64">
+                    <img src="https://images.unsplash.com/photo-1616948055600-a12117d86301?auto=format&fit=crop&q=80&w=300" class="object-contain hover:scale-105 transition">
+                </div>
+                <div class="space-y-1">
+                    <h4 class="text-xs font-semibold">Desert Oudh</h4>
+                    <p class="text-[10px] text-gray-500">Petal & Co.</p>
+                    <p class="text-xs mt-2">₹5,100</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+</body>
+</html>

@@ -1,0 +1,159 @@
+<section class="flex items-center justify-center px-6 py-12 md:py-20">
+    <div class="w-full max-w-[460px] border border-gray-800 rounded-[40px] p-8 md:p-10 flex flex-col bg-black">
+        
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-semibold mb-1 text-white">Create Your Account</h2>
+            <p class="text-gray-400 text-sm">Join us and find your perfect pair.</p>
+        </div>
+
+        <button type="button" class="w-full bg-white text-black py-2.5 rounded-lg flex items-center justify-center gap-3 font-medium hover:bg-gray-200 transition-colors mb-6">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4" alt="Google">
+            <span class="text-xs">Sign in with Google</span>
+        </button>
+
+        <div id="responseMessage" class="hidden mb-4 p-3 rounded-lg text-xs font-medium text-center"></div>
+
+        <form id="signupForm" class="space-y-4">
+            <div>
+                <label class="block text-[10px] font-medium text-gray-400 mb-1.5 ml-1 uppercase tracking-wider">Full Name</label>
+                <input type="text" name="name"  placeholder="Enter your full name" 
+                    class="w-full bg-transparent border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-xs text-white">
+           </div>
+
+            <div>
+                <label class="block text-[10px] font-medium text-gray-400 mb-1.5 ml-1 uppercase tracking-wider">Email Address</label>
+                <input type="email" name="email"  placeholder="Enter your email address" 
+                    class="w-full bg-transparent border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-xs text-white">
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-medium text-gray-400 mb-1.5 ml-1 uppercase tracking-wider">Phone Number</label>
+                <input type="tel" name="phone"  placeholder="Enter your phone number" 
+                    class="w-full bg-transparent border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-xs text-white">
+          </div>
+
+            <div>
+                <label class="block text-[10px] font-medium text-gray-400 mb-1.5 ml-1 uppercase tracking-wider">Referral Code</label>
+                <input type="text" name="referral" placeholder="Enter your Referral Code" 
+                    class="w-full bg-transparent border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-xs text-white">
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-medium text-gray-400 mb-1.5 ml-1 uppercase tracking-wider">Password</label>
+                <div class="relative">
+                    <input type="password" name="password" id="password"  placeholder="Create a password" 
+                        class="w-full bg-transparent border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-xs text-white">
+                    <button type="button" onclick="togglePassword('password')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-medium text-gray-400 mb-1.5 ml-1 uppercase tracking-wider">Confirm Password</label>
+                <div class="relative">
+                    <input type="password" name="confirmPassword" id="confirmPassword"  placeholder="Confirm your password" 
+                        class="w-full bg-transparent border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-xs text-white">
+                    <button type="button" onclick="togglePassword('confirmPassword')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" id="submitBtn" class="w-full bg-[#00FFFF] text-black font-bold py-3 rounded-xl hover:bg-[#00e6e6] shadow-[0_0_20px_rgba(0,255,255,0.2)] transition-all text-sm uppercase tracking-widest">
+                    Create Account
+                </button>
+            </div>
+        </form>
+
+        <p class="text-center mt-6 text-[11px] text-gray-400">
+            Already have an account? <a href="/auth/login" class="text-gray-200 hover:underline">Log in</a>
+        </p>
+    </div>
+</section>
+
+<div id="loadingModal" class="fixed inset-0 z-50 hidden flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm">
+    <div class="flex flex-col items-center bg-gray-900 border border-gray-800 p-10 rounded-[32px] shadow-2xl">
+        <div class="w-12 h-12 border-4 border-[#00FFFF]/20 border-t-[#00FFFF] rounded-full animate-spin mb-4"></div>
+        <h3 class="text-white font-semibold text-lg">Processing</h3>
+        <p class="text-gray-400 text-xs mt-2">Setting up your profile...</p>
+    </div>
+</div>
+
+<script>
+    // 1. Password Visibility Toggle Function
+    function togglePassword(id) {
+        const input = document.getElementById(id);
+        input.type = input.type === "password" ? "text" : "password";
+    }
+
+    // 2. Form Submission Handling
+    document.getElementById('signupForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('submitBtn');
+        const msgDiv = document.getElementById('responseMessage');
+        const loadingModal = document.getElementById('loadingModal');
+        const formData = new FormData(this);
+        
+        const data = Object.fromEntries(formData.entries());
+
+        if (data.password !== data.confirmPassword) {
+            showMessage("Passwords do not match!", "error");
+            return;
+        }
+
+        try {
+            // SHOW LOADING MODAL
+            loadingModal.classList.remove('hidden');
+            submitBtn.disabled = true;
+            msgDiv.classList.add('hidden');
+
+            const response = await fetch('/auth/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                showMessage(result.message || "Account created successfully!", "success");  
+                // The modal stays visible until redirect
+                setTimeout(() => window.location.href = result.redirectUrl || "/auth/verify-otp", 1500);
+            } else {
+                // HIDE MODAL IF FAILED
+                loadingModal.classList.add('hidden');
+                showMessage(result.message || "Signup failed. Please try again.", "error");
+                submitBtn.disabled = false;
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            // HIDE MODAL ON ERROR
+            loadingModal.classList.add('hidden');
+            showMessage("A network error occurred.", "error");
+            submitBtn.disabled = false;
+        }
+    });
+
+    // Helper function to show messages
+    function showMessage(text, type) {
+        const msgDiv = document.getElementById('responseMessage');
+        msgDiv.innerText = text;
+        msgDiv.classList.remove('hidden', 'bg-red-900/50', 'text-red-200', 'bg-green-900/50', 'text-green-200', 'border-red-800', 'border-green-800');
+        msgDiv.classList.add('block', 'border'); // Ensure block for visibility
+        
+        if (type === "error") {
+            msgDiv.classList.add('bg-red-900/50', 'text-red-200', 'border-red-800');
+        } else {
+            msgDiv.classList.add('bg-green-900/50', 'text-green-200', 'border-green-800');
+        }
+    }
+</script>
