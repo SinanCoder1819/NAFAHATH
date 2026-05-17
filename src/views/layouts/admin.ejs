@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Nafahath</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ── Reset ───────────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0d0d0d;
+            color: #e5e5e5;
+            display: flex;
+        }
+
+        /* ── Sidebar ─────────────────────────────────────────── */
+        .sidebar {
+            width: 180px;
+            min-height: 100vh;
+            height: 100%;
+            background: #111;
+            border-right: 1px solid #1e1e1e;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            z-index: 100;
+        }
+
+        /* Profile */
+        .sb-profile {
+            padding: 28px 20px 22px;
+            border-bottom: 1px solid #1e1e1e;
+            flex-shrink: 0;
+        }
+        .sb-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #2d3748;
+            color: #fff;
+            font-size: 17px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            letter-spacing: 0;
+        }
+        .sb-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.4;
+        }
+        .sb-email {
+            font-size: 11px;
+            color: #6b7280;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 3px;
+            line-height: 1.4;
+        }
+
+        /* Nav */
+        .sb-nav {
+            flex: 1;
+            padding: 18px 12px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            overflow-y: auto;
+        }
+        .sb-link {
+            display: block;
+            padding: 10px 14px;
+            font-size: 12.5px;
+            font-weight: 500;
+            color: #6b7280;
+            text-decoration: none;
+            border-radius: 7px;
+            white-space: nowrap;
+            letter-spacing: 0.01em;
+            transition: background 0.15s, color 0.15s;
+            cursor: pointer;
+        }
+        .sb-link:hover {
+            background: rgba(255,255,255,0.07);
+            color: #e5e5e5;
+        }
+        .sb-link.active {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* Footer / Sign out */
+        .sb-footer {
+            flex-shrink: 0;
+            padding: 14px 12px 24px;
+            border-top: 1px solid #1e1e1e;
+        }
+        .sb-signout {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 10px 14px;
+            font-size: 12.5px;
+            font-weight: 500;
+            color: #6b7280;
+            text-decoration: none;
+            border-radius: 7px;
+            white-space: nowrap;
+            transition: background 0.15s, color 0.15s;
+        }
+        .sb-signout:hover {
+            background: rgba(248,113,113,0.08);
+            color: #f87171;
+        }
+        .sb-signout svg { flex-shrink: 0; }
+
+        /* ── Main ────────────────────────────────────────────── */
+        .main-content {
+            margin-left: 180px;
+            flex: 1;
+            min-width: 0;
+            padding: 44px 52px;
+        }
+    </style>
+</head>
+<body>
+
+<% if (typeof admin !== 'undefined' && admin) { %>
+<aside class="sidebar">
+
+    <div class="sb-profile">
+        <div class="sb-avatar"><%= admin.name ? admin.name.charAt(0).toUpperCase() : 'A' %></div>
+        <div class="sb-name"><%= admin.name || 'Admin' %></div>
+        <div class="sb-email"><%= admin.email %></div>
+    </div>
+
+    <nav class="sb-nav">
+        <a href="/admin/dashboard" class="sb-link <%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'active' : '' %>">Dashboard</a>
+        <a href="#" class="sb-link">Orders</a>
+        <a href="#" class="sb-link">Products</a>
+        <a href="/admin/customers" class="sb-link <%= typeof activePage !== 'undefined' && activePage === 'customers' ? 'active' : '' %>">Customers</a>
+        <a href="#" class="sb-link">Sales Report</a>
+        <a href="#" class="sb-link">Coupon</a>
+        <a href="#" class="sb-link">Category</a>
+    </nav>
+
+    <div class="sb-footer">
+        <a href="/admin/logout" class="sb-signout">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/>
+            </svg>
+            Sign Out
+        </a>
+    </div>
+
+</aside>
+<% } %>
+
+<main class="main-content">
+    <%- body %>
+</main>
+
+</body>
+</html>

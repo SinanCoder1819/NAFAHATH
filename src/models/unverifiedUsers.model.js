@@ -1,4 +1,4 @@
-// models/UnverifiedUser.js
+
 import mongoose from "mongoose";
 
 const unverifiedUserSchema = new mongoose.Schema(

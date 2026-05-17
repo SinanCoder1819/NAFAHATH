@@ -1,0 +1,336 @@
+﻿<main class="min-h-screen bg-[#060606] text-white py-12 px-4 md:px-8 lg:px-12">
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
+        <aside class="w-full lg:w-72 shrink-0">
+            <div class="bg-[#0f0f0f] border border-gray-800 rounded-3xl p-8 sticky top-28 shadow-2xl">
+                <div class="mb-10">
+                    <p class="text-[10px] uppercase tracking-[0.3em] text-[#C5A267] font-bold mb-6 opacity-80">Dashboard</p>
+                    <nav class="flex flex-col gap-2">
+                        <a href="/profile" class="group flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all border border-transparent">
+                            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            <span class="text-sm font-medium">Profile</span>
+                        </a>
+                        <a href="/orders" class="group flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all border border-transparent">
+                            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                            <span class="text-sm font-medium">My Orders</span>
+                        </a>
+                        <a href="/wallet" class="group flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all border border-transparent">
+                            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                            <span class="text-sm font-medium">Wallet</span>
+                        </a>
+                        <a href="/address" class="group flex items-center gap-4 px-4 py-3 rounded-xl bg-[#C5A267]/10 text-[#C5A267] border border-[#C5A267]/20 transition-all">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+                            <span class="text-sm font-medium">Addresses</span>
+                        </a>
+                        <a href="/referrals" class="group flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all border border-transparent">
+                            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12z"/></svg>
+                            <span class="text-sm font-medium">Refer and Earn</span>
+                        </a>
+                    </nav>
+                </div>
+                <div class="pt-6 border-t border-gray-800">
+                    <a href="/auth/logout" class="flex items-center gap-4 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-all group">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                        <span class="text-sm font-medium">Logout</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+        <section class="flex-1">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-white">Address</h1>
+                    <div class="w-12 h-0.5 bg-[#00FFFF] mt-2"></div>
+                </div>
+                <button onclick="openAddModal()" class="bg-[#00FFFF] text-black px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_20px_rgba(0,255,255,0.2)]">
+                    + Add Address
+                </button>
+            </div>
+            <div id="addressList" class="space-y-4">
+                <% if (addresses.length === 0) { %>
+                    <div class="bg-[#0f0f0f] border border-gray-800 rounded-2xl p-12 text-center">
+                        <svg class="w-12 h-12 text-gray-700 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <p class="text-gray-500 text-sm">No addresses saved yet.</p>
+                        <button onclick="openAddModal()" class="mt-4 text-[#00FFFF] text-xs uppercase tracking-widest hover:underline">Add your first address</button>
+                    </div>
+                <% } else { %>
+                    <% addresses.forEach(addr => { %>
+                        <div class="address-card bg-[#0f0f0f] border border-gray-800 rounded-2xl p-6 relative" data-id="<%= addr._id %>">
+                            <% if (addr.isDefault) { %>
+                                <span class="absolute top-4 right-4 bg-[#00FFFF]/10 text-[#00FFFF] text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-[#00FFFF]/20">Default</span>
+                            <% } %>
+                            <p class="font-bold text-white text-base mb-1"><%= addr.fullName %></p>
+                            <p class="text-gray-400 text-sm"><%= addr.addressLine %></p>
+                            <p class="text-gray-400 text-sm"><%= addr.city %>, <%= addr.state %> - <%= addr.postalCode %></p>
+                            <p class="text-gray-400 text-sm">Phone: <%= addr.phone %></p>
+                            <div class="flex items-center gap-6 mt-4">
+                                <button onclick="openEditModal('<%= addr._id %>', '<%= addr.fullName.replace(/'/g, `\\'`) %>', '<%= addr.addressLine.replace(/'/g, `\\'`) %>', '<%= addr.city %>', '<%= addr.state %>', '<%= addr.postalCode %>', '<%= addr.phone %>', <%= addr.isDefault %>)"
+                                    class="text-[10px] font-bold uppercase tracking-widest text-gray-300 hover:text-[#C5A267] transition-colors underline underline-offset-2">
+                                    Edit Address
+                                </button>
+                                <button onclick="deleteAddress('<%= addr._id %>')"
+                                    class="text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-red-400 transition-colors underline underline-offset-2">
+                                    Delete
+                                </button>
+                                <% if (!addr.isDefault) { %>
+                                    <button onclick="setDefault('<%= addr._id %>')"
+                                        class="text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-[#00FFFF] transition-colors">
+                                        Set as Default
+                                    </button>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } %>
+            </div>
+        </section>
+    </div>
+</main>
+
+<!-- Add/Edit Address Modal -->
+<div id="addressModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
+    <div class="bg-[#0f0f0f] border border-gray-800 rounded-[2rem] p-8 w-full max-w-lg shadow-2xl relative">
+        <button onclick="closeModal()" class="absolute top-5 right-5 text-gray-500 hover:text-white transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+        <h2 id="modalTitle" class="text-2xl font-bold text-white mb-6 uppercase tracking-widest text-center">Add Address</h2>
+        <div id="modalMessage" class="hidden mb-4 p-3 rounded-xl text-xs font-medium border text-center"></div>
+        <form id="addressForm" class="space-y-4">
+            <input type="hidden" id="editAddressId">
+            <div>
+                <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Full Name</label>
+                <input type="text" id="f_fullName" placeholder="Full Name"
+                    class="w-full bg-black/40 border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-sm text-white placeholder:text-gray-600">
+                <p id="e_fullName" class="hidden text-red-400 text-[11px] mt-1 ml-1"></p>
+            </div>
+            <div>
+                <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Address Line</label>
+                <input type="text" id="f_addressLine" placeholder="Address Line"
+                    class="w-full bg-black/40 border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-sm text-white placeholder:text-gray-600">
+                <p id="e_addressLine" class="hidden text-red-400 text-[11px] mt-1 ml-1"></p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-widest mb-1.5 ml-1">City</label>
+                    <input type="text" id="f_city" placeholder="City"
+                        class="w-full bg-black/40 border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-sm text-white placeholder:text-gray-600">
+                    <p id="e_city" class="hidden text-red-400 text-[11px] mt-1 ml-1"></p>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Postal Code</label>
+                    <input type="text" id="f_postalCode" placeholder="Postal Code" maxlength="6"
+                        class="w-full bg-black/40 border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-sm text-white placeholder:text-gray-600">
+                    <p id="e_postalCode" class="hidden text-red-400 text-[11px] mt-1 ml-1"></p>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-widest mb-1.5 ml-1">State</label>
+                    <input type="text" id="f_state" placeholder="State"
+                        class="w-full bg-black/40 border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-sm text-white placeholder:text-gray-600">
+                    <p id="e_state" class="hidden text-red-400 text-[11px] mt-1 ml-1"></p>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Phone Number</label>
+                    <input type="tel" id="f_phone" placeholder="Phone Number" maxlength="10"
+                        class="w-full bg-black/40 border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-sm text-white placeholder:text-gray-600">
+                    <p id="e_phone" class="hidden text-red-400 text-[11px] mt-1 ml-1"></p>
+                </div>
+            </div>
+            <label class="flex items-center gap-3 cursor-pointer mt-2">
+                <input type="checkbox" id="f_isDefault" class="w-4 h-4 accent-[#00FFFF] rounded">
+                <span class="text-xs text-gray-400">Set as default shipping address</span>
+            </label>
+            <button type="submit" id="modalSaveBtn"
+                class="w-full bg-[#00FFFF] text-black py-4 rounded-2xl font-bold uppercase tracking-widest text-sm hover:scale-[1.01] active:scale-95 transition-all shadow-[0_0_20px_rgba(0,255,255,0.2)] mt-2 disabled:opacity-60 disabled:cursor-not-allowed">
+                Save
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div id="deleteModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
+    <div class="bg-[#0f0f0f] border border-gray-800 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl text-center">
+        <svg class="w-12 h-12 text-red-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        <h3 class="text-lg font-bold text-white mb-2">Remove Address?</h3>
+        <p class="text-gray-400 text-sm mb-6">This address will be permanently removed.</p>
+        <div class="flex gap-3">
+            <button onclick="closeDeleteModal()" class="flex-1 border border-gray-700 text-white py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-white/5 transition-all">Cancel</button>
+            <button id="confirmDeleteBtn" class="flex-1 bg-red-500 text-white py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-red-600 transition-all">Remove</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let deleteTargetId = null;
+
+    // --- Modal helpers ---
+    function openAddModal() {
+        document.getElementById('modalTitle').textContent = 'Add Address';
+        document.getElementById('editAddressId').value = '';
+        document.getElementById('addressForm').reset();
+        clearAllErrors();
+        hideModalMsg();
+        document.getElementById('addressModal').classList.remove('hidden');
+    }
+
+    function openEditModal(id, fullName, addressLine, city, state, postalCode, phone, isDefault) {
+        document.getElementById('modalTitle').textContent = 'Edit Address';
+        document.getElementById('editAddressId').value = id;
+        document.getElementById('f_fullName').value = fullName;
+        document.getElementById('f_addressLine').value = addressLine;
+        document.getElementById('f_city').value = city;
+        document.getElementById('f_state').value = state;
+        document.getElementById('f_postalCode').value = postalCode;
+        document.getElementById('f_phone').value = phone;
+        document.getElementById('f_isDefault').checked = isDefault;
+        clearAllErrors();
+        hideModalMsg();
+        document.getElementById('addressModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('addressModal').classList.add('hidden');
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+        deleteTargetId = null;
+    }
+
+    // Close modal on backdrop click
+    document.getElementById('addressModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+        if (e.target === this) closeDeleteModal();
+    });
+
+    // --- Validation helpers ---
+    function showErr(id, msg) {
+        const el = document.getElementById('e_' + id);
+        el.textContent = msg; el.classList.remove('hidden');
+    }
+    function clearErr(id) {
+        const el = document.getElementById('e_' + id);
+        el.textContent = ''; el.classList.add('hidden');
+    }
+    function clearAllErrors() {
+        ['fullName','addressLine','city','postalCode','state','phone'].forEach(clearErr);
+    }
+    function showModalMsg(text, type) {
+        const el = document.getElementById('modalMessage');
+        el.textContent = text;
+        el.className = 'mb-4 p-3 rounded-xl text-xs font-medium border text-center block';
+        el.classList.add(type === 'error' ? 'bg-red-900/50' : 'bg-green-900/50');
+        el.classList.add(type === 'error' ? 'text-red-200' : 'text-green-200');
+        el.classList.add(type === 'error' ? 'border-red-800' : 'border-green-800');
+    }
+    function hideModalMsg() {
+        document.getElementById('modalMessage').className = 'hidden';
+    }
+
+    // Clear errors on input
+    ['fullName','addressLine','city','postalCode','state','phone'].forEach(id => {
+        document.getElementById('f_' + id).addEventListener('input', () => clearErr(id));
+    });
+
+    // --- Form Submit ---
+    document.getElementById('addressForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearAllErrors();
+
+        const id = document.getElementById('editAddressId').value;
+        const fullName = document.getElementById('f_fullName').value.trim();
+        const addressLine = document.getElementById('f_addressLine').value.trim();
+        const city = document.getElementById('f_city').value.trim();
+        const state = document.getElementById('f_state').value.trim();
+        const postalCode = document.getElementById('f_postalCode').value.trim();
+        const phone = document.getElementById('f_phone').value.trim();
+        const isDefault = document.getElementById('f_isDefault').checked;
+
+        let valid = true;
+        if (!fullName) { showErr('fullName', 'Full name is required.'); valid = false; }
+        if (!addressLine) { showErr('addressLine', 'Address line is required.'); valid = false; }
+        if (!city) { showErr('city', 'City is required.'); valid = false; }
+        if (!state) { showErr('state', 'State is required.'); valid = false; }
+        if (!postalCode) { showErr('postalCode', 'Postal code is required.'); valid = false; }
+        else if (!/^[0-9]{6}$/.test(postalCode)) { showErr('postalCode', 'Must be 6 digits.'); valid = false; }
+        if (!phone) { showErr('phone', 'Phone number is required.'); valid = false; }
+        else if (!/^[0-9]{10}$/.test(phone)) { showErr('phone', 'Must be 10 digits.'); valid = false; }
+        if (!valid) return;
+
+        const saveBtn = document.getElementById('modalSaveBtn');
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Saving...';
+
+        const isEdit = !!id;
+        const url = isEdit ? `/address/${id}` : '/address';
+        const method = isEdit ? 'PUT' : 'POST';
+
+        try {
+            const response = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fullName, addressLine, city, state, postalCode, phone, isDefault })
+            });
+            let result = {};
+            try { result = await response.json(); } catch(_) {}
+
+            if (response.ok) {
+                showModalMsg(result.message || 'Saved!', 'success');
+                setTimeout(() => { closeModal(); location.reload(); }, 800);
+            } else {
+                showModalMsg(result.message || 'Failed to save address.', 'error');
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save';
+            }
+        } catch(err) {
+            showModalMsg('Network error. Please try again.', 'error');
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Save';
+        }
+    });
+
+    // --- Delete ---
+    function deleteAddress(id) {
+        deleteTargetId = id;
+        document.getElementById('deleteModal').classList.remove('hidden');
+    }
+
+    document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+        if (!deleteTargetId) return;
+        const btn = document.getElementById('confirmDeleteBtn');
+        btn.disabled = true;
+        btn.textContent = 'Removing...';
+
+        try {
+            const response = await fetch(`/address/${deleteTargetId}`, { method: 'DELETE' });
+            let result = {};
+            try { result = await response.json(); } catch(_) {}
+
+            if (response.ok) {
+                closeDeleteModal();
+                location.reload();
+            } else {
+                alert(result.message || 'Failed to remove address.');
+                btn.disabled = false;
+                btn.textContent = 'Remove';
+            }
+        } catch(err) {
+            alert('Network error.');
+            btn.disabled = false;
+            btn.textContent = 'Remove';
+        }
+    });
+
+    // --- Set Default ---
+    async function setDefault(id) {
+        try {
+            const response = await fetch(`/address/${id}/set-default`, { method: 'PATCH' });
+            if (response.ok) location.reload();
+        } catch(err) {
+            alert('Network error.');
+        }
+    }
+</script>

@@ -6,11 +6,6 @@
             <p class="text-gray-400 text-sm">Join us and find your perfect pair.</p>
         </div>
 
-        <button type="button" class="w-full bg-white text-black py-2.5 rounded-lg flex items-center justify-center gap-3 font-medium hover:bg-gray-200 transition-colors mb-6">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4" alt="Google">
-            <span class="text-xs">Sign in with Google</span>
-        </button>
-
         <div id="responseMessage" class="hidden mb-4 p-3 rounded-lg text-xs font-medium text-center"></div>
 
         <form id="signupForm" class="space-y-4">
@@ -92,6 +87,14 @@
     function togglePassword(id) {
         const input = document.getElementById(id);
         input.type = input.type === "password" ? "text" : "password";
+    }
+
+
+    const googleBtn = document.getElementById('googleLoginBtn');
+    if (googleBtn) {
+        googleBtn.addEventListener('click', function() {
+            window.location.href = '/auth/google';
+        });
     }
 
     // 2. Form Submission Handling

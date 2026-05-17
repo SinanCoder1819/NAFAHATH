@@ -1,142 +1,321 @@
-<section class="flex items-center justify-center px-6 py-12 md:py-20">
-    <div class="w-full max-w-[440px] border border-gray-800 rounded-[40px] p-8 md:p-10 flex flex-col items-center bg-black">
-        
-        <div class="text-center">
-            <h2 class="text-2xl font-semibold mb-2 text-white">Welcome Back</h2>
-            <p class="text-gray-400 text-sm mb-8">Log in to continue to your account</p>
+<style>
+    .login-wrap {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 48px 16px;
+    }
+    .login-card {
+        width: 100%;
+        max-width: 420px;
+        background: #000;
+        border: 1px solid #1f1f1f;
+        border-radius: 32px;
+        padding: 40px 36px;
+    }
+    .login-title {
+        font-size: 22px;
+        font-weight: 600;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 6px;
+    }
+    .login-sub {
+        font-size: 13px;
+        color: #6b7280;
+        text-align: center;
+        margin-bottom: 28px;
+    }
+    /* Google btn */
+    .google-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        background: #fff;
+        color: #000;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 11px 0;
+        border-radius: 10px;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: background 0.15s;
+        margin-bottom: 22px;
+        font-family: inherit;
+    }
+    .google-btn:hover { background: #e5e7eb; }
+    /* Divider */
+    .divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 22px;
+    }
+    .divider-line { flex: 1; height: 1px; background: #1f1f1f; }
+    .divider-text { font-size: 11px; color: #4b5563; }
+    /* Alert */
+    .alert {
+        width: 100%;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 500;
+        text-align: center;
+        margin-bottom: 16px;
+        display: none;
+    }
+    .alert.show { display: block; }
+    .alert-error   { background: rgba(127,29,29,0.4); color: #fca5a5; border: 1px solid #7f1d1d; }
+    .alert-success { background: rgba(20,83,45,0.4);  color: #86efac;  border: 1px solid #14532d; }
+    /* Form */
+    .form-group { margin-bottom: 18px; }
+    .form-label {
+        display: block;
+        font-size: 11.5px;
+        font-weight: 500;
+        color: #9ca3af;
+        margin-bottom: 7px;
+    }
+    .form-input {
+        width: 100%;
+        background: transparent;
+        border: 1px solid #1f1f1f;
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-size: 13px;
+        color: #fff;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.2s;
+        box-sizing: border-box;
+    }
+    .form-input::placeholder { color: #374151; }
+    .form-input:focus { border-color: #00FFFF; }
+    .input-wrap { position: relative; }
+    .eye-btn {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #4b5563;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        transition: color 0.15s;
+    }
+    .eye-btn:hover { color: #9ca3af; }
+    /* Buttons */
+    .btn-submit {
+        width: 100%;
+        background: #00FFFF;
+        color: #000;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 13px 0;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        transition: opacity 0.15s;
+        margin-bottom: 12px;
+        box-shadow: 0 0 20px rgba(0,255,255,0.15);
+    }
+    .btn-submit:hover { opacity: 0.88; }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-signup {
+        display: block;
+        width: 100%;
+        text-align: center;
+        border: 1px solid #1f1f1f;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 12px 0;
+        border-radius: 12px;
+        text-decoration: none;
+        transition: background 0.15s;
+        box-sizing: border-box;
+    }
+    .btn-signup:hover { background: rgba(255,255,255,0.05); }
+    .forgot-link {
+        display: block;
+        text-align: center;
+        margin-top: 18px;
+        font-size: 12px;
+        color: #3b82f6;
+        text-decoration: none;
+    }
+    .forgot-link:hover { text-decoration: underline; }
+    /* Loading overlay */
+    .loading-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        background: rgba(0,0,0,0.8);
+        backdrop-filter: blur(4px);
+        align-items: center;
+        justify-content: center;
+    }
+    .loading-overlay.show { display: flex; }
+    .loading-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: #111;
+        border: 1px solid #1f1f1f;
+        border-radius: 28px;
+        padding: 40px 48px;
+    }
+    .spinner {
+        width: 44px;
+        height: 44px;
+        border: 3px solid rgba(0,255,255,0.15);
+        border-top-color: #00FFFF;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        margin-bottom: 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-title { font-size: 15px; font-weight: 600; color: #fff; }
+    .loading-sub   { font-size: 12px; color: #6b7280; margin-top: 4px; }
+</style>
+
+<div class="login-wrap">
+    <div class="login-card">
+
+        <h2 class="login-title">Welcome Back</h2>
+        <p class="login-sub">Log in to continue to your account</p>
+
+        <!-- Google -->
+        <a href="/auth/google" class="google-btn">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" alt="Google">
+            Sign in with Google
+        </a>
+
+        <!-- Divider -->
+        <div class="divider">
+            <div class="divider-line"></div>
+            <span class="divider-text">or</span>
+            <div class="divider-line"></div>
         </div>
 
-        <button type="button" class="w-full bg-white text-black py-3 rounded-lg flex items-center justify-center gap-3 font-medium hover:bg-gray-200 transition-colors mb-6">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" alt="Google">
-            <span class="text-sm">Sign in with Google</span>
-        </button>
-
-        <div class="w-full flex items-center gap-4 mb-8">
-            <div class="h-[1px] bg-gray-700 flex-grow"></div>
-            <span class="text-gray-500 text-xs lowercase">or</span>
-            <div class="h-[1px] bg-gray-700 flex-grow"></div>
+        <!-- Blocked alert (server-side) -->
+        <% if (typeof blocked !== 'undefined' && blocked) { %>
+        <div class="alert alert-error show">
+            Your account has been blocked. Please contact support.
         </div>
+        <% } %>
 
-        <div id="responseMessage" class="hidden w-full mb-4 p-3 rounded-lg text-xs font-medium text-center"></div>
+        <!-- JS response message -->
+        <div id="responseMessage" class="alert"></div>
 
-        <form id="loginForm" class="w-full space-y-6">
-            <div>
-                <label class="block text-xs font-medium text-gray-300 mb-2 ml-1">Email</label>
-                <input type="email" name="email" id="email"  placeholder="Enter your email" 
-                    class="w-full bg-transparent border border-gray-700 rounded-xl px-4 py-3.5 outline-none focus:border-[#00FFFF] transition-all text-sm text-white">
+        <!-- Form -->
+        <form id="loginForm" novalidate>
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" class="form-input" autocomplete="email" required />
             </div>
 
-            <div class="relative">
-                <div class="flex justify-between items-center mb-2">
-                    <label class="text-xs font-medium text-gray-300 ml-1">Password</label>
-                </div>
-                <div class="relative">
-                    <input type="password" name="password" id="password"  placeholder="Enter your password" 
-                        class="w-full bg-transparent border border-gray-700 rounded-xl px-4 py-3.5 outline-none focus:border-[#00FFFF] transition-all text-sm text-white">
-                    
-                    <button type="button" onclick="togglePassword('password')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition">
-                        <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <div class="input-wrap">
+                    <input type="password" id="password" name="password" placeholder="Enter your password" class="form-input" style="padding-right:44px" autocomplete="current-password" required />
+                    <button type="button" class="eye-btn" id="eyeToggle" aria-label="Toggle password">
+                        <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="display:none">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/>
                         </svg>
                     </button>
                 </div>
             </div>
 
-            <div class="pt-2 space-y-4">
-                <button type="submit" id="submitBtn" class="w-full bg-[#00FFFF] text-black font-bold py-3.5 rounded-xl hover:opacity-90 shadow-[0_0_20px_rgba(0,255,255,0.2)] transition-all text-sm uppercase tracking-widest">
-                    Log In
-                </button>
-                
-                <a href="/auth/signup" class="block w-full text-center border border-gray-700 text-white font-medium py-3.5 rounded-xl hover:bg-white/5 transition-colors text-sm">
-                    Signup
-                </a>
-            </div>
+            <button type="submit" id="submitBtn" class="btn-submit">Log In</button>
+            <a href="/auth/signup" class="btn-signup">Sign Up</a>
         </form>
 
-        <div class="text-center mt-6">
-            <a href="/auth/forgot-password" class="text-xs text-blue-500 hover:underline font-medium">Forget Password?</a>
-        </div>
+        <a href="/auth/forgot-password" class="forgot-link">Forgot Password?</a>
     </div>
-</section>
+</div>
 
-<div id="loadingModal" class="fixed inset-0 z-50 hidden flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm">
-    <div class="flex flex-col items-center bg-gray-900 border border-gray-800 p-10 rounded-[32px] shadow-2xl">
-        <div class="w-12 h-12 border-4 border-[#00FFFF]/20 border-t-[#00FFFF] rounded-full animate-spin mb-4"></div>
-        <h3 class="text-white font-semibold text-lg">Authenticating</h3>
-        <p class="text-gray-400 text-xs mt-2">Checking your credentials...</p>
+<!-- Loading overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-box">
+        <div class="spinner"></div>
+        <p class="loading-title">Authenticating</p>
+        <p class="loading-sub">Checking your credentials...</p>
     </div>
 </div>
 
 <script>
-    // 1. Toggle Password Visibility
-    function togglePassword(id) {
-        const passwordInput = document.getElementById(id);
-        const eyeIcon = document.getElementById('eyeIcon');
-        
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />`;
-        } else {
-            passwordInput.type = 'password';
-            eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />`;
-        }
-    }
+(function () {
+    // Eye toggle
+    const pwInput   = document.getElementById('password');
+    const eyeOpen   = document.getElementById('eyeOpen');
+    const eyeClosed = document.getElementById('eyeClosed');
 
-    // 2. Handle Login Submission
-    const loginForm = document.getElementById('loginForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const msgDiv = document.getElementById('responseMessage');
-    const loadingModal = document.getElementById('loadingModal');
-
-    loginForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-
-        // 1. Show the loading modal immediately
-        loadingModal.classList.remove('hidden');
-        submitBtn.disabled = true;
-        msgDiv.classList.add('hidden');
-
-        try {
-            // 2. Attempt the real connection
-            const response = await fetch('/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(Object.fromEntries(new FormData(this)))
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                showMessage("Login successful!", "success");
-                setTimeout(() => {
-                    window.location.href = result.redirectUrl || "/auth/home";
-                }, 1000);
-            } else {
-                loadingModal.classList.add('hidden');
-                showMessage(result.message || "Invalid credentials", "error");
-                submitBtn.disabled = false;
-            }
-        } catch (error) {
-            // 3. BYPASS ERROR: If server is down, redirect anyway after a short delay
-            console.warn("Server not found, redirecting to home anyway...");
-            
-            setTimeout(() => {
-                window.location.href = "/"; 
-            }, 1500);
-        }
+    document.getElementById('eyeToggle').addEventListener('click', () => {
+        const show = pwInput.type === 'password';
+        pwInput.type            = show ? 'text' : 'password';
+        eyeOpen.style.display   = show ? 'none'  : '';
+        eyeClosed.style.display = show ? ''      : 'none';
     });
 
-    // 3. Helper Function for Messages
-    function showMessage(text, type) {
-        msgDiv.innerText = text;
-        msgDiv.classList.remove('hidden', 'bg-red-900/50', 'text-red-200', 'bg-green-900/50', 'text-green-200', 'border-red-800', 'border-green-800');
-        msgDiv.classList.add('block', 'border');
-
-        if (type === "error") {
-            msgDiv.classList.add('bg-red-900/50', 'text-red-200', 'border-red-800');
-        } else {
-            msgDiv.classList.add('bg-green-900/50', 'text-green-200', 'border-green-800');
-        }
+    // Message helper
+    const msgDiv = document.getElementById('responseMessage');
+    function showMsg(text, type) {
+        msgDiv.textContent = text;
+        msgDiv.className   = 'alert show ' + (type === 'error' ? 'alert-error' : 'alert-success');
     }
+    function hideMsg() { msgDiv.className = 'alert'; }
+
+    // Form submit
+    const form      = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const overlay   = document.getElementById('loadingOverlay');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideMsg();
+        overlay.classList.add('show');
+        submitBtn.disabled = true;
+
+        try {
+            const res  = await fetch('/auth/login', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({
+                    email:    document.getElementById('email').value.trim(),
+                    password: pwInput.value,
+                }),
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                showMsg('Login successful!', 'success');
+                setTimeout(() => { window.location.href = data.redirectUrl || '/'; }, 900);
+            } else {
+                overlay.classList.remove('show');
+                submitBtn.disabled = false;
+                showMsg(data.message || 'Invalid credentials.', 'error');
+            }
+        } catch {
+            overlay.classList.remove('show');
+            submitBtn.disabled = false;
+            showMsg('Connection error. Please try again.', 'error');
+        }
+    });
+})();
 </script>

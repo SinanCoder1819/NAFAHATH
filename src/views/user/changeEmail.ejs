@@ -1,0 +1,144 @@
+<main class="min-h-screen bg-[#060606] text-white py-12 px-4 md:px-8 lg:px-12">
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
+
+        <!-- Sidebar -->
+        <aside class="w-full lg:w-72 shrink-0">
+            <div class="bg-[#0f0f0f] border border-gray-800 rounded-3xl p-8 sticky top-28 shadow-2xl">
+                <div class="mb-10">
+                    <p class="text-[10px] uppercase tracking-[0.3em] text-[#C5A267] font-bold mb-6 opacity-80">Dashboard</p>
+                    <nav class="flex flex-col gap-2">
+                        <a href="/profile" class="group flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all border border-transparent">
+                            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            <span class="text-sm font-medium">Profile</span>
+                        </a>
+                        <% const navLinks = [
+                            { href: '/orders', label: 'My Orders', icon: 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' },
+                            { href: '/wallet', label: 'Wallet', icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z' },
+                            { href: '/address', label: 'Addresses', icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z' },
+                            { href: '/referrals', label: 'Refer & Earn', icon: 'M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12z' }
+                        ] %>
+                        <% navLinks.forEach(link => { %>
+                            <a href="<%= link.href %>" class="group flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all border border-transparent">
+                                <svg class="w-5 h-5 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="<%= link.icon %>"/></svg>
+                                <span class="text-sm font-medium"><%= link.label %></span>
+                            </a>
+                        <% }) %>
+                    </nav>
+                </div>
+                <div class="pt-6 border-t border-gray-800">
+                    <a href="/auth/logout" class="flex items-center gap-4 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-all group">
+                        <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                        <span class="text-sm font-medium">Logout</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <section class="flex-1 flex items-start justify-center">
+            <div class="w-full max-w-lg">
+                <div class="text-center mb-10">
+                    <h1 class="text-4xl font-serif italic text-white mb-2">Change Your Email</h1>
+                    <p class="text-gray-500 text-[10px] tracking-[0.3em] uppercase">Update your account email address</p>
+                </div>
+
+                <div class="bg-[#0f0f0f] border border-gray-800 rounded-[2.5rem] p-8 md:p-10 shadow-2xl">
+
+                    <p class="text-gray-400 text-sm mb-2">Enter your new email address below. We'll send a verification code to it.</p>
+                    <p class="text-[11px] text-gray-600 mb-8">
+                        Current Email: <span class="text-[#C5A267] font-medium"><%= user.email %></span>
+                    </p>
+
+                    <div id="formMessage" class="hidden mb-6 p-3 rounded-xl text-xs font-medium border text-center"></div>
+
+                    <form id="changeEmailForm" class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-widest ml-1">New Email Address</label>
+                            <input type="email" id="newEmail" name="newEmail"
+                                placeholder="Enter your new email"
+                                class="w-full bg-black/40 border border-gray-700 rounded-2xl px-5 py-4 outline-none focus:border-[#00FFFF] focus:ring-1 focus:ring-[#00FFFF]/20 transition-all text-sm text-white placeholder:text-gray-600">
+                            <p id="emailError" class="hidden text-red-400 text-[11px] ml-1"></p>
+                        </div>
+
+                        <button type="submit" id="continueBtn"
+                            class="w-full bg-[#00FFFF] text-black py-4 rounded-2xl font-bold uppercase tracking-widest text-sm hover:scale-[1.01] active:scale-95 transition-all shadow-[0_0_25px_rgba(0,255,255,0.2)] disabled:opacity-60 disabled:cursor-not-allowed">
+                            Continue
+                        </button>
+                    </form>
+
+                    <div class="mt-6 text-center">
+                        <a href="/profile" class="text-xs text-gray-500 hover:text-white transition uppercase tracking-widest">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<script>
+    const continueBtn = document.getElementById('continueBtn');
+    const emailError = document.getElementById('emailError');
+    const formMsg = document.getElementById('formMessage');
+
+    function showFieldError(msg) {
+        emailError.textContent = msg;
+        emailError.classList.remove('hidden');
+    }
+    function clearFieldError() {
+        emailError.textContent = '';
+        emailError.classList.add('hidden');
+    }
+    function showFormMsg(text, type) {
+        formMsg.textContent = text;
+        formMsg.className = 'mb-6 p-3 rounded-xl text-xs font-medium border text-center block';
+        formMsg.classList.add(type === 'error' ? 'bg-red-900/50' : 'bg-green-900/50');
+        formMsg.classList.add(type === 'error' ? 'text-red-200' : 'text-green-200');
+        formMsg.classList.add(type === 'error' ? 'border-red-800' : 'border-green-800');
+    }
+
+    document.getElementById('newEmail').addEventListener('input', clearFieldError);
+
+    document.getElementById('changeEmailForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearFieldError();
+
+        const newEmail = document.getElementById('newEmail').value.trim();
+
+        if (!newEmail) {
+            showFieldError('New email address is required.');
+            return;
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(newEmail)) {
+            showFieldError('Please enter a valid email address.');
+            return;
+        }
+
+        continueBtn.disabled = true;
+        continueBtn.textContent = 'Sending OTP...';
+
+        try {
+            const response = await fetch('/profile/change-email/send-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ newEmail })
+            });
+
+            let result = {};
+            try { result = await response.json(); } catch (_) {}
+
+            if (response.ok) {
+                showFormMsg('OTP sent to your new email! Redirecting...', 'success');
+                setTimeout(() => window.location.href = '/profile/change-email/verify-otp', 1200);
+            } else {
+                showFormMsg(result.message || 'Failed to send OTP.', 'error');
+                continueBtn.disabled = false;
+                continueBtn.textContent = 'Continue';
+            }
+        } catch (err) {
+            showFormMsg('Network error. Please try again.', 'error');
+            continueBtn.disabled = false;
+            continueBtn.textContent = 'Continue';
+        }
+    });
+</script>

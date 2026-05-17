@@ -12,7 +12,7 @@ const otpSchema = new mongoose.Schema({
   },
   purpose: {
     type: String,
-    enum: ['SIGNUP', 'FORGOT_PASSWORD'], // Defines the flow [cite: 35, 55]
+    enum: ['SIGNUP', 'FORGOT_PASSWORD', 'EMAIL_CHANGE'],
     required: true
   },
   attempts: {

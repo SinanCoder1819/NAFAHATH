@@ -1,0 +1,351 @@
+<% const activePage = 'dashboard'; %>
+
+<style>
+    /* ── Stats cards ─────────────────────────────────── */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0;
+        border: 1px solid #1e1e1e;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 40px;
+    }
+    .stat-card {
+        padding: 24px 28px;
+        border-right: 1px solid #1e1e1e;
+    }
+    .stat-card:last-child { border-right: none; }
+    .stat-label {
+        font-size: 10px;
+        font-weight: 600;
+        color: #4b5563;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 10px;
+    }
+    .stat-value {
+        font-size: 26px;
+        font-weight: 700;
+        color: #fff;
+        letter-spacing: -0.02em;
+        line-height: 1;
+    }
+
+    /* ── Section header ──────────────────────────────── */
+    .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+    .section-title {
+        font-size: 11px;
+        font-weight: 600;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+    .section-meta {
+        font-size: 11px;
+        color: #4b5563;
+        letter-spacing: 0.04em;
+    }
+    .section-meta span { color: #fff; font-weight: 600; }
+
+    /* ── Chart area ──────────────────────────────────── */
+    .chart-wrap {
+        border: 1px solid #1e1e1e;
+        border-radius: 10px;
+        padding: 28px 28px 20px;
+        margin-bottom: 40px;
+        position: relative;
+    }
+    .chart-canvas-wrap {
+        position: relative;
+        height: 180px;
+        margin-top: 16px;
+    }
+    #salesChart { width: 100% !important; height: 100% !important; }
+
+    /* ── Recent orders table ─────────────────────────── */
+    .orders-wrap {
+        border: 1px solid #1e1e1e;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .orders-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 24px;
+        border-bottom: 1px solid #1e1e1e;
+    }
+    .view-all-link {
+        font-size: 11px;
+        font-weight: 500;
+        color: #6b7280;
+        text-decoration: none;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        transition: color 0.15s;
+    }
+    .view-all-link:hover { color: #fff; }
+
+    .orders-table { width: 100%; border-collapse: collapse; }
+    .orders-table thead tr { border-bottom: 1px solid #1a1a1a; }
+    .orders-table th {
+        padding: 11px 24px;
+        font-size: 10.5px;
+        font-weight: 600;
+        color: #4b5563;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        text-align: left;
+        white-space: nowrap;
+    }
+    .orders-table tbody tr {
+        border-bottom: 1px solid #141414;
+        transition: background 0.15s;
+    }
+    .orders-table tbody tr:last-child { border-bottom: none; }
+    .orders-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+    .orders-table td {
+        padding: 15px 24px;
+        font-size: 13px;
+        color: #9ca3af;
+        vertical-align: middle;
+    }
+    .td-id { color: #fff; font-weight: 500; font-family: 'Courier New', monospace; font-size: 12.5px; }
+    .td-customer { color: #e5e5e5; }
+    .td-total { color: #e5e5e5; font-weight: 500; }
+
+    .status-pill {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+    .status-shipped    { color: #e5e5e5; }
+    .status-processing { color: #fbbf24; }
+    .status-cancelled  { color: #f87171; }
+    .status-delivered  { color: #4ade80; }
+
+    /* ── Period selector ─────────────────────────────── */
+    .period-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 36px;
+    }
+    .page-title { font-size: 26px; font-weight: 600; color: #fff; letter-spacing: -0.01em; }
+    .period-selector {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .period-label { font-size: 11px; color: #4b5563; text-transform: uppercase; letter-spacing: 0.1em; }
+    .period-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 16px;
+        background: transparent;
+        border: 1px solid #2d2d2d;
+        border-radius: 7px;
+        color: #e5e5e5;
+        font-size: 13px;
+        font-family: inherit;
+        font-weight: 500;
+        cursor: pointer;
+        transition: border-color 0.15s, background 0.15s;
+        white-space: nowrap;
+    }
+    .period-btn:hover { border-color: #4b5563; background: rgba(255,255,255,0.04); }
+    .period-btn svg { color: #6b7280; flex-shrink: 0; }
+</style>
+
+<!-- ── Header row ────────────────────────────────────────────────────── -->
+<div class="period-row">
+    <h1 class="page-title">Dashboard</h1>
+    <div class="period-selector">
+        <span class="period-label">Period</span>
+        <button class="period-btn">
+            Oct 01 — Oct 31, 2023
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<!-- ── Stats ─────────────────────────────────────────────────────────── -->
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-label">Revenue</div>
+        <div class="stat-value">₹42,500</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Total Sales</div>
+        <div class="stat-value">1,240</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">New Customers</div>
+        <div class="stat-value">850</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Active Orders</div>
+        <div class="stat-value">42</div>
+    </div>
+</div>
+
+<!-- ── Sales chart ───────────────────────────────────────────────────── -->
+<div class="chart-wrap">
+    <div class="section-header">
+        <span class="section-title">Sales Over Time</span>
+        <span class="section-meta">Monthly Growth: <span>+12.4%</span></span>
+    </div>
+    <div class="chart-canvas-wrap">
+        <canvas id="salesChart"></canvas>
+    </div>
+    <!-- X-axis labels -->
+    <div style="display:flex; justify-content:space-between; margin-top:10px; padding:0 4px;">
+        <span style="font-size:10px; color:#4b5563; text-transform:uppercase; letter-spacing:0.08em;">Week 1</span>
+        <span style="font-size:10px; color:#4b5563; text-transform:uppercase; letter-spacing:0.08em;">Week 2</span>
+        <span style="font-size:10px; color:#4b5563; text-transform:uppercase; letter-spacing:0.08em;">Week 3</span>
+        <span style="font-size:10px; color:#4b5563; text-transform:uppercase; letter-spacing:0.08em;">Week 4</span>
+    </div>
+</div>
+
+<!-- ── Recent orders ─────────────────────────────────────────────────── -->
+<div class="orders-wrap">
+    <div class="orders-header">
+        <span class="section-title">Recent Orders</span>
+        <a href="#" class="view-all-link">View All Transaction Records</a>
+    </div>
+    <table class="orders-table">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th style="text-align:right;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="td-id">#BK-9402</td>
+                <td class="td-customer">Arthur Miller</td>
+                <td>2023-10-24</td>
+                <td class="td-total">₹124</td>
+                <td style="text-align:right;"><span class="status-pill status-shipped">Shipped</span></td>
+            </tr>
+            <tr>
+                <td class="td-id">#BK-9401</td>
+                <td class="td-customer">Virginia Woolf</td>
+                <td>2023-10-24</td>
+                <td class="td-total">₹199</td>
+                <td style="text-align:right;"><span class="status-pill status-processing">Processing</span></td>
+            </tr>
+            <tr>
+                <td class="td-id">#BK-9399</td>
+                <td class="td-customer">Franz Kafka</td>
+                <td>2023-10-23</td>
+                <td class="td-total">₹299</td>
+                <td style="text-align:right;"><span class="status-pill status-shipped">Shipped</span></td>
+            </tr>
+            <tr>
+                <td class="td-id">#BK-9398</td>
+                <td class="td-customer">James Joyce</td>
+                <td>2023-10-23</td>
+                <td class="td-total">₹399</td>
+                <td style="text-align:right;"><span class="status-pill status-cancelled">Cancelled</span></td>
+            </tr>
+            <tr>
+                <td class="td-id">#BK-9397</td>
+                <td class="td-customer">Sylvia Plath</td>
+                <td>2023-10-22</td>
+                <td class="td-total">₹249</td>
+                <td style="text-align:right;"><span class="status-pill status-shipped">Shipped</span></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+    const ctx = document.getElementById('salesChart').getContext('2d');
+
+    // Static weekly data points (Mon–Sun × 4 weeks)
+    const labels = [
+        'Mon','Tue','Wed','Thu','Fri','Sat','Sun',
+        'Mon','Tue','Wed','Thu','Fri','Sat','Sun',
+        'Mon','Tue','Wed','Thu','Fri','Sat','Sun',
+        'Mon','Tue','Wed','Thu','Fri','Sat','Sun'
+    ];
+    const data = [
+        320, 290, 340, 310, 380, 420, 400,
+        430, 410, 460, 490, 520, 580, 560,
+        600, 570, 620, 650, 700, 740, 720,
+        760, 730, 780, 820, 870, 910, 940
+    ];
+
+    // Gradient fill
+    const gradient = ctx.createLinearGradient(0, 0, 0, 180);
+    gradient.addColorStop(0,   'rgba(255,255,255,0.12)');
+    gradient.addColorStop(1,   'rgba(255,255,255,0)');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                data,
+                borderColor: '#ffffff',
+                borderWidth: 1.8,
+                pointRadius: 0,
+                pointHoverRadius: 4,
+                pointHoverBackgroundColor: '#fff',
+                fill: true,
+                backgroundColor: gradient,
+                tension: 0.4,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#1a1a1a',
+                    borderColor: '#2d2d2d',
+                    borderWidth: 1,
+                    titleColor: '#9ca3af',
+                    bodyColor: '#fff',
+                    titleFont: { size: 11, family: 'Inter' },
+                    bodyFont: { size: 13, family: 'Inter', weight: '600' },
+                    padding: 10,
+                    callbacks: {
+                        label: ctx => ' ₹' + ctx.parsed.y.toLocaleString()
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    display: false,
+                    grid: { display: false },
+                },
+                y: {
+                    display: false,
+                    grid: { display: false },
+                    min: 200,
+                }
+            }
+        }
+    });
+})();
+</script>

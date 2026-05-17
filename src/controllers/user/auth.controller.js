@@ -7,9 +7,9 @@ import { sendOtpEmail } from "../../services/emailService.js";
 // --- GET PAGES ---
 
 export const getLoginPage = (req, res) => {
-  // If already logged in, redirect to home
   if (req.session.user) return res.redirect("/");
-  res.render("user/login");
+  const blocked = req.query.blocked === 'true';
+  res.render("user/login", { blocked });
 };
 
 export const getSignupPage = (req, res) => {
@@ -21,24 +21,13 @@ export const getVerifyOtp = (req, res) => {
   res.render("user/verifyOtp");
 };
 
-/**
- * GET Home Page
- * FIXED: Now passes the user session to the view
- */
 
-
-
-// --- AUTH LOGIC ---
-
-/**
- * POST /auth/signup
- */
 
 export const registerUserTemp = async (req, res) => {
   try {
     const { name, email, phone, password, confirmPassword } = req.body;
 
-    // 1. Basic Validation
+  
     if (!name || !email || !password || !confirmPassword || !phone) {
       return res.status(400).json({ message: "All fields are required" });
     }
@@ -230,46 +219,50 @@ export const resendOtp = async (req, res) => {
 export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
-      console.log("working");
-        // 1. Basic validation
+
         if (!email || !password) {
             return res.status(400).json({ message: "Email and password are required" });
         }
 
-        // 2. Find user
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(401).json({ message: "Invalid email or password" });
         }
 
-        // 3. Compare password
+        // Block check
+        if (user.isBlocked) {
+            return res.status(403).json({ message: "Your account has been blocked. Please contact support." });
+        }
+
+        // Google-only accounts have no password
+        if (!user.password) {
+            return res.status(401).json({ message: "This account uses Google login. Please sign in with Google." });
+        }
+
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({ message: "Invalid email or password" });
         }
 
-        // 4. Set Session Data
         req.session.user = {
             id: user._id,
             name: user.name,
             email: user.email,
         };
 
-
-        // 5. THE FIX: Explicitly save session to MongoStore before responding
         req.session.save((err) => {
             if (err) {
                 console.error("Session save error:", err);
-
                 return res.status(500).json({ message: "Internal server error" });
             }
 
-    console.log("Session saved:", req.session.user);     
-    console.log("Session ID:", req.session.id);
-            // 6. Only now tell the frontend it's okay to redirect
+            // Redirect to the page they were trying to visit, or home
+            const returnTo = req.session.returnTo || '/';
+            delete req.session.returnTo;
+
             return res.status(200).json({
                 message: "Login successful!",
-                redirectUrl: "/", 
+                redirectUrl: returnTo,
             });
         });
 
@@ -282,18 +275,17 @@ export const loginUser = async (req, res) => {
  * GET /auth/logout
  */
 export const logoutUser = (req, res) => {
-  req.session.destroy((err) => {
-    if (err) return res.redirect("/");
-    res.clearCookie("connect.sid"); // Matches default express-session cookie name
-    res.redirect("/");
-  });
+    req.session.destroy((err) => {
+        if (err) return res.redirect("/");
+        res.clearCookie("user.sid");
+        res.redirect("/auth/login");
+    });
 };
 
 
 export const getVerifyEmail = (req, res) => {
     res.render('user/forgot-password', { 
-        title: 'Verify Your Email | Nafahath',
-        // email: req.session.tempEmail // Assume email is stored during signup
+        title: 'Forgot Password | Nafahath',
     });
 };
 
@@ -301,35 +293,49 @@ export const getVerifyEmail = (req, res) => {
 export const sendForgotPasswordOtp = async (req, res) => {
     try {
         const { email } = req.body;
-        
+
+        if (!email) {
+            return res.status(400).json({ message: "Email is required." });
+        }
         
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({ message: "The email account not exists." });
+            return res.status(404).json({ message: "No account found with this email." });
         }
-
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
- 
-        user.otp = otp;
-       
-        user.otpExpire = Date.now() + 10 * 60 * 1000; 
-        await user.save();
+        // Clear any existing forgot-password OTPs for this email
+        await OTP.deleteMany({ email, purpose: "FORGOT_PASSWORD" });
 
-   
+        // Store OTP in dedicated collection
+        await OTP.create({
+            email,
+            otpCode: otp,
+            purpose: "FORGOT_PASSWORD"
+        });
+
         await sendOtpEmail(email, otp);
 
-        
         req.session.forgotEmail = email;
 
-        return res.status(200).json({ message: "OTP send to your email." });
+        return res.status(200).json({ message: "OTP sent to your email." });
     } catch (error) {
+        console.error("Forgot password error:", error);
         return res.status(500).json({ message: "Server error" });
     }
 };
 
 
+// GET /auth/verify-forgotOtp
+export const getVerifyForgotOtp = (req, res) => {
+    if (!req.session.forgotEmail) {
+        return res.redirect('/auth/forgot-password');
+    }
+    res.render('user/verify-forgotOtp', { 
+        title: 'Verify OTP | Nafahath',
+    });
+};
 
 
 export const verifyForgotOtp = async (req, res) => {
@@ -338,19 +344,124 @@ export const verifyForgotOtp = async (req, res) => {
         const email = req.session.forgotEmail;
 
         if (!email) {
-            return res.status(400).json({ message: "Session is expired." });
+            return res.status(400).json({ message: "Session expired. Please start again." });
         }
 
-        const user = await User.findOne({ email });
-
-     
-        if (!user || user.otp !== otp || user.otpExpire < Date.now()) {
-            return res.status(400).json({ message: "Incorrect OTP or expired" });
+        if (!otp || otp.length !== 6) {
+            return res.status(400).json({ message: "Please enter a valid 6-digit OTP." });
         }
 
-        return res.status(200).json({ message: "OTP verification completed" });
+        const validOtp = await OTP.findOne({ email, purpose: "FORGOT_PASSWORD" });
+
+        if (!validOtp) {
+            return res.status(400).json({ message: "OTP expired or not found. Please request a new one." });
+        }
+
+        if (validOtp.attempts >= 5) {
+            await OTP.deleteOne({ _id: validOtp._id });
+            return res.status(403).json({ message: "Too many failed attempts. Please request a new OTP." });
+        }
+
+        if (validOtp.otpCode !== otp) {
+            validOtp.attempts += 1;
+            await validOtp.save();
+            return res.status(400).json({ 
+                message: `Incorrect OTP. ${5 - validOtp.attempts} attempt(s) left.` 
+            });
+        }
+
+        // OTP is correct — mark session as verified, clean up OTP
+        await OTP.deleteOne({ _id: validOtp._id });
+        req.session.otpVerified = true;
+
+        return res.status(200).json({ message: "OTP verified successfully." });
     } catch (error) {
+        console.error("Verify forgot OTP error:", error);
         return res.status(500).json({ message: "Server error" });
     }
-}
+};
+
+
+export const resendForgotOtp = async (req, res) => {
+    try {
+        const email = req.session.forgotEmail;
+
+        if (!email) {
+            return res.status(400).json({ message: "Session expired. Please start again." });
+        }
+
+        // Cooldown check
+        const existingOtp = await OTP.findOne({ email, purpose: "FORGOT_PASSWORD" });
+        if (existingOtp && (Date.now() - existingOtp.createdAt < 30 * 1000)) {
+            return res.status(429).json({ message: "Please wait 30 seconds before requesting a new OTP." });
+        }
+
+        const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        await OTP.deleteMany({ email, purpose: "FORGOT_PASSWORD" });
+        await OTP.create({ email, otpCode: newOtp, purpose: "FORGOT_PASSWORD" });
+
+        await sendOtpEmail(email, newOtp);
+
+        return res.status(200).json({ message: "OTP resent successfully." });
+    } catch (error) {
+        console.error("Resend forgot OTP error:", error);
+        return res.status(500).json({ message: "Failed to resend OTP." });
+    }
+};
+
+
+// GET /auth/reset-password
+export const getResetPassword = (req, res) => {
+    if (!req.session.forgotEmail || !req.session.otpVerified) {
+        return res.redirect('/auth/forgot-password');
+    }
+    res.render('user/reset-password', { title: 'Reset Password | Nafahath' });
+};
+
+
+// POST /auth/reset-password
+export const resetPassword = async (req, res) => {
+    try {
+        const { password, confirmPassword } = req.body;
+        const email = req.session.forgotEmail;
+
+        if (!email || !req.session.otpVerified) {
+            return res.status(403).json({ message: "Unauthorized. Please verify your OTP first." });
+        }
+
+        if (!password || !confirmPassword) {
+            return res.status(400).json({ message: "All fields are required." });
+        }
+
+        if (password.length < 8) {
+            return res.status(400).json({ message: "Password must be at least 8 characters." });
+        }
+
+        if (!/[A-Z]/.test(password)) {
+            return res.status(400).json({ message: "Password must contain at least one uppercase letter." });
+        }
+
+        if (!/[0-9]/.test(password)) {
+            return res.status(400).json({ message: "Password must contain at least one number." });
+        }
+
+        if (password !== confirmPassword) {
+            return res.status(400).json({ message: "Passwords do not match." });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        await User.findOneAndUpdate({ email }, { password: hashedPassword });
+
+        // Clear session flags
+        req.session.forgotEmail = null;
+        req.session.otpVerified = null;
+
+        return res.status(200).json({ message: "Password reset successfully." });
+    } catch (error) {
+        console.error("Reset password error:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+};
 
