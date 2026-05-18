@@ -1,20 +1,25 @@
 <% const activePage = 'customers'; %>
 
 <style>
-    /* ── Page ───────────────────────────────────────────── */
-    .page-title { font-size: 21px; font-weight: 600; color: #fff; margin-bottom: 8px; }
-    .page-title-bar { width: 36px; height: 2px; background: #fff; margin-bottom: 28px; }
+    /* ── Page header ────────────────────────────────────── */
+    .page-title     { font-size: 22px; font-weight: 600; color: #fff; margin-bottom: 8px; }
+    .page-title-bar { width: 40px; height: 2px; background: #fff; margin-bottom: 32px; }
 
     /* ── Search row ─────────────────────────────────────── */
-    .search-row { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
-    .search-wrap { position: relative; width: 280px; }
-    .search-wrap svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: #6b7280; pointer-events: none; }
+    .search-row  { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 28px; }
+    .search-left { display: flex; align-items: center; gap: 10px; }
+    .search-right { display: flex; align-items: center; gap: 10px; }
+    .search-wrap { position: relative; width: 300px; }
+    .search-wrap svg {
+        position: absolute; left: 12px; top: 50%;
+        transform: translateY(-50%); color: #6b7280; pointer-events: none;
+    }
     .search-input {
         width: 100%;
-        background: transparent;
-        border: 1px solid #2d2d2d;
-        border-radius: 7px;
-        padding: 9px 14px 9px 36px;
+        background: #111;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        padding: 10px 14px 10px 38px;
         font-size: 13px;
         color: #fff;
         font-family: inherit;
@@ -24,217 +29,182 @@
     .search-input::placeholder { color: #4b5563; }
     .search-input:focus { border-color: #00BFFF; }
 
+    /* Buttons */
     .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 9px 22px;
-        font-size: 12px;
-        font-weight: 700;
-        font-family: inherit;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        border-radius: 7px;
-        cursor: pointer;
-        border: none;
-        text-decoration: none;
-        transition: background 0.18s, color 0.18s, border-color 0.18s, opacity 0.18s;
-        white-space: nowrap;
-        line-height: 1;
+        display: inline-flex; align-items: center; justify-content: center;
+        padding: 10px 22px;
+        font-size: 12px; font-weight: 700; font-family: inherit;
+        letter-spacing: 0.07em; text-transform: uppercase;
+        border-radius: 8px; cursor: pointer; border: none;
+        text-decoration: none; white-space: nowrap; line-height: 1;
+        transition: background 0.15s, opacity 0.15s;
     }
-    .btn-primary { background: #00BFFF; color: #000; }
-    .btn-primary:hover { background: #009fd4; }
-    .btn-primary:active { background: #0088b3; }
-
-    .btn-outline { background: transparent; color: #9ca3af; border: 1px solid #2d2d2d; }
-    .btn-outline:hover { background: rgba(255,255,255,0.06); color: #fff; border-color: #4b5563; }
-    .btn-outline:active { background: rgba(255,255,255,0.1); }
+    .btn-primary         { background: #00BFFF; color: #000; }
+    .btn-primary:hover   { background: #009fd4; }
+    .btn-primary:active  { background: #0088b3; }
+    .btn-outline         { background: transparent; color: #9ca3af; border: 1px solid #2a2a2a; }
+    .btn-outline:hover   { background: rgba(255,255,255,0.05); color: #fff; border-color: #4b5563; }
 
     /* ── Table ──────────────────────────────────────────── */
     .table-wrap {
+        background: #111;
         border: 1px solid #1e1e1e;
-        border-radius: 10px;
+        border-radius: 12px;
         overflow: hidden;
     }
     .data-table { width: 100%; border-collapse: collapse; }
+
     .data-table thead tr { border-bottom: 1px solid #1e1e1e; }
     .data-table th {
-        padding: 13px 22px;
-        font-size: 11px;
-        font-weight: 600;
+        padding: 14px 24px;
+        font-size: 11px; font-weight: 600;
         color: #4b5563;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        text-align: left;
-        white-space: nowrap;
+        text-transform: uppercase; letter-spacing: 0.09em;
+        text-align: left; white-space: nowrap;
+        background: #111;
     }
+
     .data-table tbody tr {
-        border-bottom: 1px solid #161616;
-        transition: background 0.15s;
+        border-bottom: 1px solid #181818;
+        transition: background 0.12s;
     }
     .data-table tbody tr:last-child { border-bottom: none; }
-    .data-table tbody tr:hover { background: rgba(255,255,255,0.025); }
+    .data-table tbody tr:hover      { background: rgba(255,255,255,0.03); }
+
     .data-table td {
-        padding: 15px 22px;
-        font-size: 13px;
+        padding: 16px 24px;
+        font-size: 13.5px;
         vertical-align: middle;
     }
-    .td-name { color: #fff; font-weight: 500; }
+    .td-name  { color: #fff; font-weight: 500; }
     .td-muted { color: #6b7280; }
 
-    /* Status badge */
-    .badge {
-        display: inline-block;
-        font-size: 12px;
-        font-weight: 500;
-    }
-    .badge-active { color: #4ade80; }
+    /* Status */
+    .badge         { font-size: 12.5px; font-weight: 500; }
+    .badge-active  { color: #4ade80; }
     .badge-blocked { color: #f87171; }
 
-    /* Action buttons */
+    /* Action btn */
     .action-btn {
-        background: none;
-        border: none;
-        padding: 0;
-        font-size: 12px;
-        font-weight: 700;
-        font-family: inherit;
-        letter-spacing: 0.07em;
-        text-transform: uppercase;
-        cursor: pointer;
-        transition: opacity 0.15s;
+        background: none; border: none; padding: 0;
+        font-size: 12px; font-weight: 700; font-family: inherit;
+        letter-spacing: 0.07em; text-transform: uppercase;
+        cursor: pointer; transition: opacity 0.15s;
     }
-    .action-btn:hover { opacity: 0.7; }
+    .action-btn:hover  { opacity: 0.7; }
     .action-btn:active { opacity: 0.5; }
     .action-btn-block   { color: #f87171; }
     .action-btn-unblock { color: #00BFFF; }
 
-    /* Empty state */
-    .empty-row td { text-align: center; padding: 56px 22px; color: #4b5563; font-size: 13px; }
+    /* Empty */
+    .empty-row td {
+        text-align: center; padding: 60px 24px;
+        color: #4b5563; font-size: 13px;
+    }
 
-    /* ── Footer row ─────────────────────────────────────── */
+    /* ── Footer ─────────────────────────────────────────── */
     .table-footer {
-        display: flex;
-        align-items: center;
+        display: flex; align-items: center;
         justify-content: space-between;
         margin-top: 20px;
     }
     .count-label {
-        font-size: 11px;
-        color: #4b5563;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
+        font-size: 11px; color: #4b5563;
+        text-transform: uppercase; letter-spacing: 0.06em;
     }
 
     /* Pagination */
     .pagination { display: flex; align-items: center; gap: 3px; }
     .pg-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        padding: 6px 12px;
-        font-size: 11.5px;
-        font-weight: 500;
-        color: #6b7280;
-        text-decoration: none;
-        border-radius: 6px;
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 6px 12px; font-size: 12px; font-weight: 500;
+        color: #6b7280; text-decoration: none; border-radius: 6px;
         transition: background 0.15s, color 0.15s;
-        white-space: nowrap;
-        font-family: inherit;
-        cursor: pointer;
+        white-space: nowrap; font-family: inherit; cursor: pointer;
     }
     .pg-btn:hover { background: rgba(255,255,255,0.06); color: #fff; }
     .pg-btn.disabled { color: #2d2d2d; cursor: not-allowed; pointer-events: none; }
     .pg-num {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 30px;
-        height: 30px;
-        font-size: 11.5px;
-        font-weight: 500;
-        color: #6b7280;
-        text-decoration: none;
-        border-radius: 6px;
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 30px; height: 30px; font-size: 12px; font-weight: 500;
+        color: #6b7280; text-decoration: none; border-radius: 6px;
         transition: background 0.15s, color 0.15s;
     }
-    .pg-num:hover { background: rgba(255,255,255,0.06); color: #fff; }
+    .pg-num:hover   { background: rgba(255,255,255,0.06); color: #fff; }
     .pg-num.current { background: #fff; color: #000; font-weight: 700; }
-    .pg-dots { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; font-size: 11px; color: #374151; }
+    .pg-dots {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 30px; height: 30px; font-size: 12px; color: #374151;
+    }
 
-    /* ── Confirmation Modal ─────────────────────────────── */
+    /* ── Modal ──────────────────────────────────────────── */
     .modal-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 200;
-        background: rgba(0,0,0,0.72);
-        backdrop-filter: blur(5px);
-        align-items: center;
-        justify-content: center;
+        display: none; position: fixed; inset: 0; z-index: 200;
+        background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
+        align-items: center; justify-content: center;
     }
     .modal-overlay.open { display: flex; }
     .modal-box {
-        background: #161616;
-        border: 1px solid #2d2d2d;
-        border-radius: 14px;
-        padding: 30px 28px 26px;
-        width: 100%;
-        max-width: 380px;
-        margin: 0 16px;
-        box-shadow: 0 32px 64px rgba(0,0,0,0.6);
+        background: #161616; border: 1px solid #2a2a2a;
+        border-radius: 16px; padding: 32px 28px 26px;
+        width: 100%; max-width: 380px; margin: 0 16px;
+        box-shadow: 0 40px 80px rgba(0,0,0,0.7);
         animation: modalIn 0.18s ease;
     }
     @keyframes modalIn {
-        from { opacity: 0; transform: scale(0.96) translateY(8px); }
+        from { opacity: 0; transform: scale(0.95) translateY(10px); }
         to   { opacity: 1; transform: scale(1) translateY(0); }
     }
-    .modal-title { font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 8px; }
-    .modal-msg   { font-size: 13px; color: #9ca3af; line-height: 1.6; margin-bottom: 26px; }
+    .modal-title { font-size: 17px; font-weight: 600; color: #fff; margin-bottom: 8px; }
+    .modal-msg   { font-size: 13px; color: #9ca3af; line-height: 1.65; margin-bottom: 24px; }
+    .modal-error {
+        display: none; margin-bottom: 16px; padding: 10px 14px;
+        background: rgba(127,29,29,0.35); color: #fca5a5;
+        border: 1px solid rgba(127,29,29,0.5);
+        border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center;
+    }
     .modal-actions { display: flex; gap: 10px; }
-    .modal-actions .btn { flex: 1; padding: 11px 0; font-size: 13px; }
-    .btn-danger  { background: #ef4444; color: #fff; }
+    .modal-actions .btn { flex: 1; padding: 12px 0; font-size: 13px; }
+    .btn-danger        { background: #ef4444; color: #fff; }
     .btn-danger:hover  { background: #dc2626; }
     .btn-danger:active { background: #b91c1c; }
-    .btn-success { background: #00BFFF; color: #000; }
+    .btn-success        { background: #00BFFF; color: #000; }
     .btn-success:hover  { background: #009fd4; }
     .btn-success:active { background: #0088b3; }
 </style>
 
-<!-- ── Page header ──────────────────────────────────────────────────── -->
+<!-- Header -->
 <p class="page-title">Customer Management</p>
 <div class="page-title-bar"></div>
 
-<!-- ── Search ───────────────────────────────────────────────────────── -->
+<!-- Search -->
 <form id="searchForm" method="GET" action="/admin/customers" class="search-row">
-    <div class="search-wrap">
-        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
-        </svg>
-        <input
-            type="text"
-            name="search"
-            id="searchInput"
-            value="<%= search %>"
-            placeholder="Search by name or email..."
-            class="search-input"
-            autocomplete="off"
-        />
+    <div class="search-left">
+        <div class="search-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+            </svg>
+            <input type="text" name="search" id="searchInput"
+                   value="<%= search %>" placeholder="Search by name or email..."
+                   class="search-input" autocomplete="off"/>
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary">Search</button>
-    <a href="/admin/customers" class="btn btn-outline">Clear</a>
+    <div class="search-right">
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a href="/admin/customers" class="btn btn-outline">Clear</a>
+    </div>
 </form>
 
-<!-- ── Table ────────────────────────────────────────────────────────── -->
+<!-- Table -->
 <div class="table-wrap">
     <table class="data-table">
         <thead>
             <tr>
-                <th style="width:22%">Name</th>
+                <th style="width:24%">Name</th>
                 <th style="width:30%">Email</th>
                 <th style="width:18%">Phone</th>
                 <th style="width:14%">Status</th>
-                <th style="width:16%">Actions</th>
+                <th style="width:14%">Actions</th>
             </tr>
         </thead>
         <tbody id="customersTableBody">
@@ -256,11 +226,10 @@
                     </span>
                 </td>
                 <td>
-                    <button
-                        class="action-btn block-btn <%= u.isBlocked ? 'action-btn-unblock' : 'action-btn-block' %>"
-                        data-user-id="<%= u._id %>"
-                        data-user-name="<%= u.name %>"
-                        data-action="<%= u.isBlocked ? 'unblock' : 'block' %>">
+                    <button class="action-btn block-btn <%= u.isBlocked ? 'action-btn-unblock' : 'action-btn-block' %>"
+                            data-user-id="<%= u._id %>"
+                            data-user-name="<%= u.name %>"
+                            data-action="<%= u.isBlocked ? 'unblock' : 'block' %>">
                         <%= u.isBlocked ? 'Unblock' : 'Block' %>
                     </button>
                 </td>
@@ -271,15 +240,15 @@
     </table>
 </div>
 
-<!-- ── Footer ───────────────────────────────────────────────────────── -->
+<!-- Footer -->
 <div class="table-footer">
     <span class="count-label">
-        Showing <%= (currentPage - 1) * pageSize + 1 %>–<%= Math.min(currentPage * pageSize, totalUsers) %> of <%= totalUsers %> customer<%= totalUsers !== 1 ? 's' : '' %>
+        Showing <%= (currentPage - 1) * pageSize + 1 %>–<%= Math.min(currentPage * pageSize, totalUsers) %>
+        of <%= totalUsers %> customer<%= totalUsers !== 1 ? 's' : '' %>
     </span>
 
     <% if (totalPages > 1) { %>
     <nav class="pagination">
-        <!-- Prev -->
         <% if (currentPage > 1) { %>
         <a class="pg-btn" href="/admin/customers?page=<%= currentPage - 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">
             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
@@ -292,7 +261,6 @@
         </span>
         <% } %>
 
-        <!-- Page numbers -->
         <% for (let i = 1; i <= totalPages; i++) {
             const show = i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1);
             const dot  = i === currentPage - 2 || i === currentPage + 2;
@@ -307,7 +275,6 @@
             <% } %>
         <% } %>
 
-        <!-- Next -->
         <% if (currentPage < totalPages) { %>
         <a class="pg-btn" href="/admin/customers?page=<%= currentPage + 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">
             Next
@@ -323,15 +290,12 @@
     <% } %>
 </div>
 
-<!-- ── Confirmation Modal ────────────────────────────────────────────── -->
+<!-- Modal -->
 <div id="confirmModal" class="modal-overlay">
     <div class="modal-box">
         <p class="modal-title" id="modalTitle"></p>
         <p class="modal-msg"   id="modalMessage"></p>
-        <!-- Inline error shown inside modal instead of browser alert() -->
-        <div id="modalError" style="display:none; margin-bottom:14px; padding:9px 12px;
-             background:rgba(127,29,29,0.35); color:#fca5a5; border:1px solid rgba(127,29,29,0.5);
-             border-radius:7px; font-size:12px; font-weight:500; text-align:center;"></div>
+        <div id="modalError"   class="modal-error"></div>
         <div class="modal-actions">
             <button id="modalCancelBtn"  class="btn btn-outline">Cancel</button>
             <button id="modalConfirmBtn" class="btn">Confirm</button>
@@ -350,89 +314,75 @@
 
     let pending = null;
 
-    function showModalError(text) {
-        errorEl.textContent  = text;
-        errorEl.style.display = 'block';
-    }
-    function hideModalError() {
-        errorEl.style.display = 'none';
-        errorEl.textContent   = '';
-    }
+    function showError(text) { errorEl.textContent = text; errorEl.style.display = 'block'; }
+    function hideError()     { errorEl.textContent = '';   errorEl.style.display = 'none';  }
 
-    /* Open modal */
-    document.querySelectorAll('.block-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const { userId, userName, action } = btn.dataset;
-            pending = { userId, action, btn };
+    /* Event delegation — survives DOM updates */
+    document.getElementById('customersTableBody').addEventListener('click', (e) => {
+        const btn = e.target.closest('.block-btn');
+        if (!btn) return;
 
-            hideModalError();
-            titleEl.textContent = action === 'block' ? 'Block User' : 'Unblock User';
-            msgEl.textContent   = action === 'block'
-                ? `Block "${userName}"? They won't be able to log in until unblocked.`
-                : `Unblock "${userName}"? They'll regain full access to their account.`;
+        const { userId, userName, action } = btn.dataset;
+        pending = { userId, action, btn };
 
-            confirmBtn.textContent = action === 'block' ? 'Block' : 'Unblock';
-            confirmBtn.className   = 'btn ' + (action === 'block' ? 'btn-danger' : 'btn-success');
+        hideError();
+        titleEl.textContent    = action === 'block' ? 'Block User' : 'Unblock User';
+        msgEl.textContent      = action === 'block'
+            ? `Block "${userName}"? They won't be able to log in until unblocked.`
+            : `Unblock "${userName}"? They'll regain full access to their account.`;
+        confirmBtn.textContent = action === 'block' ? 'Block' : 'Unblock';
+        confirmBtn.className   = 'btn ' + (action === 'block' ? 'btn-danger' : 'btn-success');
 
-            overlay.classList.add('open');
-        });
+        overlay.classList.add('open');
     });
 
     /* Close */
-    function close() {
-        overlay.classList.remove('open');
-        hideModalError();
-        pending = null;
-    }
-    cancelBtn.addEventListener('click', close);
-    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+    function closeModal() { overlay.classList.remove('open'); hideError(); pending = null; }
+    cancelBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
     /* Confirm */
     confirmBtn.addEventListener('click', async () => {
         if (!pending) return;
         const { userId, action, btn } = pending;
 
-        hideModalError();
+        hideError();
         confirmBtn.disabled    = true;
         confirmBtn.textContent = 'Processing…';
 
         try {
-            const res  = await fetch(`/admin/customers/${userId}/block`, {
+            const res = await fetch(`/admin/customers/${userId}/block`, {
                 method:  'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept':       'application/json',
-                },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body:    JSON.stringify({ action }),
             });
 
             let data = {};
-            try { data = await res.json(); } catch { /* empty body */ }
+            try { data = await res.json(); } catch { /* empty */ }
 
             if (res.ok) {
-                const row          = btn.closest('tr');
-                const badge        = row.querySelector('.status-badge');
                 const isNowBlocked = action === 'block';
+                const row   = btn.closest('tr');
+                const badge = row.querySelector('.status-badge');
 
                 badge.textContent = isNowBlocked ? 'Blocked' : 'Active';
                 badge.className   = 'badge status-badge ' + (isNowBlocked ? 'badge-blocked' : 'badge-active');
 
-                btn.dataset.action = isNowBlocked ? 'unblock' : 'block';
                 btn.textContent    = isNowBlocked ? 'Unblock' : 'Block';
+                btn.dataset.action = isNowBlocked ? 'unblock' : 'block';
                 btn.className      = 'action-btn block-btn ' + (isNowBlocked ? 'action-btn-unblock' : 'action-btn-block');
 
-                close();
+                closeModal();
             } else {
-                showModalError(data.message || 'Something went wrong. Please try again.');
-                confirmBtn.disabled    = false;
-                confirmBtn.textContent = action === 'block' ? 'Block' : 'Unblock';
+                showError(data.message || 'Something went wrong. Please try again.');
             }
         } catch (err) {
-            showModalError('Request failed. Please check your connection and try again.');
-            console.error('Block/unblock fetch error:', err);
+            showError('Request failed. Please check your connection.');
+            console.error('Block/unblock error:', err);
+        } finally {
             confirmBtn.disabled    = false;
-            confirmBtn.textContent = action === 'block' ? 'Block' : 'Unblock';
+            confirmBtn.textContent = 'Confirm';
         }
     });
 })();
