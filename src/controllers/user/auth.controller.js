@@ -8,8 +8,9 @@ import { sendOtpEmail } from "../../services/emailService.js";
 
 export const getLoginPage = (req, res) => {
   if (req.session.user) return res.redirect("/");
-  const blocked = req.query.blocked === 'true';
-  res.render("user/login", { blocked });
+  const blocked     = req.query.blocked === 'true';
+  const googleError = req.query.error   === 'google';
+  res.render("user/login", { blocked, googleError });
 };
 
 export const getSignupPage = (req, res) => {
@@ -77,7 +78,7 @@ export const registerUserTemp = async (req, res) => {
         email: tempUser.email, // Passing email back to frontend is often more useful
       });
     } catch (emailError) {
-      // Cleanup if email fails
+      // Cleanup if email fails 
       await UnverifiedUser.deleteOne({ email });
       await OTP.deleteOne({ email, otpCode: otp });
       return res.status(500).json({ message: "Failed to send OTP." });

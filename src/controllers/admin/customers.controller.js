@@ -89,13 +89,31 @@ export const toggleBlockUser = async (req, res) => {
 
 /**
  * Delete all MongoDB sessions belonging to a given userId.
- * connect-mongo stores sessions as JSON strings in the `sessions` collection.
+ *
+ * connect-mongo v3+ serialises the session as a BSON object, so the `session`
+ * field is NOT a plain string — querying it with { $regex: ... } will silently
+ * match nothing. We therefore try two paths:
+ *
+ *   1. `session.user.id`  — the standard shape set by loginUser / Google OAuth
+ *   2. `session.user._id` — alternative shape (Mongoose ObjectId stringified)
+ *
+ * Both are stored as strings inside the session object.
  */
 async function destroyUserSession(userId) {
     try {
-        // User sessions are stored in the "user_sessions" collection
         const collection = mongoose.connection.db.collection("user_sessions");
-        await collection.deleteMany({ session: { $regex: userId } });
+        const userIdStr   = userId.toString();
+
+        const result = await collection.deleteMany({
+            $or: [
+                { "session.user.id":  userIdStr },
+                { "session.user._id": userIdStr },
+            ],
+        });
+
+        if (result.deletedCount > 0) {
+            console.log(`destroyUserSession: removed ${result.deletedCount} session(s) for user ${userIdStr}`);
+        }
     } catch (err) {
         console.error("destroyUserSession error:", err);
     }

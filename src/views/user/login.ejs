@@ -209,10 +209,17 @@
             <div class="divider-line"></div>
         </div>
 
-        <!-- Blocked alert (server-side) -->
+        <!-- Blocked alert (server-side: ?blocked=true) -->
         <% if (typeof blocked !== 'undefined' && blocked) { %>
         <div class="alert alert-error show">
-            Your account has been blocked. Please contact support.
+            🚫 Your account has been blocked. Please contact support.
+        </div>
+        <% } %>
+
+        <!-- Google OAuth error (server-side: ?error=google) -->
+        <% if (typeof googleError !== 'undefined' && googleError) { %>
+        <div class="alert alert-error show">
+            ⚠️ Google sign-in failed. Please try again or use email &amp; password.
         </div>
         <% } %>
 

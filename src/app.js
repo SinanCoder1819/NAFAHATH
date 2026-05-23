@@ -19,15 +19,29 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ── Separate sessions per domain ──────────────────────────────────────────
-// Admin routes get admin.sid cookie + admin_sessions collection.
-// All other routes get user.sid cookie + user_sessions collection.
-app.use("/admin", adminSessionMiddleware);
-app.use("/auth",  userSessionMiddleware);
-app.use("/",      userSessionMiddleware);
+// Admin routes: admin.sid cookie  →  admin_sessions collection.
+// User / auth routes: user.sid cookie  →  user_sessions collection.
+//
+// IMPORTANT: app.use("/", ...) matches ALL paths including /admin, so
+// we MUST mount the user session ONLY on non-admin paths to prevent
+// session bleed where both middlewares run on the same admin request.
 
-// Passport uses user session only
+app.use("/admin", adminSessionMiddleware);
+
+// Mount user session on /auth and everything that is NOT /admin
+app.use((req, res, next) => {
+    if (req.path.startsWith("/admin")) return next();
+    return userSessionMiddleware(req, res, next);
+});
+
+// Passport: initialise globally but only restore session for non-admin routes.
+// On admin routes Passport would try to deserialize req.user which is irrelevant
+// and can silently overwrite req.session set by adminSessionMiddleware.
 app.use(passport.initialize());
-app.use(passport.session());
+app.use((req, res, next) => {
+    if (req.path.startsWith("/admin")) return next();
+    return passport.session()(req, res, next);
+});
 
 // ── Global locals ─────────────────────────────────────────────────────────
 app.use(async (req, res, next) => {

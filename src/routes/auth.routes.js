@@ -43,12 +43,43 @@ router.post('/reset-password', resetPassword);
 
 // Google OAuth
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-router.get('/google/callback',
-    passport.authenticate('google', { failureRedirect: '/auth/login' }),
-    (req, res) => {
-        req.session.user = req.user;
-        res.redirect('/');
-    }
-);
+
+// Custom callback so we can distinguish WHY authentication failed.
+// passport.authenticate with failureRedirect cannot tell us if the user was
+// blocked vs. a generic Google OAuth error — we need to inspect the `info` object.
+router.get('/google/callback', (req, res, next) => {
+    passport.authenticate('google', (err, user, info) => {
+        if (err) {
+            console.error('Google OAuth error:', err);
+            return res.redirect('/auth/login?error=google');
+        }
+
+        if (!user) {
+            // info.message is set by the strategy when a blocked user tries to log in
+            const isBlocked = info && info.message === 'Account blocked';
+            return res.redirect(isBlocked ? '/auth/login?blocked=true' : '/auth/login?error=google');
+        }
+
+        // Manually call req.login to establish the Passport session,
+        // then overwrite session.user with a clean plain-object (same shape as loginUser).
+        req.login(user, { session: false }, (loginErr) => {
+            if (loginErr) {
+                console.error('Google OAuth req.login error:', loginErr);
+                return res.redirect('/auth/login?error=google');
+            }
+
+            req.session.user = {
+                id:    user._id.toString(),
+                name:  user.name,
+                email: user.email,
+            };
+
+            req.session.save((saveErr) => {
+                if (saveErr) console.error('Session save error after Google login:', saveErr);
+                res.redirect('/');
+            });
+        });
+    })(req, res, next);
+});
 
 export default router;

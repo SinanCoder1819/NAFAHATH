@@ -11,6 +11,11 @@ passport.use(new GoogleStrategy({
         let user = await User.findOne({ email: profile.emails[0].value });
 
         if (user) {
+            // Block check — blocked users must not log in via Google either
+            if (user.isBlocked) {
+                return done(null, false, { message: "Account blocked" });
+            }
+
             if (!user.googleId) {
                 user.googleId = profile.id;
                 await user.save();
@@ -18,10 +23,9 @@ passport.use(new GoogleStrategy({
             return done(null, user);
         } else {
             const newUser = await User.create({
-                name: profile.displayName,
-                email: profile.emails[0].value,
+                name:     profile.displayName,
+                email:    profile.emails[0].value,
                 googleId: profile.id,
-                isVerified: true
             });
             return done(null, newUser);
         }
