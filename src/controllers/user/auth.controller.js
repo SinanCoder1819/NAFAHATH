@@ -40,7 +40,7 @@ export const registerUserTemp = async (req, res) => {
     // 2. Check if user already exists in permanent collection
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(409).json({ message: "User already exists." });
+      return res.status(409).json({ message: "Email already registered" });
     } 
 
     // 3. Prepare User Data
