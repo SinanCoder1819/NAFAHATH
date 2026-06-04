@@ -36,154 +36,191 @@
             <p class="text-xs text-gray-500 mb-2">Didn't receive the code?</p>
             <button id="resendBtn" disabled
                 class="text-cyan-400 text-xs font-bold uppercase tracking-wider hover:underline disabled:text-gray-600 disabled:no-underline transition-all">
-                Resend Code in <span id="timer">0:45</span>
+                Resend Code
             </button>
+            <div id="lockoutMsg" class="hidden text-xs text-red-500 font-medium mt-2">
+                Too many attempts. Try again in <span id="lockoutTimerVal">5:00</span>
+            </div>
         </div>
     </div>
 </main>
 
 <script>
-    const inputs = document.querySelectorAll('.otp-input');
+(function () {
+    const inputs    = document.querySelectorAll('.otp-input');
     const verifyBtn = document.getElementById('verifyBtn');
     const resendBtn = document.getElementById('resendBtn');
-    const timerSpan = document.getElementById('timer');
-    const msgDiv = document.getElementById('responseMessage');
+    const lockoutMsg   = document.getElementById('lockoutMsg');
+    const lockoutTimer = document.getElementById('lockoutTimerVal');
+    const msgDiv    = document.getElementById('responseMessage');
 
-    // --- OTP Input Navigation ---
+    const TIMER_DURATION = 30;
+    let countdownInterval = null;
+    let isLockout = false;
+    let messageTimeout = null;
+
+    function updateResendLabel(timeLeft) {
+        if (isLockout && timeLeft > 0) {
+            resendBtn.classList.add('hidden');
+            lockoutMsg.classList.remove('hidden');
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            lockoutTimer.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        } else if (timeLeft > 0) {
+            resendBtn.classList.remove('hidden');
+            lockoutMsg.classList.add('hidden');
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            resendBtn.innerHTML = `Resend Code in <span id="timerVal">${mins}:${secs < 10 ? '0' : ''}${secs}</span>`;
+            resendBtn.disabled = true;
+        } else {
+            isLockout = false;
+            resendBtn.classList.remove('hidden');
+            lockoutMsg.classList.add('hidden');
+            resendBtn.textContent = 'Resend Code';
+            resendBtn.disabled = false;
+            hideMessage(); // Lockout completed, clear lockout messages
+        }
+    }
+
+    function startCountdown(seconds) {
+        clearInterval(countdownInterval);
+        isLockout = (seconds > 30);
+        let timeLeft = seconds;
+        updateResendLabel(timeLeft);
+
+        countdownInterval = setInterval(() => {
+            timeLeft--;
+            if (timeLeft <= 0) {
+                clearInterval(countdownInterval);
+                updateResendLabel(0);
+            } else {
+                updateResendLabel(timeLeft);
+            }
+        }, 1000);
+    }
+
+    (function init() {
+        const serverTimeLeft = parseInt('<%= timeLeft %>', 10) || 0;
+        if (serverTimeLeft > 0) {
+            startCountdown(serverTimeLeft);
+        } else {
+            updateResendLabel(0);
+        }
+    })();
+
+    // ── OTP Inputs ──────────────────────────────────────────────────
     inputs.forEach((input, index) => {
         input.addEventListener('input', (e) => {
-            // Only allow digits
             e.target.value = e.target.value.replace(/[^0-9]/g, '');
-            if (e.target.value.length === 1 && index < inputs.length - 1) {
-                inputs[index + 1].focus();
+            if (!isLockout) {
+                hideMessage(); // Auto-dismiss old errors when typing
             }
+            if (e.target.value.length === 1 && index < inputs.length - 1) inputs[index + 1].focus();
         });
         input.addEventListener('keydown', (e) => {
-            if (e.key === 'Backspace' && !e.target.value && index > 0) {
-                inputs[index - 1].focus();
-            }
+            if (e.key === 'Backspace' && !e.target.value && index > 0) inputs[index - 1].focus();
         });
-        // Handle paste
         input.addEventListener('paste', (e) => {
             e.preventDefault();
-            const pasted = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, 6);
-            pasted.split('').forEach((char, i) => {
-                if (inputs[i]) inputs[i].value = char;
-            });
-            const nextEmpty = [...inputs].findIndex(inp => !inp.value);
-            if (nextEmpty !== -1) inputs[nextEmpty].focus();
-            else inputs[inputs.length - 1].focus();
+            const chars = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, 6).split('');
+            chars.forEach((c, i) => { if (inputs[i]) inputs[i].value = c; });
+            const next = [...inputs].findIndex(i => !i.value);
+            if (next !== -1) inputs[next].focus(); else inputs[5].focus();
         });
     });
 
-    function getOtp() {
-        return [...inputs].map(i => i.value).join('');
-    }
+    function getOtp() { return [...inputs].map(i => i.value).join(''); }
 
-    function showMessage(text, type) {
-        msgDiv.textContent = text;
-        msgDiv.className = 'mb-6 p-3 rounded-xl text-xs font-medium text-center border block';
-        if (type === 'error') {
-            msgDiv.classList.add('bg-red-900/50', 'text-red-200', 'border-red-800');
-        } else {
-            msgDiv.classList.add('bg-green-900/50', 'text-green-200', 'border-green-800');
-        }
-    }
-
-    // --- Countdown Timer ---
-    let timeLeft = 45;
-    const countdown = setInterval(() => {
-        timeLeft--;
-        timerSpan.textContent = `0:${timeLeft < 10 ? '0' : ''}${timeLeft}`;
-        if (timeLeft <= 0) {
-            clearInterval(countdown);
-            resendBtn.disabled = false;
-            resendBtn.innerHTML = 'Resend Code';
-        }
-    }, 1000);
-
-    // --- Verify OTP Submit ---
-    document.getElementById('otpForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const otp = getOtp();
-
-        if (otp.length < 6) {
-            showMessage('Please enter the complete 6-digit OTP.', 'error');
-            return;
-        }
-
-        verifyBtn.disabled = true;
-        verifyBtn.textContent = 'Verifying...';
-
-        try {
-            const response = await fetch('/auth/verify-forgotOtp', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ otp })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                showMessage('OTP verified! Redirecting...', 'success');
-                setTimeout(() => {
-                    window.location.href = '/auth/reset-password';
-                }, 1000);
-            } else {
-                showMessage(data.message || 'Invalid OTP. Please try again.', 'error');
-                // Clear inputs on wrong OTP
-                inputs.forEach(i => i.value = '');
-                inputs[0].focus();
-                verifyBtn.disabled = false;
-                verifyBtn.textContent = 'Verify OTP';
-            }
-        } catch (err) {
-            showMessage('Network error. Please try again.', 'error');
-            verifyBtn.disabled = false;
-            verifyBtn.textContent = 'Verify OTP';
-        }
-    });
-
-    // --- Resend OTP ---
+    // ── Resend ──────────────────────────────────────────────────────
     resendBtn.addEventListener('click', async () => {
-        resendBtn.disabled = true;
+        hideMessage();
+        resendBtn.disabled    = true;
         resendBtn.textContent = 'Sending...';
 
         try {
-            const response = await fetch('/auth/resend-forgotOtp', {
-                method: 'POST',
+            const res  = await fetch('/auth/resend-forgotOtp', {
+                method:  'POST',
                 headers: { 'Content-Type': 'application/json' }
             });
+            const data = await res.json();
 
-            const data = await response.json();
-
-            if (response.ok) {
-                showMessage('A new OTP has been sent to your email.', 'success');
-                // Restart timer
-                timeLeft = 45;
-                timerSpan.textContent = '0:45';
-                resendBtn.innerHTML = 'Resend Code in <span id="timer">0:45</span>';
-                const newTimer = document.getElementById('timer');
-                const newCountdown = setInterval(() => {
-                    timeLeft--;
-                    newTimer.textContent = `0:${timeLeft < 10 ? '0' : ''}${timeLeft}`;
-                    if (timeLeft <= 0) {
-                        clearInterval(newCountdown);
-                        resendBtn.disabled = false;
-                        resendBtn.innerHTML = 'Resend Code';
-                    }
-                }, 1000);
+            if (res.ok) {
+                showMessage(data.message || 'New OTP sent!', 'success');
+                startCountdown(TIMER_DURATION);
                 inputs.forEach(i => i.value = '');
                 inputs[0].focus();
             } else {
-                showMessage(data.message || 'Failed to resend OTP.', 'error');
-                resendBtn.disabled = false;
-                resendBtn.textContent = 'Resend Code';
+                showMessage(data.message || 'Failed to resend.', 'error', true); // Keep lockout error
+                if (data.blockedUntil) {
+                    const timeLeft = Math.max(0, Math.ceil((data.blockedUntil - Date.now()) / 1000));
+                    startCountdown(timeLeft);
+                } else {
+                    resendBtn.disabled = false;
+                    resendBtn.textContent = 'Resend Code';
+                }
             }
-        } catch (err) {
-            showMessage('Network error. Please try again.', 'error');
+        } catch {
+            showMessage('Network error.', 'error');
             resendBtn.disabled = false;
             resendBtn.textContent = 'Resend Code';
         }
     });
+
+    // ── Verify ──────────────────────────────────────────────────────
+    document.getElementById('otpForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const otp = getOtp();
+        if (otp.length < 6) { showMessage('Please enter the complete 6-digit OTP.', 'error'); return; }
+
+        verifyBtn.disabled    = true;
+        verifyBtn.textContent = 'Verifying...';
+
+        try {
+            const res  = await fetch('/auth/verify-forgotOtp', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({ otp })
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                showMessage('OTP verified! Redirecting...', 'success');
+                setTimeout(() => window.location.href = '/auth/reset-password', 1000);
+            } else {
+                showMessage(data.message || 'Invalid OTP.', 'error', !!data.blockedUntil); // Keep block error
+                inputs.forEach(i => i.value = '');
+                inputs[0].focus();
+                verifyBtn.disabled    = false;
+                verifyBtn.textContent = 'Verify OTP';
+                if (data.blockedUntil) {
+                    const timeLeft = Math.max(0, Math.ceil((data.blockedUntil - Date.now()) / 1000));
+                    startCountdown(timeLeft);
+                }
+            }
+        } catch {
+            showMessage('Network error.', 'error');
+            verifyBtn.disabled    = false;
+            verifyBtn.textContent = 'Verify OTP';
+        }
+    });
+
+    function showMessage(text, type, keepMessage = false) {
+        msgDiv.textContent = text;
+        msgDiv.className   = 'mb-6 p-3 rounded-xl text-xs font-medium text-center border block ' +
+            (type === 'error'
+                ? 'bg-red-900/50 text-red-200 border-red-800'
+                : 'bg-green-900/50 text-green-200 border-green-800');
+
+        clearTimeout(messageTimeout);
+        if (!keepMessage) {
+            messageTimeout = setTimeout(hideMessage, 5000); // auto-hide general messages in 5s
+        }
+    }
+
+    function hideMessage() {
+        msgDiv.textContent = '';
+        msgDiv.className   = 'hidden mb-6 p-3 rounded-xl text-xs font-medium text-center border';
+    }
+})();
 </script>

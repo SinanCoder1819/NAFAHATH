@@ -1,4 +1,5 @@
 import Address from '../../models/Address.model.js';
+import { validateName, validatePhone, validatePincode } from '../../utils/validators.js';
 
 const getSessionUserId = (req) => req.session.user?.id || req.session.user?._id;
 
@@ -17,7 +18,7 @@ export const getAddressPage = async (req, res) => {
     }
 };
 
-// POST /address — Add new address
+
 export const addAddress = async (req, res) => {
     try {
         const userId = getSessionUserId(req);
@@ -27,32 +28,38 @@ export const addAddress = async (req, res) => {
         if (!fullName || !addressLine || !city || !state || !postalCode || !phone) {
             return res.status(400).json({ message: 'All fields are required.' });
         }
-        if (!/^[0-9]{6}$/.test(postalCode)) {
-            return res.status(400).json({ message: 'Postal code must be 6 digits.' });
+        const nameCheck = validateName(fullName);
+        if (!nameCheck.valid) {
+            return res.status(400).json({ message: nameCheck.message });
         }
-        if (!/^[0-9]{10}$/.test(phone)) {
-            return res.status(400).json({ message: 'Phone number must be 10 digits.' });
+        const pinCheck = validatePincode(postalCode);
+        if (!pinCheck.valid) {
+            return res.status(400).json({ message: pinCheck.message });
+        }
+        const phoneCheck = validatePhone(phone);
+        if (!phoneCheck.valid) {
+            return res.status(400).json({ message: phoneCheck.message });
         }
 
         const setDefault = isDefault === true || isDefault === 'true';
 
-        // If setting as default, unset all others first
+      
         if (setDefault) {
             await Address.updateMany({ userId }, { $set: { isDefault: false } });
         }
 
-        // If this is the first address, auto-set as default
+        
         const count = await Address.countDocuments({ userId });
         const shouldBeDefault = setDefault || count === 0;
 
         const address = await Address.create({
             userId,
-            fullName: fullName.trim(),
+            fullName: nameCheck.value,
             addressLine: addressLine.trim(),
             city: city.trim(),
             state: state.trim(),
-            postalCode: postalCode.trim(),
-            phone: phone.trim(),
+            postalCode: pinCheck.value,
+            phone: phoneCheck.value,
             isDefault: shouldBeDefault
         });
 
@@ -63,7 +70,7 @@ export const addAddress = async (req, res) => {
     }
 };
 
-// PUT /address/:id — Edit address
+
 export const editAddress = async (req, res) => {
     try {
         const userId = getSessionUserId(req);
@@ -73,11 +80,17 @@ export const editAddress = async (req, res) => {
         if (!fullName || !addressLine || !city || !state || !postalCode || !phone) {
             return res.status(400).json({ message: 'All fields are required.' });
         }
-        if (!/^[0-9]{6}$/.test(postalCode)) {
-            return res.status(400).json({ message: 'Postal code must be 6 digits.' });
+        const nameCheck = validateName(fullName);
+        if (!nameCheck.valid) {
+            return res.status(400).json({ message: nameCheck.message });
         }
-        if (!/^[0-9]{10}$/.test(phone)) {
-            return res.status(400).json({ message: 'Phone number must be 10 digits.' });
+        const pinCheck = validatePincode(postalCode);
+        if (!pinCheck.valid) {
+            return res.status(400).json({ message: pinCheck.message });
+        }
+        const phoneCheck = validatePhone(phone);
+        if (!phoneCheck.valid) {
+            return res.status(400).json({ message: phoneCheck.message });
         }
 
         const address = await Address.findOne({ _id: id, userId });
@@ -89,12 +102,12 @@ export const editAddress = async (req, res) => {
             await Address.updateMany({ userId }, { $set: { isDefault: false } });
         }
 
-        address.fullName = fullName.trim();
+        address.fullName = nameCheck.value;
         address.addressLine = addressLine.trim();
         address.city = city.trim();
         address.state = state.trim();
-        address.postalCode = postalCode.trim();
-        address.phone = phone.trim();
+        address.postalCode = pinCheck.value;
+        address.phone = phoneCheck.value;
         address.isDefault = setDefault;
         await address.save();
 
@@ -105,7 +118,7 @@ export const editAddress = async (req, res) => {
     }
 };
 
-// DELETE /address/:id — Remove address
+
 export const deleteAddress = async (req, res) => {
     try {
         const userId = getSessionUserId(req);
@@ -114,7 +127,7 @@ export const deleteAddress = async (req, res) => {
         const address = await Address.findOneAndDelete({ _id: id, userId });
         if (!address) return res.status(404).json({ message: 'Address not found.' });
 
-        // If deleted address was default, set the next one as default
+        
         if (address.isDefault) {
             const next = await Address.findOne({ userId }).sort({ createdAt: -1 });
             if (next) {
@@ -130,7 +143,7 @@ export const deleteAddress = async (req, res) => {
     }
 };
 
-// PATCH /address/:id/set-default
+
 export const setDefaultAddress = async (req, res) => {
     try {
         const userId = getSessionUserId(req);
@@ -140,7 +153,7 @@ export const setDefaultAddress = async (req, res) => {
         const address = await Address.findOneAndUpdate(
             { _id: id, userId },
             { $set: { isDefault: true } },
-            { new: true }
+            { returnDocument: 'after' }
         );
 
         if (!address) return res.status(404).json({ message: 'Address not found.' });

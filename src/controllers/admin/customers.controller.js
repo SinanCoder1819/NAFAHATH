@@ -3,9 +3,8 @@ import mongoose from "mongoose";
 
 const PAGE_SIZE = 5;
 
-/**
- * GET /admin/customers
- */
+
+
 export const getCustomers = async (req, res) => {
     try {
         const page   = Math.max(1, parseInt(req.query.page) || 1);
@@ -29,7 +28,12 @@ export const getCustomers = async (req, res) => {
             .limit(PAGE_SIZE)
             .select("name email phone isBlocked createdAt")
             .lean();
-
+console.log(users[0].isBlocked)
+    //   for(let i=0;i<users.length;i++){
+    //     if(users[i].isBlocked==true){
+    //         console.log(users[i])
+    //     }
+    //   }
         res.render("admin/customers", {
             layout:     "layouts/admin",
             admin:      req.session.admin,
@@ -47,14 +51,12 @@ export const getCustomers = async (req, res) => {
     }
 };
 
-/**
- * PATCH /admin/customers/:id/block
- * Blocks or unblocks a user. Blocking also destroys their active session.
- */
+
 export const toggleBlockUser = async (req, res) => {
     try {
-        const { id }     = req.params;
+        const { id }  = req.params;
         const { action } = req.body;
+
 
         if (!["block", "unblock"].includes(action)) {
             return res.status(400).json({ message: "Invalid action." });
@@ -72,7 +74,7 @@ export const toggleBlockUser = async (req, res) => {
         user.isBlocked = action === "block";
         await user.save();
 
-        // When blocking, kill the user's active session immediately
+        
         if (action === "block") {
             await destroyUserSession(id.toString());
         }
@@ -87,18 +89,7 @@ export const toggleBlockUser = async (req, res) => {
     }
 };
 
-/**
- * Delete all MongoDB sessions belonging to a given userId.
- *
- * connect-mongo v3+ serialises the session as a BSON object, so the `session`
- * field is NOT a plain string — querying it with { $regex: ... } will silently
- * match nothing. We therefore try two paths:
- *
- *   1. `session.user.id`  — the standard shape set by loginUser / Google OAuth
- *   2. `session.user._id` — alternative shape (Mongoose ObjectId stringified)
- *
- * Both are stored as strings inside the session object.
- */
+
 async function destroyUserSession(userId) {
     try {
         const collection = mongoose.connection.db.collection("user_sessions");

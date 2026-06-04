@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import User from "../models/User.model.js"; // Path ningalude model-inu anusarithamaakkuka
+import User from "../models/User.model.js"; 
 
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
@@ -11,7 +11,7 @@ passport.use(new GoogleStrategy({
         let user = await User.findOne({ email: profile.emails[0].value });
 
         if (user) {
-            // Block check — blocked users must not log in via Google either
+            
             if (user.isBlocked) {
                 return done(null, false, { message: "Account blocked" });
             }

@@ -1,4 +1,4 @@
-﻿<main class="min-h-screen bg-[#060606] text-white py-12 px-4 md:px-8 lg:px-12">
+<main class="min-h-screen bg-[#060606] text-white py-12 px-4 md:px-8 lg:px-12">
     <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
         <aside class="w-full lg:w-72 shrink-0">
             <div class="bg-[#0f0f0f] border border-gray-800 rounded-3xl p-8 sticky top-28 shadow-2xl">
@@ -94,7 +94,7 @@
         </button>
         <h2 id="modalTitle" class="text-2xl font-bold text-white mb-6 uppercase tracking-widest text-center">Add Address</h2>
         <div id="modalMessage" class="hidden mb-4 p-3 rounded-xl text-xs font-medium border text-center"></div>
-        <form id="addressForm" class="space-y-4">
+        <form id="addressForm" class="space-y-4" novalidate>
             <input type="hidden" id="editAddressId">
             <div>
                 <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Full Name</label>
@@ -207,6 +207,60 @@
     });
 
     // --- Validation helpers ---
+    function validateName(value) {
+        if (!value || typeof value !== 'string') {
+            return { valid: false, message: 'Name is required.' };
+        }
+        const trimmed = value.trim();
+        if (trimmed.length === 0) {
+            return { valid: false, message: 'Name is required.' };
+        }
+        if (trimmed.length < 2) {
+            return { valid: false, message: 'Name must be at least 2 characters.' };
+        }
+        if (trimmed.length > 50) {
+            return { valid: false, message: 'Name must not exceed 50 characters.' };
+        }
+        const injectionPattern = /[<>&"`;{}]/;
+        if (injectionPattern.test(trimmed)) {
+            return { valid: false, message: 'Name contains invalid characters.' };
+        }
+        const hasLetter = /[a-zA-Z]/.test(trimmed);
+        if (!hasLetter) {
+            return { valid: false, message: 'Name must contain at least one letter.' };
+        }
+        return { valid: true, value: trimmed };
+    }
+
+    function validatePhone(value) {
+        if (value === undefined || value === null || typeof value !== 'string') {
+            return { valid: false, message: 'Phone number is required.' };
+        }
+        const trimmed = value.trim();
+        if (trimmed.length === 0) {
+            return { valid: false, message: 'Phone number is required.' };
+        }
+        const noSep = trimmed.replace(/[\s\-]/g, '');
+        if (!/^\d+$/.test(noSep)) {
+            return { valid: false, message: 'Phone number must contain digits only.' };
+        }
+        let digits = noSep;
+        if (digits.startsWith('+91')) {
+            digits = digits.slice(3);
+        } else if (digits.startsWith('91') && digits.length === 12) {
+            digits = digits.slice(2);
+        } else if (digits.startsWith('0') && digits.length === 11) {
+            digits = digits.slice(1);
+        }
+        if (digits.length !== 10) {
+            return { valid: false, message: 'Phone number must be exactly 10 digits.' };
+        }
+        if (!/^[6-9]/.test(digits)) {
+            return { valid: false, message: 'Phone number must start with 6, 7, 8, or 9.' };
+        }
+        return { valid: true, value: digits };
+    }
+
     function showErr(id, msg) {
         const el = document.getElementById('e_' + id);
         el.textContent = msg; el.classList.remove('hidden');
@@ -245,19 +299,43 @@
         const addressLine = document.getElementById('f_addressLine').value.trim();
         const city = document.getElementById('f_city').value.trim();
         const state = document.getElementById('f_state').value.trim();
-        const postalCode = document.getElementById('f_postalCode').value.trim();
+        const postalCodeRaw = document.getElementById('f_postalCode').value;
+        const postalCodeCleaned = postalCodeRaw.trim().replace(/[\s\-]/g, '');
         const phone = document.getElementById('f_phone').value.trim();
         const isDefault = document.getElementById('f_isDefault').checked;
 
         let valid = true;
-        if (!fullName) { showErr('fullName', 'Full name is required.'); valid = false; }
+
+        const nameCheck = validateName(fullName);
+        if (!nameCheck.valid) {
+            showErr('fullName', nameCheck.message);
+            valid = false;
+        }
+
         if (!addressLine) { showErr('addressLine', 'Address line is required.'); valid = false; }
         if (!city) { showErr('city', 'City is required.'); valid = false; }
         if (!state) { showErr('state', 'State is required.'); valid = false; }
-        if (!postalCode) { showErr('postalCode', 'Postal code is required.'); valid = false; }
-        else if (!/^[0-9]{6}$/.test(postalCode)) { showErr('postalCode', 'Must be 6 digits.'); valid = false; }
-        if (!phone) { showErr('phone', 'Phone number is required.'); valid = false; }
-        else if (!/^[0-9]{10}$/.test(phone)) { showErr('phone', 'Must be 10 digits.'); valid = false; }
+
+        if (!postalCodeRaw.trim()) { 
+            showErr('postalCode', 'Postal code is required.'); 
+            valid = false; 
+        } else if (!/^\d+$/.test(postalCodeCleaned)) { 
+            showErr('postalCode', 'Postal code must contain numbers only.'); 
+            valid = false; 
+        } else if (postalCodeCleaned.length !== 6) { 
+            showErr('postalCode', 'Postal code must be exactly 6 digits.'); 
+            valid = false; 
+        } else if (!/^[1-9]/.test(postalCodeCleaned)) { 
+            showErr('postalCode', 'Postal code cannot start with 0.'); 
+            valid = false; 
+        }
+
+        const phoneCheck = validatePhone(phone);
+        if (!phoneCheck.valid) {
+            showErr('phone', phoneCheck.message);
+            valid = false;
+        }
+
         if (!valid) return;
 
         const saveBtn = document.getElementById('modalSaveBtn');
@@ -272,7 +350,15 @@
             const response = await fetch(url, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ fullName, addressLine, city, state, postalCode, phone, isDefault })
+                body: JSON.stringify({ 
+                    fullName: nameCheck.value || fullName, 
+                    addressLine, 
+                    city, 
+                    state, 
+                    postalCode: postalCodeCleaned, 
+                    phone: phoneCheck.value || phone, 
+                    isDefault 
+                })
             });
             let result = {};
             try { result = await response.json(); } catch(_) {}

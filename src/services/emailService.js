@@ -1,8 +1,8 @@
 import { transporter } from "../config/mailer.js";
 
-/**
- * Sends OTP email to user
- */
+
+//  Sends OTP email to user
+
 export const sendOtpEmail = async (email, otp) => {
   try {
     await transporter.sendMail({

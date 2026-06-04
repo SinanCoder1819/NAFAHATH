@@ -26,12 +26,15 @@ const unverifiedUserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-
-    //  Document TTL (MongoDB handles deletion)
+referral:{
+  type:String,
+  required:false
+},
+   
     createdAt: {
       type: Date,
       default: Date.now,
-      expires: 1200, // 20 minutes
+      expires: 1200, 
     },    
   },
   {

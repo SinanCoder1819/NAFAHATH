@@ -1,10 +1,6 @@
 import User from "../../models/User.model.js";
 import bcrypt from "bcrypt";
 
-/**
- * GET /admin/login
- * Render the admin login page.
- */
 export const getAdminLogin = (req, res) => {
     if (req.session.admin) {
         return res.redirect("/admin/dashboard");
@@ -19,10 +15,7 @@ export const getAdminLogin = (req, res) => {
     });
 };
 
-/**
- * POST /admin/login
- * Role-based: only users with role === "admin" can log in here.
- */
+
 export const postAdminLogin = async (req, res) => {
     const { email, password } = req.body;
 
@@ -34,10 +27,10 @@ export const postAdminLogin = async (req, res) => {
         const user = await User.findOne({ email: email.toLowerCase().trim() });
 
         if (!user) {
-            return res.status(401).json({ message: "Invalid email or password." });
+            return res.status(401).json({ message: "Password or email doesn't exist" });
         }
 
-        // Role-based access: only admins allowed
+       
         if (user.role !== "admin") {
             return res.status(403).json({ message: "Access denied. Admins only." });
         }
@@ -46,7 +39,7 @@ export const postAdminLogin = async (req, res) => {
             return res.status(403).json({ message: "Your account has been disabled." });
         }
 
-        // Verify password (supports both hashed and plain-text env-seeded passwords)
+     
         let passwordMatch = false;
         if (user.password) {
             const isHashed = user.password.startsWith("$2");
@@ -56,7 +49,7 @@ export const postAdminLogin = async (req, res) => {
         }
 
         if (!passwordMatch) {
-            return res.status(401).json({ message: "Invalid email or password." });
+            return res.status(401).json({ message: "Password or email doesn't match" });
         }
 
         // Set admin session
@@ -77,9 +70,7 @@ export const postAdminLogin = async (req, res) => {
     }
 };
 
-/**
- * GET /admin/logout
- */
+
 export const getAdminLogout = (req, res) => {
     req.session.destroy((err) => {
         if (err) console.error("Admin logout error:", err);

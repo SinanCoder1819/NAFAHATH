@@ -8,35 +8,39 @@
 
         <div id="responseMessage" class="hidden mb-4 p-3 rounded-lg text-xs font-medium text-center"></div>
 
-        <form id="signupForm" class="space-y-4">
+        <form id="signupForm" class="space-y-4" novalidate>
             <div>
                 <label class="block text-[10px] font-medium text-gray-400 mb-1.5 ml-1 uppercase tracking-wider">Full Name</label>
-                <input type="text" name="name"  placeholder="Enter your full name" 
+                <input type="text" name="name" id="nameInput" placeholder="Enter your full name" 
                     class="w-full bg-transparent border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-xs text-white">
+                <p id="nameError" class="hidden text-red-400 text-[10px] mt-1 ml-1"></p>
            </div>
 
             <div>
                 <label class="block text-[10px] font-medium text-gray-400 mb-1.5 ml-1 uppercase tracking-wider">Email Address</label>
-                <input type="email" name="email"  placeholder="Enter your email address" 
+                <input type="email" name="email" id="emailInput" placeholder="Enter your email address" 
                     class="w-full bg-transparent border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-xs text-white">
+                <p id="emailError" class="hidden text-red-400 text-[10px] mt-1 ml-1"></p>
             </div>
 
             <div>
                 <label class="block text-[10px] font-medium text-gray-400 mb-1.5 ml-1 uppercase tracking-wider">Phone Number</label>
-                <input type="tel" name="phone"  placeholder="Enter your phone number" 
+                <input type="tel" name="phone" id="phoneInput" placeholder="Enter your phone number" 
                     class="w-full bg-transparent border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-xs text-white">
-          </div>
+                <p id="phoneError" class="hidden text-red-400 text-[10px] mt-1 ml-1"></p>
+           </div>
 
             <div>
                 <label class="block text-[10px] font-medium text-gray-400 mb-1.5 ml-1 uppercase tracking-wider">Referral Code</label>
-                <input type="text" name="referral" placeholder="Enter your Referral Code" 
+                <input type="text" name="referral" id="referralInput" placeholder="Enter your Referral Code" 
                     class="w-full bg-transparent border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-xs text-white">
+                <p id="referralError" class="hidden text-red-400 text-[10px] mt-1 ml-1"></p>
             </div>
 
             <div>
                 <label class="block text-[10px] font-medium text-gray-400 mb-1.5 ml-1 uppercase tracking-wider">Password</label>
                 <div class="relative">
-                    <input type="password" name="password" id="password"  placeholder="Create a password" 
+                    <input type="password" name="password" id="password" placeholder="Create a password" 
                         class="w-full bg-transparent border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-xs text-white">
                     <button type="button" onclick="togglePassword('password')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
@@ -45,12 +49,13 @@
                         </svg>
                     </button>
                 </div>
+                <p id="passwordError" class="hidden text-red-400 text-[10px] mt-1 ml-1"></p>
             </div>
 
             <div>
                 <label class="block text-[10px] font-medium text-gray-400 mb-1.5 ml-1 uppercase tracking-wider">Confirm Password</label>
                 <div class="relative">
-                    <input type="password" name="confirmPassword" id="confirmPassword"  placeholder="Confirm your password" 
+                    <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm your password" 
                         class="w-full bg-transparent border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-xs text-white">
                     <button type="button" onclick="togglePassword('confirmPassword')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
@@ -59,6 +64,7 @@
                         </svg>
                     </button>
                 </div>
+                <p id="confirmPasswordError" class="hidden text-red-400 text-[10px] mt-1 ml-1"></p>
             </div>
 
             <div class="pt-4">
@@ -82,6 +88,9 @@
     </div>
 </div>
 
+
+
+
 <script>
     // 1. Password Visibility Toggle Function
     function togglePassword(id) {
@@ -97,9 +106,220 @@
         });
     }
 
+    // --- Frontend Validation Helper Functions ---
+
+    function validateName(value) {
+        if (!value || typeof value !== 'string') {
+            return { valid: false, message: 'Name is required.' };
+        }
+
+        const trimmed = value.trim();
+
+        if (trimmed.length === 0) {
+            return { valid: false, message: 'Name is required.' };
+        }
+
+        if (trimmed.length < 3) {
+            return { valid: false, message: 'Name must be at least 3 characters.' };
+        }
+
+        if (trimmed.length > 50) {
+            return { valid: false, message: 'Name must not exceed 50 characters.' };
+        }
+
+        const injectionPattern = /[<>&"`;{}]/;
+        if (injectionPattern.test(trimmed)) {
+            return { valid: false, message: 'Name contains invalid characters.' };
+        }
+
+        const hasLetter = /\p{L}/u.test(trimmed);
+        if (!hasLetter) {
+            return { valid: false, message: 'Name must contain at least one letter.' };
+        }
+
+        return { valid: true, value: trimmed };
+    }
+
+
+
+    function validateEmail(value) {
+        if (!value || typeof value !== 'string') {
+            return { valid: false, message: 'Email address is required.' };
+        }
+
+        const trimmed = value.trim();
+
+        if (trimmed.length === 0) {
+            return { valid: false, message: 'Email address is required.' };
+        }
+
+        // Standard robust email validation pattern
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailPattern.test(trimmed)) {
+            return { valid: false, message: 'Enter a valid email address.' };
+        }
+
+        return { valid: true, value: trimmed };
+    }
+
+    function validatePhone(value) {
+        if (value === undefined || value === null || typeof value !== 'string') {
+            return { valid: false, message: 'Phone number is required.' };
+        }
+
+        const trimmed = value.trim();
+
+        if (trimmed.length === 0) {
+            return { valid: false, message: 'Phone number is required.' };
+        }
+
+        const noSep = trimmed.replace(/[\s\-]/g, '');
+
+        if (!/^\d+$/.test(noSep)) {
+            return { valid: false, message: 'Phone number must contain digits only.' };
+        }
+
+        let digits = noSep;
+        if (digits.startsWith('+91')) {
+            digits = digits.slice(3);
+        } else if (digits.startsWith('91') && digits.length === 12) {
+            digits = digits.slice(2);
+        } else if (digits.startsWith('0') && digits.length === 11) {
+            digits = digits.slice(1);
+        }
+
+        if (digits.length !== 10) {
+            return { valid: false, message: 'Phone number must be exactly 10 digits.' };
+        }
+
+        if (!/^[6-9]/.test(digits)) {
+            return { valid: false, message: 'Phone number must start with 6, 7, 8, or 9.' };
+        }
+
+        return { valid: true, value: digits };
+    }
+
+    function validatePassword(value) {
+        if (!value) {
+            return { valid: false, message: 'Password is required.' };
+        }
+
+        if (value.length < 8) {
+            return { valid: false, message: 'Password must be at least 8 characters.' };
+        }
+
+        if (!/[A-Z]/.test(value)) {
+            return { valid: false, message: 'Password must contain at least one uppercase letter.' };
+        }
+
+        if (!/[a-z]/.test(value)) {
+            return { valid: false, message: 'Password must contain at least one lowercase letter.' };
+        }
+
+        if (!/[0-9]/.test(value)) {
+            return { valid: false, message: 'Password must contain at least one number.' };
+        }
+
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
+            return { valid: false, message: 'Password must contain at least one special character (e.g. !@#$%^&*).' };
+        }
+
+        return { valid: true };
+    }
+
+    // --- UI Helper Functions for Errors ---
+
+    function showFieldError(inputId, errorId, message) {
+        const input = document.getElementById(inputId);
+        const errorEl = document.getElementById(errorId);
+        errorEl.textContent = message;
+        errorEl.classList.remove('hidden');
+        input.classList.add('border-red-500');
+        input.classList.remove('border-gray-700');
+    }
+
+    function clearFieldError(inputId, errorId) {
+        const input = document.getElementById(inputId);
+        const errorEl = document.getElementById(errorId);
+        errorEl.textContent = '';
+        errorEl.classList.add('hidden');
+        input.classList.remove('border-red-500');
+        input.classList.add('border-gray-700');
+    }
+
+    // --- Inputs list & Event Listeners for Live Editing ---
+
+    const nameInput = document.getElementById('nameInput');
+    const emailInput = document.getElementById('emailInput');
+    const phoneInput = document.getElementById('phoneInput');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+
+    nameInput.addEventListener('input', () => clearFieldError('nameInput', 'nameError'));
+    emailInput.addEventListener('input', () => clearFieldError('emailInput', 'emailError'));
+    phoneInput.addEventListener('input', () => clearFieldError('phoneInput', 'phoneError'));
+    passwordInput.addEventListener('input', () => {
+        clearFieldError('password', 'passwordError');
+        if (confirmPasswordInput.value) {
+            clearFieldError('confirmPassword', 'confirmPasswordError');
+        }
+    });
+    confirmPasswordInput.addEventListener('input', () => clearFieldError('confirmPassword', 'confirmPasswordError'));
+
     // 2. Form Submission Handling
     document.getElementById('signupForm').addEventListener('submit', async function(e) {
         e.preventDefault();
+
+        // Clear all fields errors first
+        clearFieldError('nameInput', 'nameError');
+        clearFieldError('emailInput', 'emailError');
+        clearFieldError('phoneInput', 'phoneError');
+        clearFieldError('password', 'passwordError');
+        clearFieldError('confirmPassword', 'confirmPasswordError');
+
+        const name = nameInput.value;
+        const email = emailInput.value;
+        const phone = phoneInput.value;
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+
+        let isValid = true;
+
+        const nameCheck = validateName(name);
+        if (!nameCheck.valid) {
+            showFieldError('nameInput', 'nameError', nameCheck.message);
+            isValid = false;
+        }
+
+        const emailCheck = validateEmail(email);
+        if (!emailCheck.valid) {
+            showFieldError('emailInput', 'emailError', emailCheck.message);
+            isValid = false;
+        }
+
+        const phoneCheck = validatePhone(phone);
+        if (!phoneCheck.valid) {
+            showFieldError('phoneInput', 'phoneError', phoneCheck.message);
+            isValid = false;
+        }
+
+        const passwordCheck = validatePassword(password);
+        if (!passwordCheck.valid) {
+            showFieldError('password', 'passwordError', passwordCheck.message);
+            isValid = false;
+        }
+
+        if (!confirmPassword) {
+            showFieldError('confirmPassword', 'confirmPasswordError', 'Please confirm your password.');
+            isValid = false;
+        } else if (password !== confirmPassword) {
+            showFieldError('confirmPassword', 'confirmPasswordError', 'Passwords do not match.');
+            isValid = false;
+        }
+
+        if (!isValid) {
+            return;
+        }
 
         const submitBtn = document.getElementById('submitBtn');
         const msgDiv = document.getElementById('responseMessage');
@@ -107,11 +327,6 @@
         const formData = new FormData(this);
         
         const data = Object.fromEntries(formData.entries());
-
-        if (data.password !== data.confirmPassword) {
-            showMessage("Passwords do not match!", "error");
-            return;
-        }
 
         try {
             // SHOW LOADING MODAL
@@ -142,6 +357,17 @@
             // HIDE MODAL ON ERROR
             loadingModal.classList.add('hidden');
             showMessage("A network error occurred.", "error");
+            submitBtn.disabled = false;
+        }
+    });
+
+    // Reset loading state when user navigates back (bfcache restore)
+    window.addEventListener('pageshow', function(e) {
+        const loadingModal = document.getElementById('loadingModal');
+        const submitBtn = document.getElementById('submitBtn');
+        // e.persisted = true means page was restored from back/forward cache
+        if (e.persisted || loadingModal.style.display !== 'none') {
+            loadingModal.classList.add('hidden');
             submitBtn.disabled = false;
         }
     });

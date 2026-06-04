@@ -1,0 +1,139 @@
+<main class="min-h-screen bg-[#060606] text-white py-12 px-4 md:px-8 lg:px-12">
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="w-full lg:w-72 shrink-0">
+            <div class="bg-[#0f0f0f] border border-gray-800 rounded-3xl p-8 sticky top-28 shadow-2xl">
+                <div class="mb-10">
+                    <p class="text-[10px] uppercase tracking-[0.3em] text-[#C5A267] font-bold mb-6 opacity-80">Dashboard</p>
+                    <nav class="flex flex-col gap-2">
+                        <a href="/profile" class="group flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all border border-transparent">
+                            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            <span class="text-sm font-medium">Profile</span>
+                        </a>
+                        
+                        <% const navLinks = [
+                            { href: '/orders', label: 'My Orders', icon: 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' },
+                            { href: '/wallet', label: 'Wallet', icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z' },
+                            { href: '/address', label: 'Addresses', icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z' },
+                            { href: '/referrals', label: 'Refer & Earn', icon: 'M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12z', active: true }
+                        ] %>
+
+                        <% navLinks.forEach(link => { %>
+                            <a href="<%= link.href %>" class="group flex items-center gap-4 px-4 py-3 rounded-xl transition-all border <%= link.active ? 'bg-[#C5A267]/10 text-[#C5A267] border-[#C5A267]/20' : 'text-gray-400 hover:bg-white/5 hover:text-white border-transparent' %>">
+                                <svg class="w-5 h-5 <%= link.active ? 'opacity-100 text-[#C5A267]' : 'opacity-50 group-hover:opacity-100' %> transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="<%= link.icon %>"/></svg>
+                                <span class="text-sm font-medium"><%= link.label %></span>
+                            </a>
+                        <% }) %>
+                    </nav>
+                </div>
+
+                <div class="pt-6 border-t border-gray-800">
+                    <a href="/auth/logout" class="flex items-center gap-4 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-all group">
+                        <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                        <span class="text-sm font-medium">Logout</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Referrals Main Dashboard Section -->
+        <section class="flex-1 space-y-8">
+            
+            <!-- Welcome Header Card -->
+            <div class="relative overflow-hidden bg-[#0f0f0f] border border-gray-800 rounded-3xl p-10 shadow-2xl">
+                <div class="absolute -top-24 -right-24 w-64 h-64 bg-[#C5A267]/10 blur-[80px] rounded-full"></div>
+                
+                <div class="relative z-10">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-[#C5A267]/10 flex items-center justify-center border border-[#C5A267]/20">
+                            <svg class="w-5 h-5 text-[#C5A267]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-serif italic text-white">Refer &amp; Earn</h2>
+                            <p class="text-xs text-gray-500 tracking-wide uppercase">Share the essence of Nafahath</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm tracking-wide max-w-xl mt-4">
+                        Invite your friends to experience Nafahath. Share your unique referral code with them, and expand our curation of perfect fragrances together.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Referral Code Card -->
+            <div class="bg-[#0f0f0f] border border-gray-800 rounded-3xl p-8 md:p-10 shadow-2xl relative">
+                <div class="max-w-md mx-auto text-center space-y-6">
+                    <span class="text-[10px] uppercase tracking-[0.25em] text-[#C5A267] font-bold">Your Unique Referral Code</span>
+                    
+                    <div class="flex items-center justify-between bg-black/60 border border-gray-800 rounded-2xl p-4 md:p-5">
+                        <span id="refCodeText" class="font-mono text-xl md:text-2xl font-bold tracking-wider text-white select-all"><%= user.referralCode %></span>
+                        <button type="button" onclick="copyReferralCode()" class="flex items-center gap-2 bg-white hover:bg-[#C5A267] text-black px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all transform active:scale-95">
+                            <svg id="copyIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                            <span id="copyBtnText">Copy</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Referred Friends List -->
+            <div class="bg-[#0f0f0f] border border-gray-800 rounded-3xl p-8 md:p-10 shadow-2xl">
+                <h3 class="text-xl font-medium mb-6">Referred Friends (<%= referredUsers.length %>)</h3>
+                
+                <% if (referredUsers && referredUsers.length > 0) { %>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-gray-800/80 text-[10px] uppercase tracking-wider text-gray-500">
+                                    <th class="pb-4 font-bold">Name</th>
+                                    <th class="pb-4 font-bold">Email</th>
+                                    <th class="pb-4 font-bold">Joined Date</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-800/50 text-sm text-gray-300">
+                                <% referredUsers.forEach(referred => { %>
+                                    <tr>
+                                        <td class="py-4 font-medium text-white"><%= referred.name %></td>
+                                        <td class="py-4"><%= referred.email %></td>
+                                        <td class="py-4"><%= new Date(referred.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } else { %>
+                    <div class="flex flex-col items-center justify-center py-12 text-center">
+                        <div class="w-16 h-16 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center mb-4 text-gray-600">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        </div>
+                        <h4 class="text-sm font-medium text-gray-400">No referrals yet</h4>
+                        <p class="text-xs text-gray-600 mt-1">Start sharing your referral code to grow your circle!</p>
+                    </div>
+                <% } %>
+            </div>
+
+        </section>
+    </div>
+</main>
+
+<script>
+    function copyReferralCode() {
+        const refText = document.getElementById('refCodeText').textContent;
+        const copyBtnText = document.getElementById('copyBtnText');
+        const copyIcon = document.getElementById('copyIcon');
+
+        navigator.clipboard.writeText(refText).then(() => {
+            // Success state
+            copyBtnText.textContent = 'Copied!';
+            copyIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />`;
+            
+            setTimeout(() => {
+                copyBtnText.textContent = 'Copy';
+                copyIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />`;
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+        });
+    }
+</script>

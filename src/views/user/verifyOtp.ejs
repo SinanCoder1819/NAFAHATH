@@ -4,7 +4,7 @@
         <div class="text-center mb-8">
             <h2 class="text-2xl font-semibold mb-3 text-white">Verify Your Email</h2>
             <p class="text-gray-400 text-sm leading-relaxed max-w-[280px] mx-auto">
-                Enter the 6-digit code sent to your new email address to complete the verification process.
+                Enter the 6-digit code sent to your email address to complete verification.
             </p>
         </div>
 
@@ -12,12 +12,12 @@
             <div id="responseMessage" class="hidden p-3 rounded-lg text-sm text-center mb-4"></div>
 
             <div class="flex justify-between gap-2 sm:gap-4">
-                <input type="text" name="otp" maxlength="1" required class="otp-input w-12 h-14 sm:w-14 sm:h-16 bg-transparent border border-gray-700 rounded-xl text-center text-xl font-semibold text-white outline-none focus:border-[#00FFFF] focus:shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all">
-                <input type="text" name="otp" maxlength="1" required class="otp-input w-12 h-14 sm:w-14 sm:h-16 bg-transparent border border-gray-700 rounded-xl text-center text-xl font-semibold text-white outline-none focus:border-[#00FFFF] focus:shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all">
-                <input type="text" name="otp" maxlength="1" required class="otp-input w-12 h-14 sm:w-14 sm:h-16 bg-transparent border border-gray-700 rounded-xl text-center text-xl font-semibold text-white outline-none focus:border-[#00FFFF] focus:shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all">
-                <input type="text" name="otp" maxlength="1" required class="otp-input w-12 h-14 sm:w-14 sm:h-16 bg-transparent border border-gray-700 rounded-xl text-center text-xl font-semibold text-white outline-none focus:border-[#00FFFF] focus:shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all">
-                <input type="text" name="otp" maxlength="1" required class="otp-input w-12 h-14 sm:w-14 sm:h-16 bg-transparent border border-gray-700 rounded-xl text-center text-xl font-semibold text-white outline-none focus:border-[#00FFFF] focus:shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all">
-                <input type="text" name="otp" maxlength="1" required class="otp-input w-12 h-14 sm:w-14 sm:h-16 bg-transparent border border-gray-700 rounded-xl text-center text-xl font-semibold text-white outline-none focus:border-[#00FFFF] focus:shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all">
+                <input type="text" maxlength="1" required class="otp-input w-12 h-14 sm:w-14 sm:h-16 bg-transparent border border-gray-700 rounded-xl text-center text-xl font-semibold text-white outline-none focus:border-[#00FFFF] focus:shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all">
+                <input type="text" maxlength="1" required class="otp-input w-12 h-14 sm:w-14 sm:h-16 bg-transparent border border-gray-700 rounded-xl text-center text-xl font-semibold text-white outline-none focus:border-[#00FFFF] focus:shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all">
+                <input type="text" maxlength="1" required class="otp-input w-12 h-14 sm:w-14 sm:h-16 bg-transparent border border-gray-700 rounded-xl text-center text-xl font-semibold text-white outline-none focus:border-[#00FFFF] focus:shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all">
+                <input type="text" maxlength="1" required class="otp-input w-12 h-14 sm:w-14 sm:h-16 bg-transparent border border-gray-700 rounded-xl text-center text-xl font-semibold text-white outline-none focus:border-[#00FFFF] focus:shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all">
+                <input type="text" maxlength="1" required class="otp-input w-12 h-14 sm:w-14 sm:h-16 bg-transparent border border-gray-700 rounded-xl text-center text-xl font-semibold text-white outline-none focus:border-[#00FFFF] focus:shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all">
+                <input type="text" maxlength="1" required class="otp-input w-12 h-14 sm:w-14 sm:h-16 bg-transparent border border-gray-700 rounded-xl text-center text-xl font-semibold text-white outline-none focus:border-[#00FFFF] focus:shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all">
             </div>
 
             <div>
@@ -28,13 +28,16 @@
         </form>
 
     <div class="mt-8 text-center">
-        <p class="text-xs text-gray-500">
-            Didn't receive the code?
+        <p class="text-xs text-gray-500">Didn't receive the code?</p>
+        <div class="mt-2">
             <button id="resendBtn" type="button" disabled
-                class="text-cyan-500 hover:text-cyan-400 font-medium transition-colors disabled:text-gray-600 disabled:cursor-not-allowed ml-1">
-                Resend Code <span id="timerContainer" class="hidden">in <span id="timer">0:30</span> sec</span>
+                class="text-cyan-500 hover:text-cyan-400 font-medium transition-colors disabled:text-gray-600 disabled:cursor-not-allowed text-xs">
+                Resend Code
             </button>
-        </p>
+            <div id="lockoutMsg" class="hidden text-xs text-red-500 font-medium mt-1">
+                Too many attempts. Try again in <span id="lockoutTimerVal">5:00</span>
+            </div>
+        </div>
     </div>
     </div>
 </section>
@@ -48,177 +51,181 @@
 </div>
 
 <script>
-    const inputs = document.querySelectorAll('.otp-input');
-    const otpForm = document.getElementById('otpForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const resendBtn = document.getElementById('resendBtn');
-    const timerSpan = document.getElementById('timer');
-    const timerContainer = document.getElementById('timerContainer');
-    const msgDiv = document.getElementById('responseMessage');
+(function () {
+    const inputs       = document.querySelectorAll('.otp-input');
+    const otpForm      = document.getElementById('otpForm');
+    const submitBtn    = document.getElementById('submitBtn');
+    const resendBtn    = document.getElementById('resendBtn');
+    const lockoutMsg   = document.getElementById('lockoutMsg');
+    const lockoutTimer = document.getElementById('lockoutTimerVal');
+    const msgDiv       = document.getElementById('responseMessage');
     const loadingModal = document.getElementById('loadingModal');
 
-    let timerId;
-    const TIMER_DURATION = 30; 
+    const TIMER_DURATION = 30;   // seconds between resends
+    let countdownInterval = null;
+    let isLockout = false;
+    let messageTimeout = null;
 
-    // --- 1. Persistent Timer Logic ---
-
-    function startTimer(duration = TIMER_DURATION) {
-        const endTime = Date.now() + duration * 1000;
-        localStorage.setItem('otpExpiry', endTime);
-        // Mark that the timer has been initialized at least once
-        localStorage.setItem('timerHasStarted', 'true'); 
-        runCountdown();
+    function updateResendLabel(timeLeft) {
+        if (isLockout && timeLeft > 0) {
+            resendBtn.classList.add('hidden');
+            lockoutMsg.classList.remove('hidden');
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            lockoutTimer.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        } else if (timeLeft > 0) {
+            resendBtn.classList.remove('hidden');
+            lockoutMsg.classList.add('hidden');
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            resendBtn.innerHTML = `Resend Code in <span id="timerVal">${mins}:${secs < 10 ? '0' : ''}${secs}</span>`;
+            resendBtn.disabled = true;
+        } else {
+            isLockout = false;
+            resendBtn.classList.remove('hidden');
+            lockoutMsg.classList.add('hidden');
+            resendBtn.textContent = 'Resend Code';
+            resendBtn.disabled = false;
+            hideMessage(); // Lockout completed, clear lockout messages
+        }
     }
 
-    function runCountdown() {
-        clearInterval(timerId);
-        
-        timerId = setInterval(() => {
-            const endTime = localStorage.getItem('otpExpiry');
-            if (!endTime) return clearInterval(timerId);
+    function startCountdown(seconds) {
+        clearInterval(countdownInterval);
+        isLockout = (seconds > 30);
+        let timeLeft = seconds;
+        updateResendLabel(timeLeft);
 
-            const now = Date.now();
-            const timeLeft = Math.round((endTime - now) / 1000);
-
+        countdownInterval = setInterval(() => {
+            timeLeft--;
             if (timeLeft <= 0) {
-                clearInterval(timerId);
-                resendBtn.disabled = false;
-                timerContainer.classList.add('hidden');
-                localStorage.removeItem('otpExpiry');
+                clearInterval(countdownInterval);
+                updateResendLabel(0);
             } else {
-                resendBtn.disabled = true;
-                timerContainer.classList.remove('hidden');
-                timerSpan.innerText = `0:${timeLeft < 10 ? '0' : ''}${timeLeft}`;
+                updateResendLabel(timeLeft);
             }
         }, 1000);
     }
 
-    // --- 2. Load Logic (First Time vs Reload) ---
-    window.addEventListener('load', () => {
-        const storedExpiry = localStorage.getItem('otpExpiry');
-        const hasStartedBefore = localStorage.getItem('timerHasStarted');
-
-        if (storedExpiry && storedExpiry > Date.now()) {
-            // Timer is currently active, keep it running
-            runCountdown();
-        } else if (!hasStartedBefore) {
-            // Page is loading for the very first time (no history)
-            startTimer(TIMER_DURATION);
+    // Init on load — restore timer from server value
+    (function init() {
+        const serverTimeLeft = parseInt('<%= timeLeft %>', 10) || 0;
+        if (serverTimeLeft > 0) {
+            startCountdown(serverTimeLeft);
         } else {
-            // Timer finished previously; do NOT restart on reload
-            resendBtn.disabled = false;
-            timerContainer.classList.add('hidden');
+            updateResendLabel(0);
         }
-    });
+    })();
 
-    // --- 3. Input Logic (Typing, Backspace, Paste) ---
+    // ── OTP box inputs ─────────────────────────────────────────────
     inputs.forEach((input, index) => {
         input.addEventListener('input', (e) => {
             e.target.value = e.target.value.replace(/[^0-9]/g, '');
-            if (e.target.value.length === 1 && index < inputs.length - 1) {
-                inputs[index + 1].focus();
+            if (!isLockout) {
+                hideMessage(); // Auto-dismiss old errors when typing
             }
+            if (e.target.value.length === 1 && index < inputs.length - 1) inputs[index + 1].focus();
         });
-
         input.addEventListener('keydown', (e) => {
-            if (e.key === 'Backspace' && !e.target.value && index > 0) {
-                inputs[index - 1].focus();
-            }
+            if (e.key === 'Backspace' && !e.target.value && index > 0) inputs[index - 1].focus();
         });
-
         input.addEventListener('paste', (e) => {
             e.preventDefault();
-            const pasteData = e.clipboardData.getData('text').slice(0, 6).split('');
-            pasteData.forEach((char, i) => {
-                if (inputs[i] && /^[0-9]$/.test(char)) {
-                    inputs[i].value = char;
-                }
-            });
-            const nextIndex = pasteData.length >= 6 ? 5 : pasteData.length;
-            inputs[nextIndex].focus();
-            if (pasteData.length === 6) otpForm.requestSubmit(); 
+            const chars = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, 6).split('');
+            chars.forEach((c, i) => { if (inputs[i] && /^[0-9]$/.test(c)) inputs[i].value = c; });
+            const next = chars.length >= 6 ? 5 : chars.length;
+            if (inputs[next]) inputs[next].focus();
+            if (chars.length === 6) otpForm.requestSubmit();
         });
     });
 
-    // --- 4. Resend OTP Logic ---
+    // ── Resend button ──────────────────────────────────────────────
     resendBtn.addEventListener('click', async () => {
-        try {
-            resendBtn.disabled = true;
-            const originalText = resendBtn.innerText;
-            resendBtn.innerText = "Sending...";
+        hideMessage();
+        resendBtn.disabled    = true;
+        resendBtn.textContent = 'Sending...';
 
-            const response = await fetch('/auth/resend-otp', {
-                method: 'POST',
+        try {
+            const res  = await fetch('/auth/resend-otp', {
+                method:  'POST',
                 headers: { 'Content-Type': 'application/json' }
             });
+            const data = await res.json();
 
-            const result = await response.json();
-
-            if (response.ok) {
-                showMessage(result.message || "New OTP sent!", "success");
-                resendBtn.innerText = "Resend Code";
-                // Explicitly restart timer on click
-                startTimer(TIMER_DURATION); 
+            if (res.ok) {
+                showMessage(data.message || 'New OTP sent!', 'success');
+                startCountdown(TIMER_DURATION);
+                inputs.forEach(i => i.value = '');
+                inputs[0].focus();
             } else {
-                showMessage(result.message || "Failed to resend.", "error");
-                resendBtn.disabled = false;
-                resendBtn.innerText = originalText;
+                showMessage(data.message || 'Failed to resend.', 'error', true); // Keep lockout error
+                if (data.blockedUntil) {
+                    const timeLeft = Math.max(0, Math.ceil((data.blockedUntil - Date.now()) / 1000));
+                    startCountdown(timeLeft);
+                } else {
+                    resendBtn.disabled = false;
+                    resendBtn.textContent = 'Resend Code';
+                }
             }
-        } catch (error) {
-            showMessage("Network error. Could not resend OTP.", "error");
+        } catch {
+            showMessage('Network error. Please try again.', 'error');
             resendBtn.disabled = false;
+            resendBtn.textContent = 'Resend Code';
         }
     });
 
-    // --- 5. OTP Verification Submission ---
-    otpForm.addEventListener('submit', async function(e) {
+    // ── Verify submit ──────────────────────────────────────────────
+    otpForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const otpValue = Array.from(inputs).map(input => input.value).join('');
+        const otp = Array.from(inputs).map(i => i.value).join('');
+        if (otp.length < 6) { showMessage('Please enter the full 6-digit code.', 'error'); return; }
 
-        if (otpValue.length < 6) {
-            showMessage("Please enter the full 6-digit code.", "error");
-            return;
-        }
+        loadingModal.classList.remove('hidden');
+        submitBtn.disabled = true;
 
         try {
-            loadingModal.classList.remove('hidden');
-            submitBtn.disabled = true;
-
-            const response = await fetch('/auth/verify-otp', {
-                method: 'POST',
+            const res  = await fetch('/auth/verify-otp', {
+                method:  'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ otp: otpValue })
+                body:    JSON.stringify({ otp })
             });
+            const data = await res.json();
 
-            const result = await response.json();
-
-            if (response.ok) {
-                // Clear all timer tracking on success
-                localStorage.removeItem('otpExpiry');
-                localStorage.removeItem('timerHasStarted');
-                showMessage(result.message || "Verified successfully!", "success");
-                setTimeout(() => window.location.href = result.redirectUrl || "/auth/login", 1500);
+            if (res.ok) {
+                showMessage(data.message || 'Verified!', 'success');
+                setTimeout(() => window.location.href = data.redirectUrl || '/auth/login', 1500);
             } else {
                 loadingModal.classList.add('hidden');
-                showMessage(result.message || "Invalid code.", "error");
+                showMessage(data.message || 'Invalid code.', 'error', !!data.blockedUntil); // Keep block error
                 submitBtn.disabled = false;
+                if (data.blockedUntil) {
+                    const timeLeft = Math.max(0, Math.ceil((data.blockedUntil - Date.now()) / 1000));
+                    startCountdown(timeLeft);
+                }
             }
-        } catch (error) {
+        } catch {
             loadingModal.classList.add('hidden');
-            showMessage("A network error occurred.", "error");
+            showMessage('Network error.', 'error');
             submitBtn.disabled = false;
         }
     });
 
-    function showMessage(text, type) {
-        msgDiv.innerText = text;
-        msgDiv.classList.remove('hidden', 'bg-red-900/50', 'text-red-200', 'bg-green-900/50', 'text-green-200');
-        msgDiv.classList.add('block', 'p-3', 'rounded-lg', 'text-sm', 'mb-4');
-        
-        if (type === "error") {
-            msgDiv.classList.add('bg-red-900/50', 'text-red-200', 'border', 'border-red-800');
-        } else {
-            msgDiv.classList.add('bg-green-900/50', 'text-green-200', 'border', 'border-green-800');
+    function showMessage(text, type, keepMessage = false) {
+        msgDiv.textContent = text;
+        msgDiv.className   = 'block p-3 rounded-lg text-sm text-center mb-4 border ' +
+            (type === 'error'
+                ? 'bg-red-900/50 text-red-200 border-red-800'
+                : 'bg-green-900/50 text-green-200 border-green-800');
+
+        clearTimeout(messageTimeout);
+        if (!keepMessage) {
+            messageTimeout = setTimeout(hideMessage, 5000); // auto-hide general messages in 5s
         }
     }
+
+    function hideMessage() {
+        msgDiv.textContent = '';
+        msgDiv.className   = 'hidden p-3 rounded-lg text-sm text-center mb-4';
+    }
+})();
 </script>

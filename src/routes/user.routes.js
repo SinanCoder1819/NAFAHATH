@@ -3,9 +3,11 @@ import * as profileController from '../controllers/user/profile.controller.js';
 import * as addressController from '../controllers/user/address.controller.js';
 import { getHomePage } from '../controllers/user/home.controller.js';
 import { upload } from '../config/cloudinary.js';
-import { isLogin } from '../middlewares/auth.middleware.js';
+import { isLogin, checkBlocked } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
+
+router.use(checkBlocked);
 
 // Multer error handler wrapper for AJAX routes
 const handleUpload = (req, res, next) => {
@@ -48,6 +50,7 @@ router.get('/address', isLogin, addressController.getAddressPage);
 router.post('/address', isLogin, addressController.addAddress);
 router.put('/address/:id', isLogin, addressController.editAddress);
 router.delete('/address/:id', isLogin, addressController.deleteAddress);
-router.patch('/address/:id/set-default', isLogin, addressController.setDefaultAddress);
+// Referrals
+router.get('/referrals', isLogin, profileController.getReferrals);
 
 export default router;

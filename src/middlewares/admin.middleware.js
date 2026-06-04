@@ -1,11 +1,6 @@
 import User from "../models/User.model.js";
 
-/**
- * Protect admin routes.
- * 1. Checks req.session.admin exists and has role === "admin"
- * 2. Validates the admin user still exists in DB and is not blocked
- * 3. Refreshes req.session.admin with latest DB data
- */
+
 export const isAdmin = async (req, res, next) => {
     const session = req.session;
 
@@ -15,17 +10,15 @@ export const isAdmin = async (req, res, next) => {
     }
 
     try {
-        // Live DB check — catches: deleted admin, role downgraded, account blocked
         const admin = await User.findById(session.admin.id)
             .select("name email role isBlocked")
             .lean();
 
         if (!admin || admin.role !== "admin" || admin.isBlocked) {
-            // Invalidate the session
             return session.destroy(() => _unauthorized(req, res));
         }
 
-        // Keep session data fresh
+      
         session.admin = {
             id:    admin._id.toString(),
             name:  admin.name,
@@ -33,7 +26,7 @@ export const isAdmin = async (req, res, next) => {
             role:  admin.role,
         };
 
-        // Make available in views (layout uses res.locals.admin)
+        
         res.locals.admin = session.admin;
 
         return next();

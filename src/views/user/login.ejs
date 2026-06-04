@@ -231,6 +231,7 @@
             <div class="form-group">
                 <label class="form-label" for="email">Email</label>
                 <input type="email" id="email" name="email" placeholder="Enter your email" class="form-input" autocomplete="email" required />
+                <p id="emailError" style="color: #fca5a5; font-size: 11px; margin-top: 5px; display: none;"></p>
             </div>
 
             <div class="form-group">
@@ -247,6 +248,7 @@
                         </svg>
                     </button>
                 </div>
+                <p id="passwordError" style="color: #fca5a5; font-size: 11px; margin-top: 5px; display: none;"></p>
             </div>
 
             <button type="submit" id="submitBtn" class="btn-submit">Log In</button>
@@ -288,6 +290,58 @@
     }
     function hideMsg() { msgDiv.className = 'alert'; }
 
+    // UI Helper Functions for Inline Errors
+    function showFieldError(inputId, errorId, message) {
+        const input = document.getElementById(inputId);
+        const errorEl = document.getElementById(errorId);
+        errorEl.textContent = message;
+        errorEl.style.display = 'block';
+        input.style.borderColor = '#ef4444';
+    }
+
+    function clearFieldError(inputId, errorId) {
+        const input = document.getElementById(inputId);
+        const errorEl = document.getElementById(errorId);
+        errorEl.textContent = '';
+        errorEl.style.display = 'none';
+        input.style.borderColor = '';
+    }
+
+    function validatePassword(value) {
+        if (!value) {
+            return { valid: false, message: 'Password is required.' };
+        }
+
+        if (value.length < 8) {
+            return { valid: false, message: 'Password must be at least 8 characters.' };
+        }
+
+        if (!/[A-Z]/.test(value)) {
+            return { valid: false, message: 'Password must contain at least one uppercase letter.' };
+        }
+
+        if (!/[a-z]/.test(value)) {
+            return { valid: false, message: 'Password must contain at least one lowercase letter.' };
+        }
+
+        if (!/[0-9]/.test(value)) {
+            return { valid: false, message: 'Password must contain at least one number.' };
+        }
+
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
+            return { valid: false, message: 'Password must contain at least one special character (e.g. !@#$%^&*).' };
+        }
+
+        return { valid: true };
+    }
+
+    // Input listeners to clear errors on type
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+
+    emailInput.addEventListener('input', () => clearFieldError('email', 'emailError'));
+    passwordInput.addEventListener('input', () => clearFieldError('password', 'passwordError'));
+
     // Form submit
     const form      = document.getElementById('loginForm');
     const submitBtn = document.getElementById('submitBtn');
@@ -296,6 +350,34 @@
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         hideMsg();
+
+        clearFieldError('email', 'emailError');
+        clearFieldError('password', 'passwordError');
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+
+        let isValid = true;
+
+        if (!email) {
+            showFieldError('email', 'emailError', 'Email address is required.');
+            isValid = false;
+        } else {
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(email)) {
+                showFieldError('email', 'emailError', 'Enter a valid email address.');
+                isValid = false;
+            }
+        }
+
+        const passwordCheck = validatePassword(password);
+        if (!passwordCheck.valid) {
+            showFieldError('password', 'passwordError', passwordCheck.message);
+            isValid = false;
+        }
+
+        if (!isValid) return;
+
         overlay.classList.add('show');
         submitBtn.disabled = true;
 
@@ -304,8 +386,8 @@
                 method:  'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body:    JSON.stringify({
-                    email:    document.getElementById('email').value.trim(),
-                    password: pwInput.value,
+                    email:    email,
+                    password: password,
                 }),
             });
             const data = await res.json();

@@ -1,6 +1,3 @@
-/**
- * GET /admin/dashboard
- */
 export const getDashboard = (req, res) => {
     res.render("admin/dashboard", {
         layout: "layouts/admin",

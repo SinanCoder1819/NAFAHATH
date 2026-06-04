@@ -4,7 +4,7 @@ const otpSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    index: true // Ensures fast lookups as your platform grows [cite: 24, 47]
+    index: true
   },
   otpCode: {
     type: String,
@@ -17,15 +17,28 @@ const otpSchema = new mongoose.Schema({
   },
   attempts: {
     type: Number,
-    default: 0 // Track failed attempts to prevent brute-force attacks [cite: 57, 66]
+    default: 0
+  },
+  // How many times resend has been clicked for this OTP session
+  resendCount: {
+    type: Number,
+    default: 0
+  },
+  // If resend limit hit, block until this timestamp
+  resendBlockedUntil: {
+    type: Date,
+    default: null
+  },
+  // If OTP validation fails 5 times, lock verification until this timestamp
+  blockedUntil: {
+    type: Date,
+    default: null
   },
   createdAt: {
     type: Date,
     default: Date.now,
-    expires: 300 // TTL Index: Automatically deletes the doc after 300 seconds (5 mins) [cite: 36, 58]
+    expires: 600   // MongoDB auto-deletes after 10 minutes
   }
 });
 
-
 export default mongoose.model('OTP', otpSchema);
-
