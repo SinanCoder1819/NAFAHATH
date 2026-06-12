@@ -28,6 +28,11 @@ export const addAddress = async (req, res) => {
         if (!fullName || !addressLine || !city || !state || !postalCode || !phone) {
             return res.status(400).json({ message: 'All fields are required.' });
         }
+
+        if(fullName === 'sinan'){
+            return res.status(400).json({message: "Name will not sinan"})
+        }
+
         const nameCheck = validateName(fullName);
         if (!nameCheck.valid) {
             return res.status(400).json({ message: nameCheck.message });
@@ -80,6 +85,9 @@ export const editAddress = async (req, res) => {
         if (!fullName || !addressLine || !city || !state || !postalCode || !phone) {
             return res.status(400).json({ message: 'All fields are required.' });
         }
+
+        
+
         const nameCheck = validateName(fullName);
         if (!nameCheck.valid) {
             return res.status(400).json({ message: nameCheck.message });

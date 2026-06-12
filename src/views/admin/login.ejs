@@ -184,29 +184,29 @@
 <script>
 (function () {
     // Eye toggle
-    const pwInput   = document.getElementById('alPassword');
-    const eyeOpen   = document.getElementById('alEyeOpen');
+    const pwInput = document.getElementById('alPassword');
+    const eyeOpen = document.getElementById('alEyeOpen');
     const eyeClosed = document.getElementById('alEyeClosed');
 
     document.getElementById('alEyeBtn').addEventListener('click', () => {
         const show = pwInput.type === 'password';
-        pwInput.type        = show ? 'text' : 'password';
-        eyeOpen.style.display   = show ? 'none' : '';
-        eyeClosed.style.display = show ? ''     : 'none';
+        pwInput.type = show ? 'text' : 'password';
+        eyeOpen.style.display = show ? 'none' : '';
+        eyeClosed.style.display = show ? '' : 'none';
     });
 
     // Message helper
     const msgDiv = document.getElementById('alMsg');
     function showMsg(text, type) {
         msgDiv.textContent = text;
-        msgDiv.className   = 'al-alert show ' + (type === 'error' ? 'al-alert-error' : 'al-alert-success');
+        msgDiv.className = 'al-alert show ' + (type === 'error' ? 'al-alert-error' : 'al-alert-success');
     }
     function hideMsg() { msgDiv.className = 'al-alert'; }
 
     // Form submit
-    const form      = document.getElementById('adminLoginForm');
+    const form = document.getElementById('adminLoginForm');
     const submitBtn = document.getElementById('alSubmit');
-    const overlay   = document.getElementById('alOverlay');
+    const overlay = document.getElementById('alOverlay');
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -216,10 +216,10 @@
 
         try {
             const res  = await fetch('/admin/login', {
-                method:  'POST',
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body:    JSON.stringify({
-                    email:    document.getElementById('alEmail').value.trim(),
+                body: JSON.stringify({
+                    email: document.getElementById('alEmail').value.trim(),
                     password: pwInput.value,
                 }),
             });

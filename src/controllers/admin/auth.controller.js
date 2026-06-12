@@ -2,8 +2,6 @@ import User from "../../models/User.model.js";
 import bcrypt from "bcrypt";
 
 export const getAdminLogin = (req, res) => {
-    // Note: redirect-if-logged-in is handled by isAdminLogout middleware in the route.
-    // This controller only runs when the admin is genuinely a guest.
     const error = req.session.adminError || null;
     delete req.session.adminError;
 
@@ -12,9 +10,6 @@ export const getAdminLogin = (req, res) => {
         error,
     });
 };
-
-
-
 
 
 
@@ -36,9 +31,9 @@ export const postAdminLogin = async (req, res) => {
             return res.status(403).json({ message: "Access denied. Admins only." });
         }
 
-        if (user.isBlocked) {
-            return res.status(403).json({ message: "Your account has been disabled." });
-        }
+        // if (user.isBlocked) {
+        //     return res.status(403).json({ message: "Your account has been disabled." });
+        // }
 
         let passwordMatch = false;
         if (user.password) {
@@ -52,15 +47,13 @@ export const postAdminLogin = async (req, res) => {
             return res.status(401).json({ message: "Invalid email or password." });
         }
 
-        // Store admin _id as a plain string (same reason as user login)
         req.session.admin = {
-            id:    user._id.toString(),
-            name:  user.name,
+            id: user._id.toString(),
+            name: user.name,
             email: user.email,
-            role:  user.role,
+            role: user.role,
         };
 
-        // Save session BEFORE responding to prevent race condition on redirect
         req.session.save((err) => {
             if (err) {
                 console.error("Admin session save error:", err);

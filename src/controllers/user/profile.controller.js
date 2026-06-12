@@ -67,6 +67,7 @@ export const updateProfile = async (req, res) => {
             return res.status(400).json({ message: nameCheck.message });
         }
 
+
         const updateData = { name: nameCheck.value };
 
         // Phone is optional on profile edit — validate only when provided and non-empty

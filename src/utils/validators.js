@@ -16,6 +16,7 @@ export function validateName(value) {
         return { valid: false, message: 'Name is required.' };
     }
 
+
     if (trimmed.length <= 3) {
         return { valid: false, message: 'Name must be at least 3 characters.' };
     }

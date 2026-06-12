@@ -344,17 +344,14 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password." });
     }
 
-    // ── Build session payload ────────────────────────────────────────────────────────────────
-    // Store _id as a plain string — ObjectId objects can behave unexpectedly
-    // when serialised/deserialised from the session store.
+  
     req.session.user = {
-      id:    user._id.toString(),   // always a string
+      id: user._id.toString(), 
       name:  user.name,
       email: user.email,
     };
 
-    // Capture returnTo BEFORE saving, then delete it so the save
-    // includes the clean session (no leftover returnTo key).
+ 
     const returnTo = req.session.returnTo || "/";
     delete req.session.returnTo;
 

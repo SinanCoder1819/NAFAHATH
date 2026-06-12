@@ -7,7 +7,7 @@ const PAGE_SIZE = 5;
 
 export const getCustomers = async (req, res) => {
     try {
-        const page   = Math.max(1, parseInt(req.query.page) || 1);
+        const page = Math.max(1, parseInt(req.query.page) || 1);
         const search = (req.query.search || "").trim();
 
         const filter = { role: { $ne: "admin" } };
@@ -29,11 +29,11 @@ export const getCustomers = async (req, res) => {
             .select("name email phone isBlocked createdAt")
             .lean();
 
-        //    console.log(users) 
+        
 
         res.render("admin/customers", {
-            layout:     "layouts/admin",
-            admin:      req.session.admin,
+            layout: "layouts/admin",
+            admin: req.session.admin,
             activePage: "customers",
             users,
             search,
@@ -51,7 +51,7 @@ export const getCustomers = async (req, res) => {
 
 export const toggleBlockUser = async (req, res) => {
     try {
-        const { id }  = req.params;
+        const { id } = req.params;
         const { action } = req.body;
 
 

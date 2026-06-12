@@ -16,6 +16,7 @@ passport.use(new GoogleStrategy({
                 return done(null, false, { message: "Account blocked" });
             }
 
+
             if (!user.googleId) {
                 user.googleId = profile.id;
                 await user.save();
@@ -23,8 +24,8 @@ passport.use(new GoogleStrategy({
             return done(null, user);
         } else {
             const newUser = await User.create({
-                name:     profile.displayName,
-                email:    profile.emails[0].value,
+                name: profile.displayName,
+                email: profile.emails[0].value,
                 googleId: profile.id,
             });
             return done(null, newUser);
