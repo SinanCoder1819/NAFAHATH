@@ -19,17 +19,14 @@ const otpSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  // How many times resend has been clicked for this OTP session
   resendCount: {
     type: Number,
     default: 0
   },
-  // If resend limit hit, block until this timestamp
   resendBlockedUntil: {
     type: Date,
     default: null
   },
-  // If OTP validation fails 5 times, lock verification until this timestamp
   blockedUntil: {
     type: Date,
     default: null
@@ -37,7 +34,7 @@ const otpSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-    expires: 600   // MongoDB auto-deletes after 10 minutes
+    expires: 600   
   }
 });
 

@@ -2,7 +2,7 @@
  * 
  
  *
- * @param {string} value  — raw input from req.body
+ * @param {string} value 
  * @returns {{ valid: boolean, value?: string, message?: string }}
  */
 export function validateName(value) {
@@ -16,8 +16,8 @@ export function validateName(value) {
         return { valid: false, message: 'Name is required.' };
     }
 
-    if (trimmed.length < 2) {
-        return { valid: false, message: 'Name must be at least 2 characters.' };
+    if (trimmed.length <= 3) {
+        return { valid: false, message: 'Name must be at least 3 characters.' };
     }
 
     if (trimmed.length > 50) {

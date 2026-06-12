@@ -6,57 +6,28 @@ import { sendOtpEmail } from "../../services/emailService.js";
 import { validateName, validatePhone, validatePassword } from "../../utils/validators.js";
 import { generateUniqueReferralCode } from "../../utils/referral.js";
 
-export const getLoginPage = (req, res) => {
-  if (req.session.user) return res.redirect("/");
-  const blocked = req.query.blocked === "true";
-  const googleError = req.query.error === "google";
-  res.render("user/login", { blocked, googleError });
-};
+
 
 export const getSignupPage = (req, res) => {
-  if (req.session.user) return res.redirect("/");
   res.render("user/signup");
 };
 
-export const getVerifyOtp = async (req, res) => {
-  try {
-    const email = req.session.email;
-    if (!email) {
-      return res.redirect("/auth/signup");
-    }
-    const otp = await OTP.findOne({ email, purpose: "SIGNUP" });
-    let timeLeft = 30;
-    if (otp) {
-      if (otp.blockedUntil && otp.blockedUntil > new Date()) {
-        timeLeft = Math.max(0, Math.ceil((otp.blockedUntil.getTime() - Date.now()) / 1000));
-      } else {
-        const elapsed = Math.round((Date.now() - otp.createdAt.getTime()) / 1000);
-        timeLeft = Math.max(0, 30 - elapsed);
-      }
-    }
-    res.render("user/verifyOtp", { timeLeft });
-  } catch (err) {
-    console.error("Error loading verify OTP page:", err);
-    res.redirect("/auth/signup");
-  }
-};
 
 export const registerUserTemp = async (req, res) => {
   try {
-    const { name, email, phone, password, confirmPassword, referral } =
-      req.body;
+    const { name, email, phone, password, confirmPassword, referral } = req.body;
 
     if (!email || !password || !confirmPassword) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Name validation (required, trim, min/max, unicode, punctuation, sanitize)
+   
     const nameCheck = validateName(name);
     if (!nameCheck.valid) {
       return res.status(400).json({ message: nameCheck.message });
     }
 
-    // Phone validation (10 digits, starts 6-9, optional +91/91/0 prefix, separators ok)
+
     const phoneCheck = validatePhone(phone);
     if (!phoneCheck.valid) {
       return res.status(400).json({ message: phoneCheck.message });
@@ -127,6 +98,29 @@ export const registerUserTemp = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getVerifyOtp = async (req, res) => {
+  try {
+    const email = req.session.email;
+    if (!email) {
+      return res.redirect("/auth/signup");
+    }
+    const otp = await OTP.findOne({ email, purpose: "SIGNUP" });
+    let timeLeft = 30;
+    if (otp) {
+      if (otp.blockedUntil && otp.blockedUntil > new Date()) {
+        timeLeft = Math.max(0, Math.ceil((otp.blockedUntil.getTime() - Date.now()) / 1000));
+      } else {
+        const elapsed = Math.round((Date.now() - otp.createdAt.getTime()) / 1000);
+        timeLeft = Math.max(0, 30 - elapsed);
+      }
+    }
+    res.render("user/verifyOtp", { timeLeft });
+  } catch (err) {
+    console.error("Error loading verify OTP page:", err);
+    res.redirect("/auth/signup");
   }
 };
 
@@ -310,63 +304,65 @@ export const resendOtp = async (req, res) => {
 };
 
 
+
+
+export const getLoginPage = (req, res) => {
+  const blocked = req.query.blocked === "true";
+  const googleError = req.query.error === "google";
+  res.render("user/login", { blocked, googleError });
+};
+
+
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Email and password are required" });
+      return res.status(400).json({ message: "Email and password are required" });
     }
 
     const trimmedEmail = email.trim().toLowerCase();
     const user = await User.findOne({ email: trimmedEmail });
     if (!user) {
-      return res.status(401).json({ message: "Password or email doesn't exist" });
+      return res.status(401).json({ message: "Invalid email or password." });
     }
 
-    // Block check
     if (user.isBlocked) {
-      return res
-        .status(403)
-        .json({
-          message: "Your account has been blocked. Please contact support.",
-        });
+      return res.status(403).json({
+        message: "Your account has been blocked. Please contact support.",
+      });
     }
 
-    // Google-only accounts have no password
     if (!user.password) {
-      return res
-        .status(401)
-        .json({
-          message:
-            "This account uses Google login. Please sign in with Google.",
-        });
+      return res.status(401).json({
+        message: "This account uses Google login. Please sign in with Google.",
+      });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log("Is Match : ",isMatch)
     if (!isMatch) {
-      return res.status(401).json({ message: "Password or email doesn't match" });
+      return res.status(401).json({ message: "Invalid email or password." });
     }
 
+    // ── Build session payload ────────────────────────────────────────────────────────────────
+    // Store _id as a plain string — ObjectId objects can behave unexpectedly
+    // when serialised/deserialised from the session store.
     req.session.user = {
-      id: user._id,
-      name: user.name,
+      id:    user._id.toString(),   // always a string
+      name:  user.name,
       email: user.email,
     };
+
+    // Capture returnTo BEFORE saving, then delete it so the save
+    // includes the clean session (no leftover returnTo key).
+    const returnTo = req.session.returnTo || "/";
+    delete req.session.returnTo;
 
     req.session.save((err) => {
       if (err) {
         console.error("Session save error:", err);
         return res.status(500).json({ message: "Internal server error" });
       }
-
-      // Redirect to the page they were trying to visit, or home
-      const returnTo = req.session?.returnTo || "/";
-      delete req.session.returnTo;
-
       return res.status(200).json({
         message: "Login successful!",
         redirectUrl: returnTo,
@@ -664,14 +660,5 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-
-// async function blockedUser(){
-//   let users = await User.find({isBlocked: true})
-//   return users
-// }
-
-// blockedUser()
-// .then((users)=> console.log(users))
-// .catch((err)=> console.log(err))
 
 

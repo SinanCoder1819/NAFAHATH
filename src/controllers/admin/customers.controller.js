@@ -28,12 +28,9 @@ export const getCustomers = async (req, res) => {
             .limit(PAGE_SIZE)
             .select("name email phone isBlocked createdAt")
             .lean();
-console.log(users[0].isBlocked)
-    //   for(let i=0;i<users.length;i++){
-    //     if(users[i].isBlocked==true){
-    //         console.log(users[i])
-    //     }
-    //   }
+
+        //    console.log(users) 
+
         res.render("admin/customers", {
             layout:     "layouts/admin",
             admin:      req.session.admin,

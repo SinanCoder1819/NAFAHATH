@@ -1,6 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 const router = express.Router();
+
 import {
     getLoginPage,
     getSignupPage,
@@ -19,35 +20,38 @@ import {
     verifyOtp
 } from "../controllers/user/auth.controller.js";
 
+import { isLogout, noCache } from '../middlewares/auth.middleware.js';
 
-import { isLogout } from '../middlewares/auth.middleware.js';
 
 
-router.get('/signup', isLogout, getSignupPage);
+router.get('/signup',  isLogout, noCache, getSignupPage);
 router.post('/signup', registerUserTemp);
-router.get('/verify-otp', getVerifyOtp);
+
+
+router.get('/verify-otp',  noCache, getVerifyOtp);
 router.post('/verify-otp', verifyOtp);
 router.post('/resend-otp', resendOtp);
 
 
-router.get('/login', isLogout, getLoginPage);
+router.get('/login', isLogout, noCache, getLoginPage);
 router.post('/login', loginUser);
 router.get('/logout', logoutUser);
 
 
-router.get('/forgot-password', isLogout, getVerifyEmail);
+router.get('/forgot-password',  isLogout, noCache, getVerifyEmail);
 router.post('/forgot-password', sendForgotPasswordOtp);
-router.get('/verify-forgotOtp', getVerifyForgotOtp);   
+
+router.get('/verify-forgotOtp',  noCache, getVerifyForgotOtp);
 router.post('/verify-forgotOtp', verifyForgotOtp);
 router.post('/resend-forgotOtp', resendForgotOtp);
-router.get('/reset-password', getResetPassword);        
+
+router.get('/reset-password',  noCache, getResetPassword);
 router.post('/reset-password', resetPassword);
 
-// Google OAuth
+
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-
-router.get('/google/callback', (req, res, next) => {
+router.get('/google/callback', noCache, (req, res, next) => {
     passport.authenticate('google', (err, user, info) => {
         if (err) {
             console.error('Google OAuth error:', err);
@@ -73,7 +77,7 @@ router.get('/google/callback', (req, res, next) => {
 
             req.session.save((saveErr) => {
                 if (saveErr) console.error('Session save error after Google login:', saveErr);
-                res.redirect('/');
+                res.send(`<!DOCTYPE html><html><body><script>window.location.replace('/');</script></body></html>`);
             });
         });
     })(req, res, next);

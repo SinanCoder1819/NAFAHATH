@@ -9,7 +9,7 @@ import { generateUniqueReferralCode } from '../../utils/referral.js';
 // Helper to get user ID from session
 const getSessionUserId = (req) => req.session.user?.id || req.session.user?._id;
 
-// 1. Get Profile Page
+
 export const getProfile = async (req, res) => {
     try {
         const userId = getSessionUserId(req);
@@ -19,7 +19,8 @@ export const getProfile = async (req, res) => {
 
         res.render('user/profile', { 
             title: 'My Profile | Nafahath',
-            user
+            user,
+            isGoogleUser: !!user.googleId
         });
     } catch (error) {
         console.error("Profile Load Error:", error);
@@ -27,7 +28,16 @@ export const getProfile = async (req, res) => {
     }
 };
 
-// 2. Get Edit Profile Page
+
+
+export const blockGoogleUser = async (req, res, next) => {
+    const userId = getSessionUserId(req);
+    const user = await User.findById(userId);
+    if (user?.googleId) return res.redirect('/profile');
+    next();
+};
+
+
 export const getEditProfile = async (req, res) => {
     try {
         const userId = getSessionUserId(req);
