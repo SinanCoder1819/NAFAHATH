@@ -34,7 +34,7 @@ referral:{
     createdAt: {
       type: Date,
       default: Date.now,
-      expires: 1200, 
+      expires: 1200, // 20 minutes
     },    
   },
   {

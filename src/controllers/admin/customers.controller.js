@@ -29,6 +29,7 @@ export const getCustomers = async (req, res) => {
             .select("name email phone isBlocked createdAt")
             .lean();
 
+       
         
 
         res.render("admin/customers", {
@@ -60,6 +61,7 @@ export const toggleBlockUser = async (req, res) => {
         }
 
         const user = await User.findById(id);
+        
         if (!user) {
             return res.status(404).json({ message: "User not found." });
         }

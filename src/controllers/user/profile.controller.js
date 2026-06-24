@@ -1,5 +1,5 @@
 import User from '../../models/User.model.js';
-import { cloudinary } from '../../config/cloudinary.js';
+import {  cloudinary } from '../../config/cloudinary.js';
 import bcrypt from 'bcrypt';
 import OTP from '../../models/Otp.model.js';
 import { sendOtpEmail } from '../../services/emailService.js';
@@ -107,9 +107,9 @@ export const uploadProfileImage = async (req, res) => {
         }
 
         
-        const imageUrl = req.file.path;
+        const imageUrl = req.file.secure_url;
 
-      
+     
         const user = await User.findById(userId);
         if (user?.profileImage) {
             try {
@@ -123,7 +123,7 @@ export const uploadProfileImage = async (req, res) => {
         }
 
         await User.findByIdAndUpdate(userId, { $set: { profileImage: imageUrl } });
-
+       
         return res.status(200).json({ 
             message: "Profile image updated successfully.",
             newImageUrl: imageUrl

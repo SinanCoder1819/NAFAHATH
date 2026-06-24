@@ -132,12 +132,7 @@ export function validatePincode(value) {
 }
 
 /**
- * Validates a password based on strong password rules.
- * - Minimum Length: At least 8 characters.
- * - Uppercase: At least one capital letter (A-Z).
- * - Lowercase: At least one small letter (a-z).
- * - Number: At least one numeric digit (0-9).
- * - Special Character: At least one symbol (e.g. !@#$%^&*).
+ *
  *
  * @param {string} value
  * @returns {{ valid: boolean, message?: string }}

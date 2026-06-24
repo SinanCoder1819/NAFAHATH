@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.get("/login",  isAdminLogout, noCache, getAdminLogin);
 router.post("/login", postAdminLogin);
-router.get("/logout", getAdminLogout);
+router.post("/logout", getAdminLogout);
 
 
 router.use(isAdmin);

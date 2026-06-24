@@ -65,7 +65,9 @@
                             <div class="px-2 space-y-1">
                                 <a href="/profile" class="block px-3 py-2 text-xs text-gray-300 hover:text-[#C5A267] hover:bg-[#C5A267]/5 rounded-xl">My Profile</a>
                                 <a href="/orders" class="block px-3 py-2 text-xs text-gray-300 hover:text-[#C5A267] hover:bg-[#C5A267]/5 rounded-xl">Order History</a>
-                                <a href="/auth/logout" class="block px-3 py-2 text-xs text-red-500 hover:bg-red-500/5 rounded-xl">Sign Out</a>
+                                <form action="/auth/logout" method="post">
+                                    <button class="block px-3 py-2 text-xs text-red-500 hover:bg-red-500/5 rounded-xl">Sign Out</button>
+                                </form>
                             </div>
                         <% } else { %>
                             <div class="p-4 space-y-3">

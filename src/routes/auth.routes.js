@@ -35,7 +35,7 @@ router.post('/resend-otp', resendOtp);
 
 router.get('/login', isLogout, noCache, getLoginPage);
 router.post('/login', loginUser);
-router.get('/logout', logoutUser);
+router.post('/logout', logoutUser);
 
 
 router.get('/forgot-password',  isLogout, noCache, getVerifyEmail);

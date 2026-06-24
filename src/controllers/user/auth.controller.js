@@ -42,6 +42,7 @@ export const registerUserTemp = async (req, res) => {
       return res.status(400).json({ message: "Passwords do not match" });
     }
 
+
     if (referral && referral.trim() !== "") {
       const referrer = await User.findOne({ referralCode: referral.trim() });
       if (!referrer) {
@@ -56,9 +57,11 @@ export const registerUserTemp = async (req, res) => {
     }
 
     const existingOtp = await OTP.findOne({ email, purpose: "SIGNUP" });
+
     if (existingOtp && existingOtp.blockedUntil && existingOtp.blockedUntil > new Date()) {
       const timeLeftMs = existingOtp.blockedUntil.getTime() - Date.now();
       const minutesLeft = Math.ceil(timeLeftMs / 60000);
+
       return res.status(403).json({
         message: `Too many failed attempts. OTP verification is locked for ${minutesLeft} minute(s).`,
         blockedUntil: existingOtp.blockedUntil.getTime()
@@ -87,9 +90,8 @@ export const registerUserTemp = async (req, res) => {
     try {
       await sendOtpEmail(email, otp);
       req.session.email = email;
-      return res
-        .status(201)
-        .json({ message: "OTP sent to email.", email: tempUser.email });
+      return res.status(201).json({ message: "OTP sent to email.", email: tempUser.email });
+
     } catch (emailError) {
       await UnverifiedUser.deleteOne({ email });
       await OTP.deleteOne({ email, otpCode: otp });
@@ -323,6 +325,8 @@ export const loginUser = async (req, res) => {
 
     const trimmedEmail = email.trim().toLowerCase();
     const user = await User.findOne({ email: trimmedEmail });
+
+    
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password." });
     }
@@ -347,7 +351,7 @@ export const loginUser = async (req, res) => {
   
     req.session.user = {
       id: user._id.toString(), 
-      name:  user.name,
+      name: user.name,
       email: user.email,
     };
 

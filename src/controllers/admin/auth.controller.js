@@ -23,6 +23,7 @@ export const postAdminLogin = async (req, res) => {
     try {
         const user = await User.findOne({ email: email.toLowerCase().trim() });
 
+
         if (!user) {
             return res.status(401).json({ message: "Invalid email or password." });
         }
@@ -34,6 +35,8 @@ export const postAdminLogin = async (req, res) => {
         // if (user.isBlocked) {
         //     return res.status(403).json({ message: "Your account has been disabled." });
         // }
+
+        
 
         let passwordMatch = false;
         if (user.password) {

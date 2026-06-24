@@ -277,16 +277,16 @@
 
     document.getElementById('eyeToggle').addEventListener('click', () => {
         const show = pwInput.type === 'password';
-        pwInput.type            = show ? 'text' : 'password';
-        eyeOpen.style.display   = show ? 'none'  : '';
-        eyeClosed.style.display = show ? ''      : 'none';
+        pwInput.type = show ? 'text' : 'password';
+        eyeOpen.style.display = show ? 'none' : '';
+        eyeClosed.style.display = show ? '' : 'none';
     });
 
     // Message helper
     const msgDiv = document.getElementById('responseMessage');
     function showMsg(text, type) {
         msgDiv.textContent = text;
-        msgDiv.className   = 'alert show ' + (type === 'error' ? 'alert-error' : 'alert-success');
+        msgDiv.className = 'alert show ' + (type === 'error' ? 'alert-error' : 'alert-success');
     }
     function hideMsg() { msgDiv.className = 'alert'; }
 
@@ -343,7 +343,7 @@
     passwordInput.addEventListener('input', () => clearFieldError('password', 'passwordError'));
 
     // Form submit
-    const form      = document.getElementById('loginForm');
+    const form = document.getElementById('loginForm');
     const submitBtn = document.getElementById('submitBtn');
     const overlay   = document.getElementById('loadingOverlay');
 

@@ -40,7 +40,6 @@ app.use((req, res, next) => {
 
 app.use(passport.initialize());
 
-// Restore passport user only for non-admin routes (user OAuth flow)
 app.use((req, res, next) => {
     if (req.path.startsWith("/admin")) return next();
     return passport.session()(req, res, next);
@@ -58,7 +57,7 @@ app.set("layout", "layouts/user");
 
 app.use("/admin", adminRoutes); 
 app.use("/auth",  authRoutes);  
-app.use("/", userRoutes);  
+app.use("/", userRoutes);
 
 
 export default app;

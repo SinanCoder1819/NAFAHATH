@@ -52,16 +52,16 @@
 
 <script>
 (function () {
-    const inputs       = document.querySelectorAll('.otp-input');
-    const otpForm      = document.getElementById('otpForm');
-    const submitBtn    = document.getElementById('submitBtn');
-    const resendBtn    = document.getElementById('resendBtn');
-    const lockoutMsg   = document.getElementById('lockoutMsg');
+    const inputs = document.querySelectorAll('.otp-input');
+    const otpForm = document.getElementById('otpForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const resendBtn = document.getElementById('resendBtn');
+    const lockoutMsg = document.getElementById('lockoutMsg');
     const lockoutTimer = document.getElementById('lockoutTimerVal');
-    const msgDiv       = document.getElementById('responseMessage');
+    const msgDiv = document.getElementById('responseMessage');
     const loadingModal = document.getElementById('loadingModal');
 
-    const TIMER_DURATION = 30;   // seconds between resends
+    const TIMER_DURATION = 30;  
     let countdownInterval = null;
     let isLockout = false;
     let messageTimeout = null;
@@ -86,7 +86,7 @@
             lockoutMsg.classList.add('hidden');
             resendBtn.textContent = 'Resend Code';
             resendBtn.disabled = false;
-            hideMessage(); // Lockout completed, clear lockout messages
+            hideMessage(); 
         }
     }
 
@@ -142,11 +142,11 @@
     // ── Resend button ──────────────────────────────────────────────
     resendBtn.addEventListener('click', async () => {
         hideMessage();
-        resendBtn.disabled    = true;
+        resendBtn.disabled = true;
         resendBtn.textContent = 'Sending...';
 
         try {
-            const res  = await fetch('/auth/resend-otp', {
+            const res = await fetch('/auth/resend-otp', {
                 method:  'POST',
                 headers: { 'Content-Type': 'application/json' }
             });

@@ -1,3 +1,4 @@
+import { json } from 'express';
 import Address from '../../models/Address.model.js';
 import { validateName, validatePhone, validatePincode } from '../../utils/validators.js';
 
@@ -29,9 +30,7 @@ export const addAddress = async (req, res) => {
             return res.status(400).json({ message: 'All fields are required.' });
         }
 
-        if(fullName === 'sinan'){
-            return res.status(400).json({message: "Name will not sinan"})
-        }
+        
 
         const nameCheck = validateName(fullName);
         if (!nameCheck.valid) {
@@ -53,9 +52,12 @@ export const addAddress = async (req, res) => {
             await Address.updateMany({ userId }, { $set: { isDefault: false } });
         }
 
-        
+
+       
         const count = await Address.countDocuments({ userId });
         const shouldBeDefault = setDefault || count === 0;
+
+        
 
         const address = await Address.create({
             userId,
@@ -67,6 +69,8 @@ export const addAddress = async (req, res) => {
             phone: phoneCheck.value,
             isDefault: shouldBeDefault
         });
+
+    
 
         return res.status(201).json({ message: 'Address added successfully.', address });
     } catch (error) {
@@ -85,6 +89,7 @@ export const editAddress = async (req, res) => {
         if (!fullName || !addressLine || !city || !state || !postalCode || !phone) {
             return res.status(400).json({ message: 'All fields are required.' });
         }
+
 
         
 

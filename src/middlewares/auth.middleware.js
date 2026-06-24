@@ -58,16 +58,17 @@ export const isLogout = async (req, res, next) => {
 
   try {
     const userId = req.session.user.id || req.session.user._id;
-    const user   = await User.findById(userId).select("isBlocked").lean();
+    const user = await User.findById(userId).select("isBlocked").lean();
 
     if (!user || user.isBlocked) {
       return req.session.destroy(() => {
         res.clearCookie("user.sid");
-        return next();
+        return res.redirect('/login'); // return next()
       });
     }
 
    return res.redirect("/");
+   
   } catch (err) {
     console.error("isLogout middleware error:", err);
     return next(); 
