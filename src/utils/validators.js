@@ -24,19 +24,19 @@ export function validateName(value) {
     if (trimmed.length > 50) {
         return { valid: false, message: 'Name must not exceed 50 characters.' };
     }
-
+    
     
     const injectionPattern = /[<>&"`;{}]/;
     if (injectionPattern.test(trimmed)) {
         return { valid: false, message: 'Name contains invalid characters.' };
     }
-
-  
-    const hasLetter = /\p{L}/u.test(trimmed);
+    
+    
+    const hasLetter = /\p{L}/u.test(trimmed); // uncode 
     if (!hasLetter) {
-        return { valid: false, message: 'Name must contain at least one letter.' };
+        return { valid: false, message: 'Name must contain at only letter.' };
     }
-
+    
     return { valid: true, value: trimmed };
 }
 

@@ -26,7 +26,8 @@ export const registerUserTemp = async (req, res) => {
     if (!nameCheck.valid) {
       return res.status(400).json({ message: nameCheck.message });
     }
-
+    
+    
 
     const phoneCheck = validatePhone(phone);
     if (!phoneCheck.valid) {
@@ -57,6 +58,7 @@ export const registerUserTemp = async (req, res) => {
     }
 
     const existingOtp = await OTP.findOne({ email, purpose: "SIGNUP" });
+
 
     if (existingOtp && existingOtp.blockedUntil && existingOtp.blockedUntil > new Date()) {
       const timeLeftMs = existingOtp.blockedUntil.getTime() - Date.now();
@@ -103,6 +105,10 @@ export const registerUserTemp = async (req, res) => {
   }
 };
 
+
+
+
+
 export const getVerifyOtp = async (req, res) => {
   try {
     const email = req.session.email;
@@ -111,6 +117,9 @@ export const getVerifyOtp = async (req, res) => {
     }
     const otp = await OTP.findOne({ email, purpose: "SIGNUP" });
     let timeLeft = 30;
+    if(!otp){
+      return res.redirect('/auth/signup')
+    }
     if (otp) {
       if (otp.blockedUntil && otp.blockedUntil > new Date()) {
         timeLeft = Math.max(0, Math.ceil((otp.blockedUntil.getTime() - Date.now()) / 1000));
@@ -120,11 +129,14 @@ export const getVerifyOtp = async (req, res) => {
       }
     }
     res.render("user/verifyOtp", { timeLeft });
+    
   } catch (err) {
     console.error("Error loading verify OTP page:", err);
     res.redirect("/auth/signup");
   }
 };
+
+
 
 export const verifyOtp = async (req, res) => {
   try {
@@ -132,9 +144,7 @@ export const verifyOtp = async (req, res) => {
     const email = req.session.email;
 
     if (!email) {
-      return res
-        .status(400)
-        .json({ message: "Session expired. Please signup again." });
+      return res.status(400).json({ message: "Session expired. Please signup again." });
     }
 
     const validOtp = await OTP.findOne({ email, purpose: "SIGNUP" });
@@ -149,9 +159,7 @@ export const verifyOtp = async (req, res) => {
     }
 
     if (!validOtp) {
-      return res
-        .status(400)
-        .json({ message: "OTP expired." });
+      return res.status(400).json({ message: "OTP expired." });
     }
 
     if (Date.now() - validOtp.createdAt.getTime() > 30 * 1000) {
@@ -170,11 +178,7 @@ export const verifyOtp = async (req, res) => {
         });
       }
       await validOtp.save();
-      return res
-        .status(400)
-        .json({
-          message: "Incorrect OTP.",
-        });
+      return res.status(400).json({message: "Incorrect OTP.",});
     }
 
     const tempUser = await UnverifiedUser.findOne({ email });
@@ -222,16 +226,12 @@ export const resendOtp = async (req, res) => {
     const email = req.session.email;
 
     if (!email) {
-      return res
-        .status(400)
-        .json({ message: "Session expired. Please signup again." });
+      return res.status(400).json({ message: "Session expired. Please signup again." });
     }
 
     const user = await UnverifiedUser.findOne({ email });
     if (!user) {
-      return res
-        .status(404)
-        .json({ message: "No pending signup found. Please signup again." });
+      return res.status(404).json({ message: "No pending signup found. Please signup again." });
     }
 
     const existingOtp = await OTP.findOne({ email, purpose: "SIGNUP" });
@@ -246,11 +246,9 @@ export const resendOtp = async (req, res) => {
       }); 
     }
 
-    // ── 30-second cooldown between individual resends ────────────────
+
     if (existingOtp && now - existingOtp.createdAt.getTime() < 30 * 1000) {
-      const secsLeft = Math.ceil(
-        30 - (now - existingOtp.createdAt.getTime()) / 1000,
-      );
+      const secsLeft = Math.ceil(30 - (now - existingOtp.createdAt.getTime()) / 1000,);
       return res.status(429).json({
         message: `Please wait ${secsLeft} second(s) before requesting a new OTP.`,
       });
@@ -277,7 +275,7 @@ export const resendOtp = async (req, res) => {
       });
     }
 
-    // ── Generate and send new OTP ────────────────────────────────────
+
     const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
     const currentAttempts = existingOtp?.attempts || 0;
@@ -305,7 +303,7 @@ export const resendOtp = async (req, res) => {
   }
 };
 
-
+      
 
 
 export const getLoginPage = (req, res) => {
@@ -326,6 +324,8 @@ export const loginUser = async (req, res) => {
     const trimmedEmail = email.trim().toLowerCase();
     const user = await User.findOne({ email: trimmedEmail });
 
+  
+  
     
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password." });
@@ -376,11 +376,14 @@ export const loginUser = async (req, res) => {
 };
 
 
-
+ 
 
 export const logoutUser = (req, res) => {
   req.session.destroy((err) => {
-    if (err) return res.redirect("/");
+    if (err) {
+      console.log(err)
+      return res.redirect("/");
+    }
     res.clearCookie("user.sid");
     res.redirect("/auth/login");
   });
@@ -402,9 +405,7 @@ export const sendForgotPasswordOtp = async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res
-        .status(404)
-        .json({ message: "No account found with this email." });
+      return res.status(404).json({ message: "No account found with this email." });
     }
 
     const existingOtp = await OTP.findOne({ email, purpose: "FORGOT_PASSWORD" });
@@ -472,15 +473,11 @@ export const verifyForgotOtp = async (req, res) => {
     const email = req.session.forgotEmail;
 
     if (!email) {
-      return res
-        .status(400)
-        .json({ message: "Session expired. Please start again." });
+      return res.status(400).json({ message: "Session expired. Please start again." });
     }
 
     if (!otp || otp.length !== 6) {
-      return res
-        .status(400)
-        .json({ message: "Please enter a valid 6-digit OTP." });
+      return res.status(400).json({ message: "Please enter a valid 6-digit OTP." });
     }
 
     const validOtp = await OTP.findOne({ email, purpose: "FORGOT_PASSWORD" });
@@ -495,9 +492,7 @@ export const verifyForgotOtp = async (req, res) => {
     }
 
     if (!validOtp) {
-      return res
-        .status(400)
-        .json({ message: "OTP expired." });
+      return res.status(400).json({ message: "OTP expired." });
     }
 
     if (Date.now() - validOtp.createdAt.getTime() > 30 * 1000) {
@@ -536,9 +531,7 @@ export const resendForgotOtp = async (req, res) => {
     const email = req.session.forgotEmail;
 
     if (!email) {
-      return res
-        .status(400)
-        .json({ message: "Session expired. Please start again." });
+      return res.status(400).json({ message: "Session expired. Please start again." });
     }
 
     const existingOtp = await OTP.findOne({
@@ -628,9 +621,7 @@ export const resetPassword = async (req, res) => {
     const email = req.session.forgotEmail;
 
     if (!email || !req.session.otpVerified) {
-      return res
-        .status(403)
-        .json({ message: "Unauthorized. Please verify your OTP first." });
+      return res.status(403).json({ message: "Unauthorized. Please verify your OTP first." });
     }
 
     if (!password || !confirmPassword) {

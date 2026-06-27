@@ -70,7 +70,7 @@ export const updateProfile = async (req, res) => {
 
         const updateData = { name: nameCheck.value };
 
-        // Phone is optional on profile edit — validate only when provided and non-empty
+       
         if (phone !== undefined && phone.trim() !== '') {
             const phoneCheck = validatePhone(phone);
             if (!phoneCheck.valid) {
@@ -78,7 +78,6 @@ export const updateProfile = async (req, res) => {
             }
             updateData.phone = phoneCheck.value;
         } else if (phone !== undefined) {
-            // Empty string submitted — clear phone
             updateData.phone = null;
         }
 
@@ -98,6 +97,8 @@ export const uploadProfileImage = async (req, res) => {
     try {
         const userId = getSessionUserId(req);
 
+        
+
         if (!userId) {
             return res.status(401).json({ message: "Not authenticated. Please log in." });
         }
@@ -109,6 +110,7 @@ export const uploadProfileImage = async (req, res) => {
         
         const imageUrl = req.file.secure_url;
 
+      
      
         const user = await User.findById(userId);
         if (user?.profileImage) {

@@ -22,6 +22,8 @@ export const getCustomers = async (req, res) => {
         const totalPages  = Math.max(1, Math.ceil(totalUsers / PAGE_SIZE));
         const currentPage = Math.min(page, totalPages);
 
+        
+
         const users = await User.find(filter)
             .sort({ createdAt: -1 })
             .skip((currentPage - 1) * PAGE_SIZE)
@@ -48,6 +50,8 @@ export const getCustomers = async (req, res) => {
         res.status(500).send("Server error");
     }
 };
+
+
 
 
 export const toggleBlockUser = async (req, res) => {
@@ -87,6 +91,9 @@ export const toggleBlockUser = async (req, res) => {
         return res.status(500).json({ message: "Server error." });
     }
 };
+
+
+
 
 
 async function destroyUserSession(userId) {

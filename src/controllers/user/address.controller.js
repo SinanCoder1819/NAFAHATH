@@ -9,10 +9,7 @@ export const getAddressPage = async (req, res) => {
     try {
         const userId = getSessionUserId(req);
         const addresses = await Address.find({ userId }).sort({ isDefault: -1, createdAt: -1 });
-        res.render('user/address', {
-            title: 'My Addresses | Nafahath',
-            addresses
-        });
+        res.render('user/address', {title: 'My Addresses | Nafahath',addresses});
     } catch (error) {
         console.error('Get addresses error:', error);
         res.status(500).send('Internal Server Error');
