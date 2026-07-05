@@ -28,4 +28,17 @@ const upload = multer({
   },
 });
 
-export { cloudinary, upload };
+// --- ADD THIS NEW PRODUCT STORAGE ---
+const productStorage = cloudinaryStorage({
+  cloudinary: cloudinaryPackage,
+  params: {
+    folder: "Nafahath_Products", // Saves to a separate folder in Cloudinary!
+    allowed_formats: ["jpg", "png", "jpeg", "webp"],
+  },
+});
+const uploadProduct = multer({
+  storage: productStorage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit for high-quality product images
+});
+
+export { cloudinary, upload, uploadProduct };

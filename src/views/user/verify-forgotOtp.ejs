@@ -39,7 +39,7 @@
                 Resend Code
             </button>
             <div id="lockoutMsg" class="hidden text-xs text-red-500 font-medium mt-2">
-                Too many attempts. Try again in <span id="lockoutTimerVal">5:00</span>
+                Too many attempts. Try again in <span id="lockoutTimerVal">2:00</span>
             </div>
         </div>
     </div>
@@ -54,7 +54,7 @@
     const lockoutTimer = document.getElementById('lockoutTimerVal');
     const msgDiv    = document.getElementById('responseMessage');
 
-    const TIMER_DURATION = 30;
+    const TIMER_DURATION = 180;
     let countdownInterval = null;
     let isLockout = false;
     let messageTimeout = null;

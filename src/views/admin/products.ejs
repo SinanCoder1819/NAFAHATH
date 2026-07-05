@@ -1,0 +1,260 @@
+<style>
+/* Base typography and layout (Matching Categories) */
+.product-page { color:#d8d8d8; font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; }
+.product-top { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:40px; }
+.product-title { font-size:36px; font-weight:600; color:#ffffff; margin:0 0 16px; letter-spacing:-0.5px; }
+
+/* Search and Add Buttons */
+.search-form { width:430px; }
+.search-line { display:flex; align-items:center; gap:12px; background: rgba(255, 255, 255, 0.03); border: 1px solid #333; border-radius: 8px; padding: 10px 16px; transition: border-color 0.3s ease, background 0.3s ease; }
+.search-line:focus-within { border-color: #28c9f4; background: rgba(40, 201, 244, 0.05); }
+.search-line input { flex:1; background:transparent; border:0; outline:0; color:#f1f1f1; font-size:14px; font-family:inherit; }
+.search-line input::placeholder { color:#666; }
+.search-btn { background: #28c9f4; color: #061014; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+.search-btn:hover { background: #6ae2ff; }
+
+.top-actions { display:flex; flex-direction:column; align-items:flex-end; gap:20px; }
+.add-btn { background:#28c9f4; color:#061014; border:0; padding:12px 24px; font-size:13px; font-weight:700; letter-spacing:0.05em; cursor:pointer; border-radius:6px; box-shadow: 0 4px 12px rgba(40, 201, 244, 0.2); transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; text-decoration: none; display: inline-block; }
+.add-btn:hover { background:#30d5ff; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(40, 201, 244, 0.3); }
+
+/* Table styling */
+.product-table { width:100%; border-collapse: separate; border-spacing: 0; background: rgba(25, 25, 25, 0.6); border: 1px solid #333; border-radius: 10px; overflow: hidden; }
+.product-table th { background: rgba(0, 0, 0, 0.2); color:#a0a0a0; font-size:11px; font-weight:600; letter-spacing:0.08em; text-align:left; padding:20px 24px; border-bottom:1px solid #333; text-transform: uppercase; white-space: nowrap; }
+.product-table td { padding:16px 24px; border-bottom:1px solid #333; vertical-align:middle; font-size:14px; }
+.product-table tbody tr:hover td { background: rgba(255, 255, 255, 0.02); }
+.product-table tbody tr:last-child td { border-bottom: none; }
+
+/* Columns */
+.col-img img { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; border: 1px solid #444; }
+.col-name { font-weight:600; color:#ffffff; font-size: 14px; }
+.col-name span { display: block; font-size: 12px; color: #888; font-weight: 400; margin-top: 4px; }
+.col-category { color:#b0b0b0; font-size: 13px; }
+.col-price { color:#b0b0b0; font-size: 13px; }
+.col-sale { color:#4ade80; font-weight: 500; font-size: 13px; }
+.col-stock { font-size: 13px; color: #f1f1f1; font-weight: 600; }
+.col-status { font-size:12px; font-weight: 700; letter-spacing: 0.05em; }
+.col-actions { text-align:right; }
+
+/* Status Colors */
+.status-instock { color:#4ade80; }
+.status-outofstock { color:#f87171; }
+.status-pending { color:#fbbf24; }
+
+/* Action Buttons & Icons */
+.action-row { display:flex; justify-content:flex-end; gap:8px; align-items: center; }
+.icon-action { background:transparent; border:0; color:#888; cursor:pointer; transition: all 0.2s ease; padding: 6px; border-radius: 6px; display: flex; align-items: center; justify-content: center; text-decoration: none; }
+.icon-action:hover { color:#28c9f4; background: rgba(255, 255, 255, 0.08); }
+.icon-action.delete:hover { color:#f87171; background: rgba(248, 113, 113, 0.1); }
+
+/* Custom Modal Styling */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; opacity: 0; transition: opacity 0.2s; backdrop-filter: blur(4px); }
+.modal-overlay.open { display: flex; opacity: 1; }
+.modal-box { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 24px; width: 100%; max-width: 380px; margin: 0 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); transform: scale(0.95); transition: transform 0.2s; }
+.modal-overlay.open .modal-box { transform: scale(1); }
+.modal-title { font-size: 18px; font-weight: 600; color: #fff; margin: 0 0 8px; font-family: inherit; }
+.modal-msg { font-size: 14px; color: #a0a0a0; line-height: 1.5; margin: 0 0 24px; }
+.modal-actions { display: flex; gap: 12px; }
+.modal-btn { flex: 1; padding: 12px 0; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; border: none; transition: all 0.2s; letter-spacing: 0.5px; }
+.modal-btn-cancel { background: transparent; color: #a0a0a0; border: 1px solid #444; }
+.modal-btn-cancel:hover { background: rgba(255,255,255,0.05); color: #fff; }
+.modal-btn-delete { background: #ef4444; color: #fff; }
+.modal-btn-delete:hover { background: #dc2626; }
+</style>
+
+<div class="product-page">
+  <div class="product-top">
+    <div>
+      <h1 class="product-title">Product Management</h1>
+      
+      <!-- Search Form -->
+      <form method="GET" action="/admin/products" class="search-form">
+        <div class="search-line">
+            <!-- Using locals.search prevents any crash if the variable is missing -->
+            <input type="text" name="search" value="<%= locals.search || '' %>" placeholder="Search by title, brand...">
+            <button type="submit" class="search-btn">Search</button>
+
+            <!-- CLEAR Button -->
+            <% if (locals.search) { %>
+                <a href="/admin/products" style="background:transparent; border:0; color:#28c9f4; font-size:13px; font-weight:600; cursor:pointer; text-decoration:none; margin-left: 8px;">CLEAR</a>
+            <% } %>
+        </div>
+      </form>
+    </div>
+
+    <div class="top-actions">
+      <!-- Add Product Button (Usually links to a new page for products) -->
+      <a href="/admin/addProducts" class="add-btn">+ ADD PRODUCT</a>
+      
+      <!-- Filter/Sort (Optional placeholders) -->
+      <div style="display:flex; gap: 20px;">
+        <button style="background:transparent; border:0; color:#28c9f4; font-size:13px; font-weight:600; cursor:pointer;">FILTER</button>
+        <button style="background:transparent; border:0; color:#28c9f4; font-size:13px; font-weight:600; cursor:pointer;">SORT</button>
+      </div>
+    </div>
+  </div>
+
+  <table class="product-table">
+    <thead>
+      <tr>
+        <th>IMG</th>
+        <th>PRODUCT NAME</th>
+        <th>CATEGORY</th>
+        <th>REG. PRICE</th>
+        <th>SALE PRICE</th>
+        <th>OFFER</th>
+        <th>STOCK</th>
+        <th>STATUS</th>
+        <th style="text-align:right;">ACTIONS</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% if (products && products.length > 0) { %>
+        <% products.forEach(product => { %>
+          <tr>
+            <td class="col-img">
+              <!-- If there's a primary image, use it. If not, try the first gallery image. If both are empty, use the placeholder! -->
+              <img src="<%= product.primaryImage || (product.galleryImages && product.galleryImages.length > 0 ? product.galleryImages[0] : 'https://via.placeholder.com/48/222/555?text=No+Img') %>" alt="Product">
+            </td>
+            <td class="col-name">
+              <%= product.productName %>
+              <span><%= product.brand %></span>
+            </td>
+            <td class="col-category" style="text-transform: capitalize;"><%= product.category %></td>
+            
+            <% 
+               // We grab the price from the very first variant to display on the table
+               let regPrice = product.variants && product.variants.length > 0 ? product.variants[0].regularPrice : 0;
+               let salePrice = product.variants && product.variants.length > 0 ? product.variants[0].salePrice : 0;
+               
+               // Add up the stock from all variants combined (e.g. 50ml + 100ml)
+               let totalStock = product.variants ? product.variants.reduce((sum, variant) => sum + variant.stock, 0) : 0;
+            %>
+            
+            <td class="col-price">$<%= regPrice.toFixed(2) %></td>
+            <td class="col-sale"><%= salePrice > 0 ? '$' + salePrice.toFixed(2) : '-' %></td>
+            <td class="col-category">ADD</td>
+            <td class="col-stock" style="<%= totalStock === 0 ? 'color: #f87171;' : '' %>"><%= totalStock %></td>
+            
+            <% if (totalStock <= 0) { %>
+                <td class="col-status status-outofstock">OUT OF STOCK</td>
+            <% } else if (totalStock < 10) { %>
+                <td class="col-status status-pending">LOW IN STOCK</td>
+            <% } else { %>
+                <td class="col-status status-instock">IN STOCK</td>
+            <% } %>
+
+            <td class="col-actions">
+              <div class="action-row">
+                
+                <!-- Edit Icon linked to real Product ID -->
+                <a href="/admin/products/edit/<%= product._id %>" class="icon-action" title="Edit Product">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                  </svg>
+                </a>
+                
+                <!-- Delete Icon linked to real Product ID -->
+                <form method="POST" action="/admin/products/delete/<%= product._id %>" style="margin:0;" class="delete-product-form" data-name="<%= product.productName %>">
+                  <button type="button" class="icon-action delete delete-btn-trigger" title="Delete Product">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-7.5 0" />
+                    </svg>
+                  </button>
+                </form>
+
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr>
+          <td colspan="9" style="text-align: center; color: #888; padding: 40px;">
+            No products found. Add your first product!
+          </td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<!-- Pagination -->
+<% if (totalPages > 1) { %>
+<div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 30px; margin-bottom: 20px;">
+  
+  <!-- Previous Button -->
+  <a href="<%= currentPage > 1 ? '?page=' + (currentPage - 1) + (search ? '&search=' + search : '') : '#' %>" 
+     style="padding: 8px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: <%= currentPage === 1 ? '#444' : '#fff' %>; text-decoration: none; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; pointer-events: <%= currentPage === 1 ? 'none' : 'auto' %>;">
+    Prev
+  </a>
+  
+  <!-- Page Numbers -->
+  <% for(let i = 1; i <= totalPages; i++) { %>
+    <a href="?page=<%= i %><%= search ? '&search=' + search : '' %>" 
+       style="padding: 8px 16px; border: 1px solid <%= currentPage === i ? '#28c9f4' : 'rgba(255,255,255,0.1)' %>; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; transition: 0.2s; <%= currentPage === i ? 'background: #28c9f4; color: #000;' : 'background: rgba(0,0,0,0.3); color: #fff;' %>">
+      <%= i %>
+    </a>
+  <% } %>
+
+  <!-- Next Button -->
+  <a href="<%= currentPage < totalPages ? '?page=' + (currentPage + 1) + (search ? '&search=' + search : '') : '#' %>" 
+     style="padding: 8px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: <%= currentPage === totalPages ? '#444' : '#fff' %>; text-decoration: none; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; pointer-events: <%= currentPage === totalPages ? 'none' : 'auto' %>;">
+    Next
+  </a>
+  
+</div>
+<% } %>
+
+<!-- Custom Delete Modal -->
+<div id="deleteModal" class="modal-overlay">
+  <div class="modal-box">
+    <h2 class="modal-title">Delete Product</h2>
+    <p class="modal-msg">Delete "<span id="deleteProductName"></span>"? This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button id="cancelDeleteBtn" class="modal-btn modal-btn-cancel">CANCEL</button>
+      <button id="confirmDeleteBtn" class="modal-btn modal-btn-delete">DELETE</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('deleteModal');
+    const cancelBtn = document.getElementById('cancelDeleteBtn');
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    const nameSpan = document.getElementById('deleteProductName');
+    
+    let formToSubmit = null;
+
+    // Open modal when any delete button is clicked
+    document.querySelectorAll('.delete-btn-trigger').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const form = e.target.closest('.delete-product-form');
+        formToSubmit = form;
+        nameSpan.textContent = form.getAttribute('data-name');
+        modal.classList.add('open');
+      });
+    });
+
+    // Cancel deletes
+    cancelBtn.addEventListener('click', () => {
+      modal.classList.remove('open');
+      formToSubmit = null;
+    });
+
+    // Confirm deletes
+    confirmBtn.addEventListener('click', () => {
+      if (formToSubmit) {
+        formToSubmit.submit();
+      }
+    });
+
+    // Close on background click
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.remove('open');
+        formToSubmit = null;
+      }
+    });
+  });
+</script>

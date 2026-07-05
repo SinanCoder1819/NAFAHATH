@@ -10,8 +10,8 @@
         html, body { height: 100%; }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: #0d0d0d;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0a0a;
             color: #e5e5e5;
             display: flex;
             min-height: 100vh;
@@ -19,116 +19,173 @@
 
         /* ── Sidebar ──────────────────────────────────────── */
         .sidebar {
-            width: 200px;
+            width: 240px;
             min-height: 100vh;
             background: #111;
-            border-right: 1px solid #1e1e1e;
+            border-right: 1px solid #222;
             display: flex;
             flex-direction: column;
             position: fixed;
             top: 0; left: 0; bottom: 0;
             z-index: 100;
             overflow: hidden;
+            transition: width 0.3s ease;
         }
 
         /* Profile block */
         .sb-profile {
-            padding: 24px 20px 20px;
-            border-bottom: 1px solid #1e1e1e;
+            padding: 32px 24px 24px;
+            border-bottom: 1px solid #222;
             flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
         .sb-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #374151;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #28c9f4, #0f6c87);
             color: #fff;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 10px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(40, 201, 244, 0.2);
+            transition: transform 0.2s ease;
+        }
+        .sb-avatar:hover {
+            transform: scale(1.05);
         }
         .sb-name {
-            font-size: 13px;
+            font-size: 15px;
             font-weight: 600;
             color: #fff;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 160px;
+            width: 100%;
         }
         .sb-email {
-            font-size: 11px;
-            color: #6b7280;
+            font-size: 12px;
+            color: #888;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 160px;
-            margin-top: 3px;
+            width: 100%;
+            margin-top: 4px;
         }
 
         /* Nav */
         .sb-nav {
             flex: 1;
-            padding: 16px 10px 10px;
+            padding: 24px 16px;
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 8px;
             overflow-y: auto;
         }
+        .sb-nav::-webkit-scrollbar { width: 4px; }
+        .sb-nav::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+
         .sb-link {
-            display: block;
-            padding: 9px 14px;
-            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            font-size: 14px;
             font-weight: 500;
-            color: #6b7280;
+            color: #888;
             text-decoration: none;
-            border-radius: 7px;
+            border-radius: 8px;
             white-space: nowrap;
-            transition: background 0.15s, color 0.15s;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .sb-link svg {
+            width: 18px;
+            height: 18px;
+            opacity: 0.7;
+            transition: all 0.2s ease;
         }
         .sb-link:hover {
-            background: rgba(255,255,255,0.06);
-            color: #e5e5e5;
+            background: rgba(255,255,255,0.04);
+            color: #fff;
+            transform: translateX(4px);
+        }
+        .sb-link:hover svg {
+            opacity: 1;
+            color: #28c9f4;
         }
         .sb-link.active {
-            color: #fff;
+            background: rgba(40, 201, 244, 0.1);
+            color: #28c9f4;
             font-weight: 600;
+        }
+        .sb-link.active svg {
+            opacity: 1;
+            color: #28c9f4;
+        }
+        .sb-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 20px;
+            width: 3px;
+            background: #28c9f4;
+            border-radius: 0 4px 4px 0;
         }
 
         /* Sign out */
         .sb-footer {
             flex-shrink: 0;
-            padding: 12px 10px 20px;
-            border-top: 1px solid #1e1e1e;
+            padding: 20px 16px;
+            border-top: 1px solid #222;
         }
         .sb-signout {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 9px 14px;
-            font-size: 13px;
+            gap: 12px;
+            padding: 12px 16px;
+            font-size: 14px;
             font-weight: 500;
-            color: #6b7280;
+            color: #888;
+            background: transparent;
+            border: 1px solid transparent;
+            width: 100%;
             text-decoration: none;
-            border-radius: 7px;
-            white-space: nowrap;
-            transition: background 0.15s, color 0.15s;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
         .sb-signout:hover {
             background: rgba(248,113,113,0.08);
+            border-color: rgba(248,113,113,0.2);
+            color: #f87171;
+            transform: translateX(4px);
+        }
+        .sb-signout svg { 
+            width: 18px;
+            height: 18px;
+            opacity: 0.8; 
+            transition: all 0.2s ease;
+        }
+        .sb-signout:hover svg {
+            opacity: 1;
             color: #f87171;
         }
-        .sb-signout svg { flex-shrink: 0; }
 
         /* ── Main content ─────────────────────────────────── */
         .main-content {
-            margin-left: 200px;
+            margin-left: 240px;
             flex: 1;
             min-width: 0;
-            padding: 44px 48px;
+            padding: 48px 56px;
+            transition: margin-left 0.3s ease;
         }
     </style>
 </head>
@@ -140,28 +197,64 @@
     <div class="sb-profile">
         <div class="sb-avatar"><%= admin.name ? admin.name.charAt(0).toUpperCase() : 'A' %></div>
         <div class="sb-name"><%= admin.name || 'Admin' %></div>
-        <div class="sb-email"><%= admin.email %></div>
+        <div class="sb-email"><%= admin.email || 'admin@nafahath.com' %></div>
     </div>
 
     <nav class="sb-nav">
-        <a href="/admin/dashboard" class="sb-link <%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'active' : '' %>">Dashboard</a>
-        <a href="#" class="sb-link">Orders</a>
-        <a href="#" class="sb-link">Products</a>
-        <a href="/admin/customers" class="sb-link <%= typeof activePage !== 'undefined' && activePage === 'customers' ? 'active' : '' %>">Customers</a>
-        <a href="#" class="sb-link">Sales Report</a>
-        <a href="#" class="sb-link">Coupon</a>
-        <a href="#" class="sb-link">Category</a>
+        <a href="/admin/dashboard" class="sb-link <%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'active' : '' %>">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+            </svg>
+            Dashboard
+        </a>
+        <a href="#" class="sb-link <%= typeof activePage !== 'undefined' && activePage === 'orders' ? 'active' : '' %>">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+            </svg>
+            Orders
+        </a>
+        <a href="/admin/products" class="sb-link <%= typeof activePage !== 'undefined' && activePage === 'products' ? 'active' : '' %>">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-2.25-1.313M21 7.5v2.25m0-2.25l-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3l2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75l2.25-1.313M12 21.75V19.5m0 2.25l-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25" />
+            </svg>
+            Products
+        </a>
+        <a href="/admin/categories" class="sb-link <%= typeof activePage !== 'undefined' && activePage === 'categories' ? 'active' : '' %>">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" />
+            </svg>
+            Category
+        </a>
+        <a href="/admin/customers" class="sb-link <%= typeof activePage !== 'undefined' && activePage === 'customers' ? 'active' : '' %>">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+            </svg>
+            Customers
+        </a>
+        <a href="#" class="sb-link <%= typeof activePage !== 'undefined' && activePage === 'coupon' ? 'active' : '' %>">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 010 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 010-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z" />
+            </svg>
+            Coupon
+        </a>
+        <a href="#" class="sb-link <%= typeof activePage !== 'undefined' && activePage === 'sales_report' ? 'active' : '' %>">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+            </svg>
+            Sales Report
+        </a>
     </nav>
 
-        <div class="sb-footer">
-    <form action="/admin/logout" method="POST">
-        <button type="submit" class="sb-signout">
-            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/>
-            </svg>
-            Sign Out
-        </button>
-    </form>
+    <div class="sb-footer">
+        <form action="/admin/logout" method="POST">
+            <button type="submit" class="sb-signout">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/>
+                </svg>
+                Sign Out
+            </button>
+        </form>
     </div>
 
 </aside>

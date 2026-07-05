@@ -53,7 +53,7 @@ export const addAddress = async (req, res) => {
        
         const count = await Address.countDocuments({ userId });
         const shouldBeDefault = setDefault || count === 0;
-
+        
         
 
         const address = await Address.create({

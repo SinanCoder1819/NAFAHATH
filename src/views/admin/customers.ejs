@@ -6,10 +6,10 @@
     .page-title-bar { width: 40px; height: 2px; background: #fff; margin-bottom: 32px; }
 
     /* ── Search row ─────────────────────────────────────── */
-    .search-row  { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 28px; }
-    .search-left { display: flex; align-items: center; gap: 10px; }
-    .search-right { display: flex; align-items: center; gap: 10px; }
-    .search-wrap { position: relative; width: 300px; }
+    .search-row  { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+    .search-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;}
+    .search-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0;}
+    .search-wrap { position: relative; flex: 1; min-width: 200px; }
     .search-wrap svg {
         position: absolute; left: 12px; top: 50%;
         transform: translateY(-50%); color: #6b7280; pointer-events: none;

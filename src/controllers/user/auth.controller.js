@@ -71,6 +71,7 @@ export const registerUserTemp = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     await OTP.deleteMany({ email, purpose: "SIGNUP" });
@@ -116,7 +117,7 @@ export const getVerifyOtp = async (req, res) => {
       return res.redirect("/auth/signup");
     }
     const otp = await OTP.findOne({ email, purpose: "SIGNUP" });
-    let timeLeft = 30;
+    let timeLeft = 180;
     if(!otp){
       return res.redirect('/auth/signup')
     }
@@ -125,7 +126,7 @@ export const getVerifyOtp = async (req, res) => {
         timeLeft = Math.max(0, Math.ceil((otp.blockedUntil.getTime() - Date.now()) / 1000));
       } else {
         const elapsed = Math.round((Date.now() - otp.createdAt.getTime()) / 1000);
-        timeLeft = Math.max(0, 30 - elapsed);
+        timeLeft = Math.max(0, 180 - elapsed);
       }
     }
     res.render("user/verifyOtp", { timeLeft });
@@ -162,7 +163,7 @@ export const verifyOtp = async (req, res) => {
       return res.status(400).json({ message: "OTP expired." });
     }
 
-    if (Date.now() - validOtp.createdAt.getTime() > 30 * 1000) {
+    if (Date.now() - validOtp.createdAt.getTime() > 3 * 60 * 1000) {
       await OTP.deleteOne({ _id: validOtp._id });
       return res.status(400).json({ message: "OTP expired." });
     }
@@ -296,15 +297,13 @@ export const resendOtp = async (req, res) => {
     return res.status(200).json({
       message: "OTP resent successfully.",
       resendCount: newResendCount,
+      resendCooldown: 180
     });
   } catch (error) {
     console.error("Resend OTP error:", error);
     return res.status(500).json({ message: "Failed to resend OTP." });
   }
 };
-
-      
-
 
 export const getLoginPage = (req, res) => {
   const blocked = req.query.blocked === "true";
@@ -344,6 +343,7 @@ export const loginUser = async (req, res) => {
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
+
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid email or password." });
     }
@@ -448,13 +448,13 @@ export const getVerifyForgotOtp = async (req, res) => {
       return res.redirect("/auth/forgot-password");
     }
     const otp = await OTP.findOne({ email, purpose: "FORGOT_PASSWORD" });
-    let timeLeft = 30;
+    let timeLeft = 180;
     if (otp) {
       if (otp.blockedUntil && otp.blockedUntil > new Date()) {
         timeLeft = Math.max(0, Math.ceil((otp.blockedUntil.getTime() - Date.now()) / 1000));
       } else {
         const elapsed = Math.round((Date.now() - otp.createdAt.getTime()) / 1000);
-        timeLeft = Math.max(0, 30 - elapsed);
+        timeLeft = Math.max(0, 180 - elapsed);
       }
     }
     res.render("user/verify-forgotOtp", {
@@ -495,7 +495,7 @@ export const verifyForgotOtp = async (req, res) => {
       return res.status(400).json({ message: "OTP expired." });
     }
 
-    if (Date.now() - validOtp.createdAt.getTime() > 30 * 1000) {
+    if (Date.now() - validOtp.createdAt.getTime() > 3 * 60 * 1000) {
       await OTP.deleteOne({ _id: validOtp._id });
       return res.status(400).json({ message: "OTP expired." });
     }

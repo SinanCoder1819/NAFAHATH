@@ -61,7 +61,7 @@
     const msgDiv = document.getElementById('responseMessage');
     const loadingModal = document.getElementById('loadingModal');
 
-    const TIMER_DURATION = 30;  
+    const TIMER_DURATION = 180;  
     let countdownInterval = null;
     let isLockout = false;
     let messageTimeout = null;
@@ -73,6 +73,7 @@
             const mins = Math.floor(timeLeft / 60);
             const secs = timeLeft % 60;
             lockoutTimer.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+            document.querySelector('#lockoutMsg p').textContent = `Too many attempts.Try again in ${mins}: ${secs < 10 ? '0' : ""} ${secs}`
         } else if (timeLeft > 0) {
             resendBtn.classList.remove('hidden');
             lockoutMsg.classList.add('hidden');
@@ -90,9 +91,9 @@
         }
     }
 
-    function startCountdown(seconds) {
+    function startCountdown(seconds,isLockoutMode = false) {
         clearInterval(countdownInterval);
-        isLockout = (seconds > 30);
+        isLockout = isLockoutMode || (seconds > 180)
         let timeLeft = seconds;
         updateResendLabel(timeLeft);
 
@@ -154,7 +155,7 @@
 
             if (res.ok) {
                 showMessage(data.message || 'New OTP sent!', 'success');
-                startCountdown(TIMER_DURATION);
+                startCountdown(data.resendCooldown || 180);
                 inputs.forEach(i => i.value = '');
                 inputs[0].focus();
             } else {

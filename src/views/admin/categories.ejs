@@ -1,0 +1,437 @@
+<style>
+/* Base typography and layout */
+.category-page { color:#d8d8d8; font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; }
+.category-top { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:40px; }
+.category-title { font-size:36px; font-weight:600; color:#ffffff; margin:0 0 16px; letter-spacing:-0.5px; }
+.search-form { width:430px; }
+.search-line { display:flex; align-items:center; gap:12px; background: rgba(255, 255, 255, 0.03); border: 1px solid #333; border-radius: 8px; padding: 10px 16px; transition: border-color 0.3s ease, background 0.3s ease; }
+.search-line:focus-within { border-color: #28c9f4; background: rgba(40, 201, 244, 0.05); }
+.search-line span { color: #888; font-size: 18px; }
+.search-line input { flex:1; background:transparent; border:0; outline:0; color:#f1f1f1; font-size:14px; font-family:inherit; }
+.search-line input::placeholder { color:#666; }
+.search-btn { background: #28c9f4; color: #061014; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+.search-btn:hover { background: #6ae2ff; }
+
+.top-actions { display:flex; flex-direction:column; align-items:flex-end; gap:20px; }
+.add-btn { background:#28c9f4; color:#061014; border:0; padding:12px 24px; font-size:13px; font-weight:700; letter-spacing:0.05em; cursor:pointer; border-radius:6px; box-shadow: 0 4px 12px rgba(40, 201, 244, 0.2); transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; }
+.add-btn:hover { background:#30d5ff; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(40, 201, 244, 0.3); }
+.add-btn:active { transform: translateY(1px); box-shadow: 0 2px 8px rgba(40, 201, 244, 0.2); }
+
+.table-tools { display:flex; gap:20px; align-items: center; }
+.text-btn { background:transparent; border:0; color:#28c9f4; font-size:13px; font-weight:600; letter-spacing:0.05em; cursor:pointer; transition: color 0.2s ease; text-decoration: none; display: inline-block; }
+.text-btn:hover { color:#6ae2ff; }
+
+/* Alerts */
+.flash { padding:14px 20px; font-size:14px; margin-bottom:24px; border-radius: 6px; font-weight: 500; }
+.flash.error { background: rgba(248, 113, 113, 0.1); color:#f87171; border: 1px solid rgba(248, 113, 113, 0.2); }
+.flash.success { background: rgba(74, 222, 128, 0.1); color:#4ade80; border: 1px solid rgba(74, 222, 128, 0.2); }
+
+/* Table styling */
+.category-table { width:100%; border-collapse: separate; border-spacing: 0; background: rgba(25, 25, 25, 0.6); border: 1px solid #333; border-radius: 10px; overflow: hidden; }
+.category-table th { background: rgba(0, 0, 0, 0.2); color:#a0a0a0; font-size:12px; font-weight:600; letter-spacing:0.08em; text-align:left; padding:20px 24px; border-bottom:1px solid #333; text-transform: uppercase; }
+.category-table td { padding:24px; border-bottom:1px solid #333; vertical-align:middle; font-size:14px; transition: background 0.2s ease; }
+.category-table tbody tr:hover td { background: transparent; }
+.category-table tbody tr:last-child td { border-bottom: none; }
+
+.col-name { width:22%; font-weight:600; color:#ffffff; font-size: 15px; }
+.col-desc { width:38%; color:#b0b0b0; line-height:1.5; padding-right:40px; font-size: 14px; }
+.col-offer { width:12%; color:#28c9f4; font-weight: 500; }
+.col-status { width:12%; font-size:12px; font-weight: 600; }
+.col-actions { width:16%; text-align:right; }
+
+.status-active { color:#4ade80; }
+.status-inactive { color:#f87171; }
+
+.action-row { display:flex; justify-content:flex-end; gap:8px; align-items: center; }
+.link-action { background:transparent; border:0; color:#dcdcdc; font-size:12px; font-weight:600; letter-spacing:0.05em; cursor:pointer; transition: all 0.2s ease; padding: 8px 12px; border-radius: 6px; }
+.link-action:hover { color:#ffffff; background: rgba(255, 255, 255, 0.08); }
+
+/* Table Toggle Switch */
+.table-switch { position: relative; display: inline-block; width: 36px; height: 20px; vertical-align: middle; cursor: pointer; }
+.table-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+.table-slider { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; transition: .3s; border-radius: 20px; }
+.table-slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+
+/* When checked (Active) */
+.table-switch input:checked + .table-slider { background-color: #4ade80; /* Green color */ }
+.table-switch input:checked + .table-slider:before { transform: translateX(16px); }
+
+/* Footer & Pagination */
+.footer-row { display:flex; justify-content:space-between; align-items:center; margin-top:32px; padding: 0 10px; }
+.count { font-size:12px; font-weight:600; letter-spacing:0.05em; color:#888; text-transform:uppercase; }
+.pagination { display:flex; gap:8px; align-items:center; }
+.pagination a, .pagination span { display: flex; align-items: center; justify-content: center; min-width: 32px; height: 32px; padding: 0 10px; color:#e5e5e5; text-decoration:none; font-size:13px; font-weight:600; border-radius: 6px; transition: all 0.2s ease; border: 1px solid transparent; }
+.pagination a:hover { background: rgba(255, 255, 255, 0.05); border-color: #444; }
+.pagination .current { background:#28c9f4; color:#061014; border-color: #28c9f4; }
+.pagination .disabled { color:#555; cursor: not-allowed; }
+
+/* Modal */
+.modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter: blur(4px); z-index:300; align-items:center; justify-content:center; opacity: 0; transition: opacity 0.3s ease; }
+.modal.open { display:flex; opacity: 1; }
+.modal-box { width:400px; background:#111; border:1px solid #333; border-radius: 8px; padding:32px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); transform: translateY(20px); transition: transform 0.3s ease; }
+.modal.open .modal-box { transform: translateY(0); }
+.modal-title { font-size:20px; font-weight:600; color:#fff; margin-bottom:24px; letter-spacing:-0.5px; }
+.field { margin-bottom:24px; }
+.field label { display:block; font-size:13px; font-weight:500; margin-bottom:10px; color:#f1f1f1; text-transform:none; letter-spacing:0; }
+.field input:not([type="checkbox"]), .field textarea, .field select { width:100%; background:#131313; border:1px solid #333; color:#fff; padding:12px 14px; font-family:inherit; font-size:14px; border-radius:6px; outline:0; transition: border-color 0.2s ease, box-shadow 0.2s ease; box-sizing: border-box; -webkit-appearance: none; appearance: none; }
+.field input:focus, .field textarea:focus, .field select:focus { border-color: #39d5ff; }
+.field select { background-image: url("data:image/svg+xml,%3Csvg fill='%23fff' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
+.field textarea { min-height:100px; resize:vertical; }
+.toggle-field { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.toggle-label { font-size:13px; font-weight:500; color:#f1f1f1; }
+.toggle-subtext { font-size:11px; color:#888; margin-top:-4px; margin-bottom: 24px; display:block; }
+.switch { position:relative; display:inline-block; width:44px; height:24px; }
+.switch input { position: absolute; opacity: 0; width: 100%; height: 100%; top: 0; left: 0; z-index: 2; cursor: pointer; margin: 0; }
+.slider { position:absolute; top:0; left:0; right:0; bottom:0; background-color:#333; transition:.4s; border-radius:24px; pointer-events: none; }
+.slider:before { position:absolute; content:""; height:18px; width:18px; left:3px; bottom:3px; background-color:white; transition:.4s; border-radius:50%; }
+.switch input:checked + .slider { background-color:#fff; }
+.switch input:checked + .slider:before { transform:translateX(20px); background-color:#111; }
+.modal-divider { border-top: 1px solid #333; margin: 24px 0 20px; }
+.modal-actions { display:flex; gap:12px; margin-top:0; }
+.save-btn { flex:2; background:#39d5ff; color:#061014; border:0; padding:12px; font-weight:600; font-size: 14px; cursor:pointer; border-radius:6px; transition: background 0.2s; box-shadow: none; }
+.save-btn:hover { background:#6ae2ff; transform:none; box-shadow:none; }
+.save-btn:active { transform:none; }
+.cancel-btn { flex:1; background:transparent; color:#fff; border:1px solid #333; padding:12px; font-weight: 500; font-size: 14px; cursor:pointer; border-radius:6px; transition: background 0.2s; }
+.cancel-btn:hover { background: #222; color:#fff; border-color:#333; }
+
+/* Table Toggle Switch */
+.table-switch { position: relative; display: inline-block; width: 36px; height: 20px; vertical-align: middle; cursor: pointer; }
+.table-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+.table-slider { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; transition: .3s; border-radius: 20px; }
+.table-slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+.table-switch input:checked + .table-slider { background-color: #4ade80; }
+.table-switch input:checked + .table-slider:before { transform: translateX(16px); }
+</style>
+
+<div class="category-page">
+  <div class="category-top">
+    <div>
+      <h1 class="category-title">Category Management</h1>
+
+      <form method="GET" action="/admin/categories" class="search-form">
+        <div class="search-line">
+            <input type="text" name="search" value="<%= search %>" placeholder="Search categories...">
+            <button type="submit" class="search-btn">Search</button>
+        
+            <% if (search) { %>
+                <a class="text-btn" href="/admin/categories">CLEAR</a>
+                <% } %>
+        </div>
+      </form>
+    </div>
+
+    <div class="top-actions">
+      <button class="add-btn" type="button" onclick="openAddModal()">ADD CATEGORY</button>
+      <div class="table-tools">
+        <button class="text-btn" type="button">FILTER</button>
+        <a class="text-btn" href="/admin/categories?sort=desc<%= search ? '&search=' + encodeURIComponent(search) : '' %>">SORT</a>
+      </div>
+    </div>
+  </div>
+
+  <% if (error) { %><div class="flash error"><%= error %></div><% } %>
+  <% if (success) { %><div class="flash success"><%= success %></div><% } %>
+
+  <table class="category-table">
+    <thead>
+      <tr>
+        <th>CATEGORY NAME</th>
+        <th>DESCRIPTION</th>
+        <th>OFFER</th>
+        <th>STATUS</th>
+        <th style="text-align:right;">ACTIONS</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% if (categories.length === 0) { %>
+        <tr>
+          <td colspan="5" style="padding:50px 0; color:#777;">
+            No categories found.
+          </td>
+        </tr>
+      <% } %>
+
+      <% categories.forEach(function(category) { %>
+        <tr>
+          <td class="col-name"><%= category.name %></td>
+          <td class="col-desc"><%= category.description || "-" %></td>
+          <td class="col-offer">
+            <%= category.offerPercentage > 0 ? category.offerPercentage + "% Off" : "None" %>
+          </td>
+          <td class="col-status <%= category.isDeleted ? 'status-inactive' : 'status-active' %>">
+            <%= category.isDeleted ? "Inactive" : "Active" %>
+          </td>
+          <td class="col-actions">
+            <div class="action-row">
+                            <button type="button" class="link-action"
+                              style="padding: 6px; display: flex; align-items: center; justify-content: center; background: transparent;"
+                              onclick='openEditModal(<%- JSON.stringify(category) %>)' title="Edit Category">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                style="width: 18px; height: 18px;">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                              </svg>
+                            </button>
+
+              <% if (category.isDeleted) { %>
+                <!-- If Inactive (toggle is off). Clicking it will Activate -->
+                <form method="POST" action="/admin/categories/<%= category._id %>/restore" style="margin:0;">
+                  <label class="table-switch" title="Click to Activate">
+                    <input type="checkbox" onchange="this.form.submit()">
+                    <span class="table-slider"></span>
+                  </label>
+                </form>
+              <% } else { %>
+                <!-- If Active (toggle is on). Clicking it will Deactivate -->
+                <form method="POST" action="/admin/categories/<%= category._id %>/delete" style="margin:0;">
+                  <label class="table-switch" title="Click to Deactivate">
+                    <input type="checkbox" checked onchange="this.form.submit()">
+                    <span class="table-slider"></span>
+                  </label>
+                </form>
+              <% } %>
+            </div>
+          </td>
+        </tr>
+      <% }); %>
+
+
+    </tbody>
+  </table>
+
+  <div class="footer-row">
+    <div class="count">
+      SHOWING
+      <% if (totalCategories === 0) { %>
+        0
+      <% } else { %>
+        <%= (currentPage - 1) * pageSize + 1 %>-<%= Math.min(currentPage * pageSize, totalCategories) %>
+      <% } %>
+      OF <%= totalCategories %> CATEGORIES
+    </div>
+
+    <div class="pagination">
+      <% if (currentPage > 1) { %>
+        <a href="/admin/categories?page=<%= currentPage - 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">Previous</a>
+      <% } else { %>
+        <span class="disabled">Previous</span>
+      <% } %>
+
+      <% for (let i = 1; i <= totalPages; i++) { %>
+        <a class="<%= i === currentPage ? 'current' : '' %>" href="/admin/categories?page=<%= i %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"><%= i %></a>
+      <% } %>
+
+      <% if (currentPage < totalPages) { %>
+        <a href="/admin/categories?page=<%= currentPage + 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">Next</a>
+      <% } else { %>
+        <span class="disabled">Next</span>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<div id="categoryModal" class="modal">
+  <div class="modal-box">
+    <div class="modal-title" id="modalTitle">Add Category</div>
+
+    <form id="categoryForm" method="POST" action="/admin/categories">
+      <div class="field">
+        <label>Category Name</label>
+        <input id="categoryName" name="name" type="text">
+      </div>
+
+      <div class="field">
+        <label>Description</label>
+        <textarea id="categoryDescription" name="description"></textarea>
+      </div>
+
+                <div class="field">
+                    <div class="toggle-field" style="margin-bottom: 4px;">
+                        <span class="toggle-label">Status</span>
+                        <label class="switch">
+                            <input type="checkbox" id="categoryStatus" name="isActive" value="true" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <span class="toggle-subtext" id="statusText" style="margin-bottom: 0;">Active</span>
+                </div>
+
+      <div class="field">
+        <label>Offer</label>
+        <select id="categoryOffer" name="offerPercentage">
+          <option value="0">None</option>
+          <option value="5">5%</option>
+          <option value="10">10%</option>
+          <option value="15">15%</option>
+          <option value="20">20%</option>
+          <option value="25">25%</option>
+          <option value="50">50%</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Offer Expiry Date</label>
+        <input type="date" id="categoryOfferExpiry" name="offerExpiryDate">
+      </div>
+
+      <div class="modal-divider"></div>
+
+      <div class="modal-actions">
+        <button class="save-btn" id="saveBtnText" type="submit">Save</button>
+        <button class="cancel-btn" type="button" onclick="closeCategoryModal()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const statusToggle = document.getElementById('categoryStatus');
+const statusText = document.getElementById('statusText');
+
+document.addEventListener('change', function(e) {
+  if (e.target && e.target.id === 'categoryStatus') {
+    const statusText = document.getElementById('statusText');
+    if (statusText) {
+      statusText.textContent = e.target.checked ? 'Active' : 'Inactive';
+    }
+  }
+});
+
+function openAddModal() {
+  document.getElementById("modalTitle").textContent = "Add Category";
+  document.getElementById("categoryForm").action = "/admin/categories";
+  document.getElementById("categoryName").value = "";
+  document.getElementById("categoryDescription").value = "";
+  document.getElementById("categoryStatus").checked = true;
+  document.getElementById("statusText").textContent = "Active";
+  document.getElementById("categoryOffer").value = "0";
+  document.getElementById("categoryOfferExpiry").value = "";
+  document.getElementById("saveBtnText").textContent = "Save";
+  
+  // Clear any old error messages when opening the modal
+  const oldError = document.getElementById('modalError');
+  if (oldError) oldError.remove();
+  
+  document.getElementById("categoryModal").classList.add("open");
+}
+
+function openEditModal(category) {
+  document.getElementById("modalTitle").textContent = "Edit Category";
+  document.getElementById("categoryForm").action = `/admin/categories/${category._id}/edit`;
+  document.getElementById("categoryName").value = category.name || "";
+  document.getElementById("categoryDescription").value = category.description || "";
+  
+  const isActive = !category.isDeleted;
+  document.getElementById("categoryStatus").checked = isActive;
+  document.getElementById("statusText").textContent = isActive ? "Active" : "Inactive";
+  
+  document.getElementById("categoryOffer").value = category.offerPercentage || "0";
+  
+  if (category.offerExpiryDate) {
+    const d = new Date(category.offerExpiryDate);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    document.getElementById("categoryOfferExpiry").value = `${year}-${month}-${day}`;
+  } else {
+    document.getElementById("categoryOfferExpiry").value = "";
+  }
+  
+  document.getElementById("saveBtnText").textContent = "Save Changes";
+  
+  // Clear any old error messages when opening the modal
+  const oldError = document.getElementById('modalError');
+  if (oldError) oldError.remove();
+  
+  document.getElementById("categoryModal").classList.add("open");
+}
+
+function closeCategoryModal() {
+  document.getElementById("categoryModal").classList.remove("open");
+}
+
+if (window.history.replaceState) {
+  const url = new URL(window.location);
+  if (url.searchParams.has('success') || url.searchParams.has('error')) {
+    url.searchParams.delete('success');
+    url.searchParams.delete('error');
+    window.history.replaceState({ path: url.href }, '', url.href);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const flashes = document.querySelectorAll('.flash');
+    flashes.forEach(flash => {
+      // Add a smooth fade-out transition
+      flash.style.transition = 'opacity 0.5s ease';
+      flash.style.opacity = '0';
+      
+      // Remove the element from the page completely after the fade-out finishes
+      setTimeout(() => flash.remove(), 500);
+    });
+  }, 3000);
+});
+
+// --- NEW AJAX FORM SUBMISSION CODE ---
+  
+  // --- NEW AJAX FORM SUBMISSION CODE ---
+document.getElementById('categoryForm').addEventListener('submit', async function(e) {
+  e.preventDefault(); // Stop the page from reloading
+  const form = e.target;
+  
+  const submitBtn = document.getElementById('saveBtnText');
+  const originalText = submitBtn.textContent;
+  submitBtn.textContent = 'Saving...';
+  submitBtn.disabled = true;
+
+  try {
+    const response = await fetch(form.action, {
+      method: form.method,
+      body: new URLSearchParams(new FormData(form))
+    });
+
+    const resultUrl = new URL(response.url);
+    
+    if (resultUrl.searchParams.has('error')) {
+      // We got an error! Show it INSIDE the modal
+      const errorMessage = resultUrl.searchParams.get('error');
+      
+      let errorDiv = document.getElementById('modalError');
+      if (!errorDiv) {
+        errorDiv = document.createElement('div');
+        errorDiv.id = 'modalError';
+        errorDiv.className = 'flash error';
+        errorDiv.style.marginBottom = '20px';
+        form.prepend(errorDiv); // Put it at the top of the form
+      }
+      
+      // Force it to be visible
+      errorDiv.style.transition = 'none';
+      errorDiv.style.opacity = '1';
+      errorDiv.textContent = errorMessage;
+      
+      // Clean up old timers just in case you clicked save twice quickly
+      if (window.errorTimeout1) clearTimeout(window.errorTimeout1);
+      if (window.errorTimeout2) clearTimeout(window.errorTimeout2);
+      
+      // Automatically fade out and REMOVE it after 3 seconds
+      window.errorTimeout1 = setTimeout(() => {
+        errorDiv.style.transition = 'opacity 0.5s ease';
+        errorDiv.style.opacity = '0';
+        window.errorTimeout2 = setTimeout(() => errorDiv.remove(), 500); // Destroys it completely!
+      }, 3000);
+      
+    } else {
+      // Success! Reload the page
+      window.location.href = resultUrl.href;
+    }
+  } catch (err) {
+    console.error(err);
+  } finally {
+    submitBtn.textContent = originalText;
+    submitBtn.disabled = false;
+  }
+});
+</script>

@@ -61,7 +61,7 @@ export const updateProfile = async (req, res) => {
         const userId = getSessionUserId(req);
         const { name, phone } = req.body;
 
-        // Name validation (required)
+        
         const nameCheck = validateName(name);
         if (!nameCheck.valid) {
             return res.status(400).json({ message: nameCheck.message });
@@ -92,7 +92,9 @@ export const updateProfile = async (req, res) => {
     }
 };
 
-// 4. Upload Profile Image (AJAX)
+
+
+// Upload Profile Image (AJAX)
 export const uploadProfileImage = async (req, res) => {
     try {
         const userId = getSessionUserId(req);
@@ -136,12 +138,12 @@ export const uploadProfileImage = async (req, res) => {
     }
 };
 
-// 5. Get Change Password Page
+
 export const getChangePassword = (req, res) => {
     res.render('user/changePassword', { title: 'Change Password | Nafahath' });
 };
 
-// 6. Change Password (AJAX)
+// Change Password (AJAX)
 export const changePassword = async (req, res) => {
     try {
         const userId = getSessionUserId(req);
@@ -177,6 +179,7 @@ export const changePassword = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
+
         await User.findByIdAndUpdate(userId, { $set: { password: hashedPassword } });
 
         return res.status(200).json({ message: 'Password changed successfully.' });
@@ -186,7 +189,7 @@ export const changePassword = async (req, res) => {
     }
 };
 
-// 7. Get Change Email Page
+
 export const getChangeEmail = async (req, res) => {
     try {
         const userId = getSessionUserId(req);
@@ -198,7 +201,7 @@ export const getChangeEmail = async (req, res) => {
     }
 };
 
-// 8. Send OTP to new email
+
 export const sendChangeEmailOtp = async (req, res) => {
     try {
         const userId = getSessionUserId(req);
@@ -251,7 +254,7 @@ export const sendChangeEmailOtp = async (req, res) => {
     }
 };
 
-// 9. Get Verify Email OTP Page
+
 export const getVerifyEmailOtp = async (req, res) => {
     try {
         const newEmail = req.session.pendingEmail;
@@ -279,7 +282,7 @@ export const getVerifyEmailOtp = async (req, res) => {
     }
 };
 
-// 10. Verify OTP and update email
+
 export const verifyChangeEmailOtp = async (req, res) => {
     try {
         const userId = getSessionUserId(req);
@@ -343,7 +346,7 @@ export const verifyChangeEmailOtp = async (req, res) => {
     }
 };
 
-// 11. Resend OTP for email change
+
 export const resendChangeEmailOtp = async (req, res) => {
     try {
         const newEmail = req.session.pendingEmail;
@@ -425,7 +428,7 @@ export const resendChangeEmailOtp = async (req, res) => {
     }
 };
 
-// 12. Get Referrals Page
+
 export const getReferrals = async (req, res) => {
     try {
         const userId = getSessionUserId(req);

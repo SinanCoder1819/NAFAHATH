@@ -4,6 +4,9 @@ import * as addressController from '../controllers/user/address.controller.js';
 import { getHomePage } from '../controllers/user/home.controller.js';
 import { upload } from '../config/cloudinary.js';
 import { isLogin, noCache } from '../middlewares/auth.middleware.js';
+import { getProductsDetail, getShopPage } from '../controllers/user/product.controller.js';
+import * as wishlistController from '../controllers/user/wishlist.controller.js';
+import * as cartController from '../controllers/user/cart.controller.js';
 
 const router = express.Router();
 
@@ -51,5 +54,19 @@ router.delete('/address/:id', isLogin, addressController.deleteAddress);
 
 
 router.get('/referrals', isLogin, noCache, profileController.getReferrals);
+
+router.get('/productDetail/:id', getProductsDetail);
+router.get('/shop', getShopPage);
+
+// Wishlist Routes
+router.get('/wishlist', isLogin, noCache, wishlistController.getWishlist);
+router.post('/wishlist/add/:productId', isLogin, wishlistController.addToWishlist);
+router.delete('/wishlist/remove/:productId', isLogin, wishlistController.removeFromWishlist);
+
+// Cart Routes
+router.get('/cart', isLogin, noCache, cartController.getCart);
+router.post('/cart/add', isLogin, cartController.addToCart);
+router.put('/cart/update', isLogin, cartController.updateCartQuantity);
+router.delete('/cart/remove', isLogin, cartController.removeFromCart);
 
 export default router;
