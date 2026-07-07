@@ -1,24 +1,22 @@
 import Product from "../../models/Product.model.js";
 import User from "../../models/User.model.js";
+import Category from "../../models/Category.model.js";
 
 export const getProductsDetail = async (req, res) => {
     try {
         // 1. Get the product ID from the URL (e.g. /productDetail/64a2b3...)
         const productId = req.params.id;
         
-        // 2. Fetch the main product from the database
-        // .lean() makes the database object a standard Javascript object which is faster for EJS
+        
         const product = await Product.findById(productId).lean();
         
         if (!product || product.isDeleted) {
-            // Redirect to shop if product doesn't exist or is blocked/deleted
             return res.redirect('/shop'); 
         }
 
-        // 3. Fetch 4 Related Products from the SAME category (excluding the current product)
         const relatedProducts = await Product.find({
             category: product.category,
-            _id: { $ne: product._id } // Do not show the current product in 'Related'
+            _id: { $ne: product._id } 
         })
         .limit(4)
         .lean();
@@ -33,8 +31,6 @@ export const getProductsDetail = async (req, res) => {
             }
         }
 
-        // 5. Render the EJS page and pass the data!
-        // We do not need to pass 'user' because your locals.middleware.js already handles it!
         res.render('user/productDetail', { 
             product: product, 
             relatedProducts: relatedProducts,
@@ -53,7 +49,6 @@ export const getShopPage = async (req, res) => {
         const page = Math.max(1, parseInt(req.query.page) || 1);
         const limit = 9; 
         
-        // vi. Hide blocked/deleted products
         let filter = { isDeleted: false };
         
         // i. Search logic
@@ -65,32 +60,27 @@ export const getShopPage = async (req, res) => {
             ];
         }
 
-        // iv. Category Filter
         const category = req.query.category || "";
         if (category) {
-            filter.category = category;
+            filter.category = { $regex: `^${category}$`, $options: "i" };
         }
 
-        // iv. Brand Filter (NEW)
         const brand = req.query.brand || "";
         if (brand) {
             filter.brand = brand;
         }
 
-        // iv. Price Range Filter (NEW)
         const minPrice = parseFloat(req.query.minPrice);
         const maxPrice = parseFloat(req.query.maxPrice);
         
         if (!isNaN(minPrice) || !isNaN(maxPrice)) {
             let priceConditions = [];
             
-            // Condition 1: On Sale (salePrice > 0 and within min/max)
             let salePriceMatch = { $gt: 0 };
             if (!isNaN(minPrice)) salePriceMatch.$gte = minPrice;
             if (!isNaN(maxPrice)) salePriceMatch.$lte = maxPrice;
             priceConditions.push({ salePrice: salePriceMatch });
             
-            // Condition 2: Not on sale (salePrice is 0 or missing, regularPrice within min/max)
             let regularPriceMatch = {};
             if (!isNaN(minPrice)) regularPriceMatch.$gte = minPrice;
             if (!isNaN(maxPrice)) regularPriceMatch.$lte = maxPrice;
@@ -99,7 +89,6 @@ export const getShopPage = async (req, res) => {
             filter.variants = { $elemMatch: { $or: priceConditions } };
         }
 
-        // iii. Sorting logic
         const sortQuery = req.query.sort || "newest";
         let sortOption = {};
         if (sortQuery === "newest") {
@@ -125,20 +114,24 @@ export const getShopPage = async (req, res) => {
             .limit(limit)
             .lean();
 
+        const categories = await Category.find({ isDeleted: false }).sort({ name: 1 }).lean();
+
+        // Pass everything to the view
         res.render("user/shop", {
-            products,
-            search,
-            category,
-            brand,         // Added brand to pass back to frontend
-            minPrice,      // Added minPrice to pass back to frontend
-            maxPrice,      // Added maxPrice to pass back to frontend
-            sort: sortQuery,
-            currentPage,
-            totalPages
+            products: products,
+            categories: categories,
+            currentPage: currentPage,
+            totalPages: totalPages,
+            search: search,
+            category: category,
+            brand: brand,
+            minPrice: minPrice,
+            maxPrice: maxPrice,
+            sort: sortQuery
         });
         
     } catch (error) {
-        console.error("Error loading shop page:", error);
-        res.redirect('/');
+        console.error("Error fetching products:", error);
+        res.redirect("/");
     }
 };

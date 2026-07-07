@@ -193,10 +193,10 @@ textarea.input-field { min-height: 140px; resize: vertical; line-height: 1.6; }
     </div>
   <% } %>
 
-  <form id="editProductForm" method="POST" action="/admin/products/edit/<%= typeof product !== 'undefined' ? product._id : '' %>" enctype="multipart/form-data">
+  <form method="POST" action="/admin/products/edit?id=<%= product._id %>" enctype="multipart/form-data" novalidate>
     
     <!-- 1. PRODUCT DETAILS -->
-    <div class="form-section">
+    <div class="form-section" style="position: relative; z-index: 50;">
       <div class="section-info">
         <h3>Product Details</h3>
         <p>Update the core information for this product. Changes will be reflected on the storefront immediately.</p>
@@ -217,13 +217,17 @@ textarea.input-field { min-height: 140px; resize: vertical; line-height: 1.6; }
           <label>Category *</label>
           <div class="custom-select-wrapper">
              <div class="custom-select-trigger">
-                 <span><%= typeof product !== 'undefined' && product.category ? product.category.charAt(0).toUpperCase() + product.category.slice(1) : 'Select Category' %></span>
+                 <span><%= typeof product !== 'undefined' && product.category ? product.category : 'Select Category' %></span>
                  <svg fill="#64748b" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>
              </div>
              <div class="custom-options">
-                 <div class="custom-option <%= typeof product !== 'undefined' && product.category === 'men' ? 'selected' : '' %>" data-value="men">Men</div>
-                 <div class="custom-option <%= typeof product !== 'undefined' && product.category === 'women' ? 'selected' : '' %>" data-value="women">Women</div>
-                 <div class="custom-option <%= typeof product !== 'undefined' && product.category === 'unisex' ? 'selected' : '' %>" data-value="unisex">Unisex</div>
+                 <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+                     <% categories.forEach(cat => { %>
+                         <div class="custom-option <%= typeof product !== 'undefined' && product.category === cat.name ? 'selected' : '' %>" data-value="<%= cat.name %>"><%= cat.name %></div>
+                     <% }) %>
+                 <% } else { %>
+                     <div class="custom-option text-gray-500" data-value="">No categories found</div>
+                 <% } %>
              </div>
              <input type="hidden" name="category" value="<%= typeof product !== 'undefined' ? product.category : '' %>" id="categoryInput" required>
           </div>
@@ -543,6 +547,106 @@ document.addEventListener("DOMContentLoaded", function() {
             
             let isValid = true;
 
+            // FORM VALIDATION
+            const name = document.querySelector('input[name="productName"]').value.trim();
+            const desc = document.querySelector('textarea[name="description"]').value.trim();
+            const brand = document.querySelector('input[name="brand"]').value.trim();
+            
+            const variantSizes = document.querySelectorAll('select[name="variantSize[]"], select[name="variantSize"]');
+            const stocks = document.querySelectorAll('input[name="stock[]"], input[name="stock"]');
+            const regularPrices = document.querySelectorAll('input[name="regularPrice[]"], input[name="regularPrice"]');
+            const salePrices = document.querySelectorAll('input[name="salePrice[]"], input[name="salePrice"]');
+            
+            const formError = document.getElementById('imageError');
+            if (formError) formError.style.display = 'none';
+
+            function showFieldError(inputElement, msg) {
+                const fieldGroup = inputElement.closest('.field-group');
+                if (!fieldGroup) return;
+                
+                // Check if error already exists to prevent duplicates
+                const existingError = fieldGroup.querySelector('.inline-error');
+                if (existingError) existingError.remove();
+                
+                let errDiv = document.createElement('div');
+                errDiv.className = 'inline-error';
+                errDiv.style.color = '#ef4444';
+                errDiv.style.fontSize = '12px';
+                errDiv.style.marginTop = '4px';
+                errDiv.textContent = `⚠ ${msg}`;
+                
+                // For custom select, append after the wrapper
+                const customWrapper = fieldGroup.querySelector('.custom-select-wrapper');
+                if (customWrapper) {
+                    customWrapper.after(errDiv);
+                    customWrapper.querySelector('.custom-select-trigger').style.borderColor = '#ef4444';
+                } else {
+                    inputElement.after(errDiv);
+                    inputElement.style.borderColor = '#ef4444';
+                }
+
+                if (isValid) { // Scroll to the very first error found
+                    fieldGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                isValid = false;
+                
+                // Make error disappear after 4 seconds
+                setTimeout(() => {
+                    errDiv.style.transition = 'opacity 0.5s ease';
+                    errDiv.style.opacity = '0';
+                    if (customWrapper) {
+                        const trigger = customWrapper.querySelector('.custom-select-trigger');
+                        trigger.style.transition = 'border-color 0.5s ease';
+                        trigger.style.borderColor = '';
+                    } else {
+                        inputElement.style.transition = 'border-color 0.5s ease';
+                        inputElement.style.borderColor = '';
+                    }
+                    setTimeout(() => errDiv.remove(), 500);
+                }, 4000);
+            }
+
+            const textRegex = /[a-zA-Z0-9]/;
+            const nameInput = document.querySelector('input[name="productName"]');
+            if (name.length < 3) {
+                showFieldError(nameInput, 'Product Name must be at least 3 characters.');
+            } else if (!textRegex.test(name)) {
+                showFieldError(nameInput, 'Product Name must contain valid letters or numbers.');
+            }
+            
+            const descInput = document.querySelector('textarea[name="description"]');
+            if (desc.length < 10) {
+                showFieldError(descInput, 'Description must be at least 10 characters.');
+            } else if (!textRegex.test(desc)) {
+                showFieldError(descInput, 'Description must contain valid letters or numbers.');
+            }
+            
+            const brandInput = document.querySelector('input[name="brand"]');
+            if (!brand) {
+                showFieldError(brandInput, 'Brand is required.');
+            } else if (!textRegex.test(brand)) {
+                showFieldError(brandInput, 'Brand must contain valid letters or numbers.');
+            }
+            
+            // Validate Variants
+            for (let i = 0; i < stocks.length; i++) {
+                const stockVal = Number(stocks[i].value);
+                const regPrice = Number(regularPrices[i].value);
+                const salePrice = Number(salePrices[i].value);
+                
+                if (stockVal < 0 || !Number.isInteger(stockVal) || stocks[i].value === "") {
+                    showFieldError(stocks[i], 'Stock must be a valid positive whole number.');
+                }
+                if (regPrice <= 0 || regularPrices[i].value === "") {
+                    showFieldError(regularPrices[i], 'Regular Price must be greater than 0.');
+                }
+                if (salePrice < 0 || salePrices[i].value === "") {
+                    showFieldError(salePrices[i], 'Sale Price cannot be negative.');
+                } else if (salePrice > 0 && salePrice >= regPrice) {
+                    showFieldError(salePrices[i], 'Sale Price must be LESS THAN Regular Price.');
+                }
+            }
+
             // 1. Validate Category
             if (categoryInput && categoryInput.value === "") {
                 if (categoryError) categoryError.style.display = 'block';
@@ -552,25 +656,14 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             // 2. Validate Photos
-            const imageError = document.getElementById('imageError');
-            if (imageError) imageError.style.display = 'none';
-
             if (previewCount < 2 || previewCount > 4) {
-                if (imageError) {
-                    imageError.style.display = 'flex';
-                }
+                showFormError('You must upload between 2 and 4 photos!');
                 isValid = false;
             }
 
             // Final check
             if (!isValid) {
                 e.preventDefault();
-                // Scroll to the first error we can find
-                if (categoryInput && categoryInput.value === "") {
-                    document.querySelector('.custom-select-wrapper').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                } else if (imageError) {
-                    imageError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
                 return false;
             }
         });

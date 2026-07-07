@@ -309,7 +309,7 @@ function openAddModal() {
   document.getElementById("categoryOfferExpiry").value = "";
   document.getElementById("saveBtnText").textContent = "Save";
   
-  // Clear any old error messages when opening the modal
+
   const oldError = document.getElementById('modalError');
   if (oldError) oldError.remove();
   
@@ -377,9 +377,79 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- NEW AJAX FORM SUBMISSION CODE ---
   
   // --- NEW AJAX FORM SUBMISSION CODE ---
+  function showFieldError(inputElement, msg) {
+    if (!inputElement) return;
+    
+    // Check if error already exists for this input to prevent duplicates
+    const existingError = inputElement.parentElement.querySelector('.inline-error');
+    if (existingError) existingError.remove();
+    
+    let errDiv = document.createElement('div');
+    errDiv.className = 'inline-error';
+    errDiv.style.color = '#ef4444';
+    errDiv.style.fontSize = '12px';
+    errDiv.style.marginTop = '4px';
+    errDiv.textContent = `⚠ ${msg}`;
+    
+    inputElement.after(errDiv);
+    inputElement.style.borderColor = '#ef4444';
+    
+    // Make error disappear after 4 seconds
+    setTimeout(() => {
+        errDiv.style.transition = 'opacity 0.5s ease';
+        errDiv.style.opacity = '0';
+        inputElement.style.transition = 'border-color 0.5s ease';
+        inputElement.style.borderColor = '';
+        setTimeout(() => errDiv.remove(), 500);
+    }, 4000);
+  }
+
 document.getElementById('categoryForm').addEventListener('submit', async function(e) {
-  e.preventDefault(); // Stop the page from reloading
+  e.preventDefault(); 
   const form = e.target;
+  
+  // Clear previous errors
+  form.querySelectorAll('.inline-error').forEach(el => el.remove());
+  form.querySelectorAll('input, textarea').forEach(el => el.style.borderColor = '');
+  
+  // Client-Side Validation
+  const nameInput = document.getElementById('categoryName');
+  const descInput = document.getElementById('categoryDescription');
+  const offerInput = document.getElementById('categoryOffer');
+  const expiryInput = document.getElementById('categoryOfferExpiry');
+  
+  const name = nameInput.value.trim();
+  const desc = descInput.value.trim();
+  const offer = parseInt(offerInput.value) || 0;
+  const expiry = expiryInput.value;
+  
+  const nameRegex = /^[A-Za-z0-9\s\-&]+$/; 
+  let isValid = true;
+  
+  if (name.length < 3 || name.length > 50) {
+      showFieldError(nameInput, 'Category name must be between 3 and 50 characters.');
+      isValid = false;
+  } else if (!nameRegex.test(name)) {
+      showFieldError(nameInput, 'Category name can only contain letters, numbers, spaces, -, and &.');
+      isValid = false;
+  }
+  
+  if (desc.length < 10) {
+      showFieldError(descInput, 'Description must be at least 10 characters long.');
+      isValid = false;
+  }
+  
+  if (offer > 0 && !expiry) {
+      showFieldError(expiryInput, 'Please select an expiry date for the offer.');
+      isValid = false;
+  } else if (offer > 0 && new Date(expiry) <= new Date()) {
+      showFieldError(expiryInput, 'Offer expiry date must be in the future.');
+      isValid = false;
+  }
+  
+  if (!isValid) {
+      return false;
+  }
   
   const submitBtn = document.getElementById('saveBtnText');
   const originalText = submitBtn.textContent;
@@ -395,34 +465,11 @@ document.getElementById('categoryForm').addEventListener('submit', async functio
     const resultUrl = new URL(response.url);
     
     if (resultUrl.searchParams.has('error')) {
-      // We got an error! Show it INSIDE the modal
-      const errorMessage = resultUrl.searchParams.get('error');
-      
-      let errorDiv = document.getElementById('modalError');
-      if (!errorDiv) {
-        errorDiv = document.createElement('div');
-        errorDiv.id = 'modalError';
-        errorDiv.className = 'flash error';
-        errorDiv.style.marginBottom = '20px';
-        form.prepend(errorDiv); // Put it at the top of the form
-      }
-      
-      // Force it to be visible
-      errorDiv.style.transition = 'none';
-      errorDiv.style.opacity = '1';
-      errorDiv.textContent = errorMessage;
-      
-      // Clean up old timers just in case you clicked save twice quickly
-      if (window.errorTimeout1) clearTimeout(window.errorTimeout1);
-      if (window.errorTimeout2) clearTimeout(window.errorTimeout2);
-      
-      // Automatically fade out and REMOVE it after 3 seconds
-      window.errorTimeout1 = setTimeout(() => {
-        errorDiv.style.transition = 'opacity 0.5s ease';
-        errorDiv.style.opacity = '0';
-        window.errorTimeout2 = setTimeout(() => errorDiv.remove(), 500); // Destroys it completely!
-      }, 3000);
-      
+      const errMsg = resultUrl.searchParams.get('error');
+      // Assume backend errors (e.g. "Category already exists") belong to the name field
+      showFieldError(document.getElementById('categoryName'), errMsg);
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
     } else {
       // Success! Reload the page
       window.location.href = resultUrl.href;

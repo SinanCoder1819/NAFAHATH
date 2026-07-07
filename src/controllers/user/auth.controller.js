@@ -3,31 +3,30 @@ import UnverifiedUser from "../../models/unverifiedUsers.model.js";
 import User from "../../models/User.model.js";
 import OTP from "../../models/Otp.model.js";
 import { sendOtpEmail } from "../../services/emailService.js";
-import { validateName, validatePhone, validatePassword } from "../../utils/validators.js";
+import {
+  validateName,
+  validatePhone,
+  validatePassword,
+} from "../../utils/validators.js";
 import { generateUniqueReferralCode } from "../../utils/referral.js";
-
-
 
 export const getSignupPage = (req, res) => {
   res.render("user/signup");
 };
 
-
 export const registerUserTemp = async (req, res) => {
   try {
-    const { name, email, phone, password, confirmPassword, referral } = req.body;
+    const { name, email, phone, password, confirmPassword, referral } =
+      req.body;
 
     if (!email || !password || !confirmPassword) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-   
     const nameCheck = validateName(name);
     if (!nameCheck.valid) {
       return res.status(400).json({ message: nameCheck.message });
     }
-    
-    
 
     const phoneCheck = validatePhone(phone);
     if (!phoneCheck.valid) {
@@ -42,7 +41,6 @@ export const registerUserTemp = async (req, res) => {
     if (password !== confirmPassword) {
       return res.status(400).json({ message: "Passwords do not match" });
     }
-
 
     if (referral && referral.trim() !== "") {
       const referrer = await User.findOne({ referralCode: referral.trim() });
@@ -59,14 +57,17 @@ export const registerUserTemp = async (req, res) => {
 
     const existingOtp = await OTP.findOne({ email, purpose: "SIGNUP" });
 
-
-    if (existingOtp && existingOtp.blockedUntil && existingOtp.blockedUntil > new Date()) {
+    if (
+      existingOtp &&
+      existingOtp.blockedUntil &&
+      existingOtp.blockedUntil > new Date()
+    ) {
       const timeLeftMs = existingOtp.blockedUntil.getTime() - Date.now();
       const minutesLeft = Math.ceil(timeLeftMs / 60000);
 
       return res.status(403).json({
         message: `Too many failed attempts. OTP verification is locked for ${minutesLeft} minute(s).`,
-        blockedUntil: existingOtp.blockedUntil.getTime()
+        blockedUntil: existingOtp.blockedUntil.getTime(),
       });
     }
 
@@ -93,8 +94,9 @@ export const registerUserTemp = async (req, res) => {
     try {
       await sendOtpEmail(email, otp);
       req.session.email = email;
-      return res.status(201).json({ message: "OTP sent to email.", email: tempUser.email });
-
+      return res
+        .status(201)
+        .json({ message: "OTP sent to email.", email: tempUser.email });
     } catch (emailError) {
       await UnverifiedUser.deleteOne({ email });
       await OTP.deleteOne({ email, otpCode: otp });
@@ -106,10 +108,6 @@ export const registerUserTemp = async (req, res) => {
   }
 };
 
-
-
-
-
 export const getVerifyOtp = async (req, res) => {
   try {
     const email = req.session.email;
@@ -118,26 +116,28 @@ export const getVerifyOtp = async (req, res) => {
     }
     const otp = await OTP.findOne({ email, purpose: "SIGNUP" });
     let timeLeft = 180;
-    if(!otp){
-      return res.redirect('/auth/signup')
+    if (!otp) {
+      return res.redirect("/auth/signup");
     }
     if (otp) {
       if (otp.blockedUntil && otp.blockedUntil > new Date()) {
-        timeLeft = Math.max(0, Math.ceil((otp.blockedUntil.getTime() - Date.now()) / 1000));
+        timeLeft = Math.max(
+          0,
+          Math.ceil((otp.blockedUntil.getTime() - Date.now()) / 1000),
+        );
       } else {
-        const elapsed = Math.round((Date.now() - otp.createdAt.getTime()) / 1000);
+        const elapsed = Math.round(
+          (Date.now() - otp.createdAt.getTime()) / 1000,
+        );
         timeLeft = Math.max(0, 180 - elapsed);
       }
     }
     res.render("user/verifyOtp", { timeLeft });
-    
   } catch (err) {
     console.error("Error loading verify OTP page:", err);
     res.redirect("/auth/signup");
   }
 };
-
-
 
 export const verifyOtp = async (req, res) => {
   try {
@@ -145,17 +145,23 @@ export const verifyOtp = async (req, res) => {
     const email = req.session.email;
 
     if (!email) {
-      return res.status(400).json({ message: "Session expired. Please signup again." });
+      return res
+        .status(400)
+        .json({ message: "Session expired. Please signup again." });
     }
 
     const validOtp = await OTP.findOne({ email, purpose: "SIGNUP" });
 
-    if (validOtp && validOtp.blockedUntil && validOtp.blockedUntil > new Date()) {
+    if (
+      validOtp &&
+      validOtp.blockedUntil &&
+      validOtp.blockedUntil > new Date()
+    ) {
       const timeLeftMs = validOtp.blockedUntil.getTime() - Date.now();
       const minutesLeft = Math.ceil(timeLeftMs / 60000);
       return res.status(403).json({
         message: `Too many failed attempts. OTP verification is locked for ${minutesLeft} minute(s).`,
-        blockedUntil: validOtp.blockedUntil.getTime()
+        blockedUntil: validOtp.blockedUntil.getTime(),
       });
     }
 
@@ -174,12 +180,13 @@ export const verifyOtp = async (req, res) => {
         validOtp.blockedUntil = new Date(Date.now() + 5 * 60 * 1000);
         await validOtp.save();
         return res.status(403).json({
-          message: "Too many failed attempts. OTP verification is locked for 5 minutes.",
-          blockedUntil: validOtp.blockedUntil.getTime()
+          message:
+            "Too many failed attempts. OTP verification is locked for 5 minutes.",
+          blockedUntil: validOtp.blockedUntil.getTime(),
         });
       }
       await validOtp.save();
-      return res.status(400).json({message: "Incorrect OTP.",});
+      return res.status(400).json({ message: "Incorrect OTP." });
     }
 
     const tempUser = await UnverifiedUser.findOne({ email });
@@ -191,7 +198,9 @@ export const verifyOtp = async (req, res) => {
 
     let referrerId = undefined;
     if (tempUser.referral && tempUser.referral.trim() !== "") {
-      const referrer = await User.findOne({ referralCode: tempUser.referral.trim() });
+      const referrer = await User.findOne({
+        referralCode: tempUser.referral.trim(),
+      });
       if (referrer) {
         referrerId = referrer._id;
       }
@@ -205,7 +214,7 @@ export const verifyOtp = async (req, res) => {
       password: tempUser.password,
       phone: tempUser.phone,
       referralCode: selfReferralCode,
-      referredBy: referrerId
+      referredBy: referrerId,
     });
 
     await UnverifiedUser.deleteOne({ email });
@@ -227,29 +236,38 @@ export const resendOtp = async (req, res) => {
     const email = req.session.email;
 
     if (!email) {
-      return res.status(400).json({ message: "Session expired. Please signup again." });
+      return res
+        .status(400)
+        .json({ message: "Session expired. Please signup again." });
     }
 
     const user = await UnverifiedUser.findOne({ email });
     if (!user) {
-      return res.status(404).json({ message: "No pending signup found. Please signup again." });
+      return res
+        .status(404)
+        .json({ message: "No pending signup found. Please signup again." });
     }
 
     const existingOtp = await OTP.findOne({ email, purpose: "SIGNUP" });
     const now = Date.now();
 
-    if (existingOtp && existingOtp.blockedUntil && existingOtp.blockedUntil > new Date()) {
+    if (
+      existingOtp &&
+      existingOtp.blockedUntil &&
+      existingOtp.blockedUntil > new Date()
+    ) {
       const timeLeftMs = existingOtp.blockedUntil.getTime() - now;
       const minutesLeft = Math.ceil(timeLeftMs / 60000);
       return res.status(403).json({
         message: `Too many failed attempts. OTP verification is locked for ${minutesLeft} minute(s).`,
-        blockedUntil: existingOtp.blockedUntil.getTime()
-      }); 
+        blockedUntil: existingOtp.blockedUntil.getTime(),
+      });
     }
 
-
     if (existingOtp && now - existingOtp.createdAt.getTime() < 30 * 1000) {
-      const secsLeft = Math.ceil(30 - (now - existingOtp.createdAt.getTime()) / 1000,);
+      const secsLeft = Math.ceil(
+        30 - (now - existingOtp.createdAt.getTime()) / 1000,
+      );
       return res.status(429).json({
         message: `Please wait ${secsLeft} second(s) before requesting a new OTP.`,
       });
@@ -271,11 +289,11 @@ export const resendOtp = async (req, res) => {
       });
 
       return res.status(403).json({
-        message: "Maximum resend attempts reached. OTP verification is locked for 5 minutes.",
+        message:
+          "Maximum resend attempts reached. OTP verification is locked for 5 minutes.",
         blockedUntil: blockedUntil.getTime(),
       });
     }
-
 
     const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -297,7 +315,7 @@ export const resendOtp = async (req, res) => {
     return res.status(200).json({
       message: "OTP resent successfully.",
       resendCount: newResendCount,
-      resendCooldown: 180
+      resendCooldown: 180,
     });
   } catch (error) {
     console.error("Resend OTP error:", error);
@@ -311,7 +329,6 @@ export const getLoginPage = (req, res) => {
   res.render("user/login", { blocked, googleError });
 };
 
-
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -323,9 +340,6 @@ export const loginUser = async (req, res) => {
     const trimmedEmail = email.trim().toLowerCase();
     const user = await User.findOne({ email: trimmedEmail });
 
-  
-  
-    
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password." });
     }
@@ -348,22 +362,24 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password." });
     }
 
-  
+    // const wishlistCount = user.wishlist.length;
+
     req.session.user = {
-      id: user._id.toString(), 
+      id: user._id.toString(),
       name: user.name,
       email: user.email,
     };
 
- 
     const returnTo = req.session.returnTo || "/";
     delete req.session.returnTo;
+
 
     req.session.save((err) => {
       if (err) {
         console.error("Session save error:", err);
         return res.status(500).json({ message: "Internal server error" });
       }
+
       return res.status(200).json({
         message: "Login successful!",
         redirectUrl: returnTo,
@@ -375,13 +391,10 @@ export const loginUser = async (req, res) => {
   }
 };
 
-
- 
-
 export const logoutUser = (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      console.log(err)
+      console.log(err);
       return res.redirect("/");
     }
     res.clearCookie("user.sid");
@@ -405,16 +418,25 @@ export const sendForgotPasswordOtp = async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ message: "No account found with this email." });
+      return res
+        .status(404)
+        .json({ message: "No account found with this email." });
     }
 
-    const existingOtp = await OTP.findOne({ email, purpose: "FORGOT_PASSWORD" });
-    if (existingOtp && existingOtp.blockedUntil && existingOtp.blockedUntil > new Date()) {
+    const existingOtp = await OTP.findOne({
+      email,
+      purpose: "FORGOT_PASSWORD",
+    });
+    if (
+      existingOtp &&
+      existingOtp.blockedUntil &&
+      existingOtp.blockedUntil > new Date()
+    ) {
       const timeLeftMs = existingOtp.blockedUntil.getTime() - Date.now();
       const minutesLeft = Math.ceil(timeLeftMs / 60000);
       return res.status(403).json({
         message: `Too many failed attempts. OTP verification is locked for ${minutesLeft} minute(s).`,
-        blockedUntil: existingOtp.blockedUntil.getTime()
+        blockedUntil: existingOtp.blockedUntil.getTime(),
       });
     }
 
@@ -451,15 +473,20 @@ export const getVerifyForgotOtp = async (req, res) => {
     let timeLeft = 180;
     if (otp) {
       if (otp.blockedUntil && otp.blockedUntil > new Date()) {
-        timeLeft = Math.max(0, Math.ceil((otp.blockedUntil.getTime() - Date.now()) / 1000));
+        timeLeft = Math.max(
+          0,
+          Math.ceil((otp.blockedUntil.getTime() - Date.now()) / 1000),
+        );
       } else {
-        const elapsed = Math.round((Date.now() - otp.createdAt.getTime()) / 1000);
+        const elapsed = Math.round(
+          (Date.now() - otp.createdAt.getTime()) / 1000,
+        );
         timeLeft = Math.max(0, 180 - elapsed);
       }
     }
     res.render("user/verify-forgotOtp", {
       title: "Verify OTP | Nafahath",
-      timeLeft
+      timeLeft,
     });
   } catch (err) {
     console.error("Error loading verify forgot OTP page:", err);
@@ -473,21 +500,29 @@ export const verifyForgotOtp = async (req, res) => {
     const email = req.session.forgotEmail;
 
     if (!email) {
-      return res.status(400).json({ message: "Session expired. Please start again." });
+      return res
+        .status(400)
+        .json({ message: "Session expired. Please start again." });
     }
 
     if (!otp || otp.length !== 6) {
-      return res.status(400).json({ message: "Please enter a valid 6-digit OTP." });
+      return res
+        .status(400)
+        .json({ message: "Please enter a valid 6-digit OTP." });
     }
 
     const validOtp = await OTP.findOne({ email, purpose: "FORGOT_PASSWORD" });
 
-    if (validOtp && validOtp.blockedUntil && validOtp.blockedUntil > new Date()) {
+    if (
+      validOtp &&
+      validOtp.blockedUntil &&
+      validOtp.blockedUntil > new Date()
+    ) {
       const timeLeftMs = validOtp.blockedUntil.getTime() - Date.now();
       const minutesLeft = Math.ceil(timeLeftMs / 60000);
       return res.status(403).json({
         message: `Too many failed attempts. OTP verification is locked for ${minutesLeft} minute(s).`,
-        blockedUntil: validOtp.blockedUntil.getTime()
+        blockedUntil: validOtp.blockedUntil.getTime(),
       });
     }
 
@@ -506,8 +541,9 @@ export const verifyForgotOtp = async (req, res) => {
         validOtp.blockedUntil = new Date(Date.now() + 5 * 60 * 1000);
         await validOtp.save();
         return res.status(403).json({
-          message: "Too many failed attempts. OTP verification is locked for 5 minutes.",
-          blockedUntil: validOtp.blockedUntil.getTime()
+          message:
+            "Too many failed attempts. OTP verification is locked for 5 minutes.",
+          blockedUntil: validOtp.blockedUntil.getTime(),
         });
       }
       await validOtp.save();
@@ -531,7 +567,9 @@ export const resendForgotOtp = async (req, res) => {
     const email = req.session.forgotEmail;
 
     if (!email) {
-      return res.status(400).json({ message: "Session expired. Please start again." });
+      return res
+        .status(400)
+        .json({ message: "Session expired. Please start again." });
     }
 
     const existingOtp = await OTP.findOne({
@@ -540,12 +578,16 @@ export const resendForgotOtp = async (req, res) => {
     });
     const now = Date.now();
 
-    if (existingOtp && existingOtp.blockedUntil && existingOtp.blockedUntil > new Date()) {
+    if (
+      existingOtp &&
+      existingOtp.blockedUntil &&
+      existingOtp.blockedUntil > new Date()
+    ) {
       const timeLeftMs = existingOtp.blockedUntil.getTime() - now;
       const minutesLeft = Math.ceil(timeLeftMs / 60000);
       return res.status(403).json({
         message: `Too many failed attempts. OTP verification is locked for ${minutesLeft} minute(s).`,
-        blockedUntil: existingOtp.blockedUntil.getTime()
+        blockedUntil: existingOtp.blockedUntil.getTime(),
       });
     }
 
@@ -575,7 +617,8 @@ export const resendForgotOtp = async (req, res) => {
       });
 
       return res.status(403).json({
-        message: "Maximum resend attempts reached. OTP verification is locked for 5 minutes.",
+        message:
+          "Maximum resend attempts reached. OTP verification is locked for 5 minutes.",
         blockedUntil: blockedUntil.getTime(),
       });
     }
@@ -621,7 +664,9 @@ export const resetPassword = async (req, res) => {
     const email = req.session.forgotEmail;
 
     if (!email || !req.session.otpVerified) {
-      return res.status(403).json({ message: "Unauthorized. Please verify your OTP first." });
+      return res
+        .status(403)
+        .json({ message: "Unauthorized. Please verify your OTP first." });
     }
 
     if (!password || !confirmPassword) {
@@ -651,6 +696,3 @@ export const resetPassword = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
-
-
-

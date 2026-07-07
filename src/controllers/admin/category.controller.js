@@ -6,6 +6,7 @@ export const getCategories = async (req,res) => {
   try {
     const page = Math.max(1, parseInt(req.query.page) || 1)
     const search = (req.query.search || "").trim()
+    
 
     const filter = {}
 
@@ -57,8 +58,15 @@ export const addCategory = async (req, res) => {
     const isActive = req.body.isActive === "true" || req.body.isActive === "on";
  
 
-    if (!name) {
-      return res.redirect("/admin/categories?error=Category name is required");
+    if (!name || name.length < 3 || name.length > 50) {
+      return res.redirect("/admin/categories?error=Category name must be between 3 and 50 characters.");
+    }
+    const nameRegex = /^[A-Za-z0-9\s\-&]+$/;
+    if (!nameRegex.test(name)) {
+      return res.redirect("/admin/categories?error=Category name can only contain letters, numbers, spaces, -, and &.");
+    }
+    if (!description || description.length < 10) {
+      return res.redirect("/admin/categories?error=Description must be at least 10 characters long.");
     }
 
     const existingCategory = await Category.findOne({
@@ -92,8 +100,15 @@ export const updateCategory = async (req, res) => {
     
     const isActive = req.body.isActive === "true" || req.body.isActive === "on";
 
-    if (!name) {
-      return res.redirect("/admin/categories?error=Category name is required");
+    if (!name || name.length < 3 || name.length > 50) {
+      return res.redirect("/admin/categories?error=Category name must be between 3 and 50 characters.");
+    }
+    const nameRegex = /^[A-Za-z0-9\s\-&]+$/;
+    if (!nameRegex.test(name)) {
+      return res.redirect("/admin/categories?error=Category name can only contain letters, numbers, spaces, -, and &.");
+    }
+    if (!description || description.length < 10) {
+      return res.redirect("/admin/categories?error=Description must be at least 10 characters long.");
     }
 
     const duplicateCategory = await Category.findOne({

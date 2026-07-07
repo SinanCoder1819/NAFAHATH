@@ -1,6 +1,7 @@
 import Product from "../../models/Product.model.js";
+import Category from "../../models/Category.model.js";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 5;
 
 const escapeRegex = (string) => {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -48,13 +49,20 @@ export const getProducts = async (req, res) => {
   }
 };
 
-export const getAddProduct = (req, res) => {
-  res.render("admin/addProducts", {
-    layout: "layouts/admin",
-    admin: req.session.admin,
-    activePage: "products",
-    error: req.query.error || "",
-  });
+export const getAddProduct = async (req, res) => {
+  try {
+    const categories = await Category.find({ isDeleted: false }).sort({ name: 1 }).lean();
+    res.render("admin/addProducts", {
+      layout: "layouts/admin",
+      admin: req.session.admin,
+      activePage: "products",
+      categories: categories,
+      error: req.query.error || "",
+    });
+  } catch (error) {
+    console.error("Error loading add product page:", error);
+    res.redirect("/admin/products?error=Server error");
+  }
 };
 
 export const postAddProduct = async (req, res) => {
@@ -64,9 +72,14 @@ export const postAddProduct = async (req, res) => {
       variantSize, stock, regularPrice, salePrice 
     } = req.body;
 
-    // Basic Validation - Redirects properly to /admin/addProducts
-    if (!productName || !category || !brand) {
-      return res.redirect("/admin/addProducts?error=Please fill all required fields");
+    if (!productName || productName.length < 3) {
+      return res.redirect("/admin/addProducts").send({message: "Product Name must be at least 3 characters"});
+    }
+    if (!description || description.length < 10) {
+      return res.redirect("/admin/addProducts?error=Description must be at least 10 characters");
+    }
+    if (!category || !brand) {
+      return res.redirect("/admin/addProducts?error=Category and Brand are required");
     }
 
     const variants = [];
@@ -119,13 +132,18 @@ export const postAddProduct = async (req, res) => {
 
 export const getEditProduct = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const productId = req.query.id;
+    if (!productId) return res.redirect("/admin/products?error=Product ID is missing");
+    
+    const product = await Product.findById(productId);
     if (!product) return res.redirect("/admin/products?error=Product not found");
+    const categories = await Category.find({ isDeleted: false }).sort({ name: 1 }).lean();
     res.render("admin/editProducts", {
       layout: "layouts/admin",
       admin: req.session.admin,
       activePage: "products",
       product: product,
+      categories: categories,
       error: req.query.error || "",
     });
   } catch (error) {
@@ -136,14 +154,26 @@ export const getEditProduct = async (req, res) => {
 
 export const postEditProduct = async (req, res) => {
   try {
+    const productId = req.query.id;
+    if (!productId) return res.redirect("/admin/products?error=Product ID is missing");
+    
     const { 
       productName, description, category, brand, 
       variantSize, stock, regularPrice, salePrice 
     } = req.body;
-    const existingProduct = await Product.findById(req.params.id);
-    if (!existingProduct) {
-      return res.redirect("/admin/products?error=Product not found");
+
+    if (!productName || productName.length < 3) {
+      return res.redirect(`/admin/products/edit?id=${productId}&error=Product Name must be at least 3 characters`);
     }
+    if (!description || description.length < 10) {
+      return res.redirect(`/admin/products/edit?id=${productId}&error=Description must be at least 10 characters`);
+    }
+    if (!category || !brand) {
+      return res.redirect(`/admin/products/edit?id=${productId}&error=Category and Brand are required`);
+    }
+
+    const existingProduct = await Product.findById(productId);
+    if (!existingProduct) return res.redirect("/admin/products?error=Product not found");
 
     const variants = [];
     if (Array.isArray(variantSize)) {
@@ -162,6 +192,22 @@ export const postEditProduct = async (req, res) => {
         regularPrice: Number(regularPrice) || 0,
         salePrice: Number(salePrice) || 0
       });
+    }
+
+    // Validate Variants
+    for (const v of variants) {
+      if (v.stock < 0 || !Number.isInteger(v.stock)) {
+        return res.redirect(`/admin/products/${req.params.id}/edit?error=Stock cannot be negative and must be an integer`);
+      }
+      if (v.regularPrice <= 0) {
+        return res.redirect(`/admin/products/${req.params.id}/edit?error=Regular Price must be greater than 0`);
+      }
+      if (v.salePrice < 0) {
+        return res.redirect(`/admin/products/${req.params.id}/edit?error=Sale Price cannot be negative`);
+      }
+      if (v.salePrice > 0 && v.salePrice >= v.regularPrice) {
+        return res.redirect(`/admin/products/${req.params.id}/edit?error=Sale Price must be less than Regular Price`);
+      }
     }
 
     if (req.files) {
@@ -190,7 +236,7 @@ export const postEditProduct = async (req, res) => {
     res.redirect("/admin/products?success=Product updated successfully");
   } catch (error) {
     console.error("Error updating product:", error);
-    res.redirect(`/admin/products/edit/${req.params.id}?error=Failed to update product`);
+    res.redirect(`/admin/products/edit?id=${req.query.id}&error=Failed to update product`);
   }
 };
 

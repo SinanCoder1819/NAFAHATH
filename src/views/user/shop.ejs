@@ -30,21 +30,19 @@
                 <span class="text-sm text-gray-400 peer-checked:text-white peer-checked:font-semibold group-hover:text-white transition-colors">All Categories</span>
             </label>
             
-            <label class="flex items-center cursor-pointer group">
-                <input type="radio" name="category" value="men" <%= category === 'men' ? 'checked' : '' %> class="peer hidden">
-                <div class="w-4 h-4 border border-[#444] rounded-sm mr-3 peer-checked:bg-[#00FFFF] peer-checked:border-[#00FFFF] transition-all flex items-center justify-center">
-                    <svg class="w-3 h-3 text-black opacity-0 peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
-                </div>
-                <span class="text-sm text-gray-400 peer-checked:text-white peer-checked:font-semibold group-hover:text-white transition-colors">Men</span>
-            </label>
-
-            <label class="flex items-center cursor-pointer group">
-                <input type="radio" name="category" value="women" <%= category === 'women' ? 'checked' : '' %> class="peer hidden">
-                <div class="w-4 h-4 border border-[#444] rounded-sm mr-3 peer-checked:bg-[#00FFFF] peer-checked:border-[#00FFFF] transition-all flex items-center justify-center">
-                    <svg class="w-3 h-3 text-black opacity-0 peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
-                </div>
-                <span class="text-sm text-gray-400 peer-checked:text-white peer-checked:font-semibold group-hover:text-white transition-colors">Women</span>
-            </label>
+            <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+                <% categories.forEach(cat => { %>
+                    <label class="flex items-center cursor-pointer group">
+                        <input type="radio" name="category" value="<%= cat.name %>" <%= category.toLowerCase() === cat.name.toLowerCase() ? 'checked' : '' %> class="peer hidden">
+                        <div class="w-4 h-4 border border-[#444] rounded-sm mr-3 peer-checked:bg-[#00FFFF] peer-checked:border-[#00FFFF] transition-all flex items-center justify-center">
+                            <svg class="w-3 h-3 text-black opacity-0 peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                        </div>
+                        <span class="text-sm text-gray-400 peer-checked:text-white peer-checked:font-semibold group-hover:text-white transition-colors"><%= cat.name %></span>
+                    </label>
+                <% }) %>
+            <% } else { %>
+                <span class="text-sm text-gray-600">No categories found</span>
+            <% } %>
         </div>
     </div>
 
@@ -226,11 +224,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const productGrid = document.getElementById('productGrid');
     const paginationContainer = document.getElementById('paginationContainer');
 
-    const fetchFilteredProducts = async (url) => {
+    const fetchFilteredProducts = async (url, pushToHistory = true) => {
         try {
             if (productGrid) {
-                productGrid.style.transition = 'opacity 0.3s ease';
-                productGrid.style.opacity = '0.4';
+                productGrid.style.transition = 'all 0.3s ease';
+                productGrid.style.opacity = '0.3';
+                productGrid.style.transform = 'scale(0.98)';
+                // Optional: show a mini spinner if you want here
             }
             
             const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
@@ -244,14 +244,21 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (newGrid && productGrid) {
                 productGrid.innerHTML = newGrid.innerHTML;
-                productGrid.style.opacity = '1'; 
+                
+                // Small delay to allow DOM to render before fading back in
+                setTimeout(() => {
+                    productGrid.style.opacity = '1'; 
+                    productGrid.style.transform = 'scale(1)';
+                }, 50);
             }
             
             if (paginationContainer) {
                 paginationContainer.innerHTML = newPagination ? newPagination.innerHTML : '';
             }
             
-            window.history.pushState({}, '', url);
+            if (pushToHistory) {
+                window.history.pushState({}, '', url);
+            }
             
         } catch (error) {
             console.error("Error fetching products:", error);
@@ -285,6 +292,23 @@ document.addEventListener('DOMContentLoaded', () => {
             fetchFilteredProducts(link.href);
             document.querySelector('.flex-1').scrollIntoView({ behavior: 'smooth' });
         }
+    });
+
+    // Handle Browser Back/Forward Buttons (SPA behavior)
+    window.addEventListener('popstate', () => {
+        // Fetch the products for the URL we just went back to, but don't push it to history again
+        fetchFilteredProducts(window.location.href, false);
+        
+        // Update the radio buttons to visually match the URL we went back to
+        const currentUrl = new URL(window.location.href);
+        const currentCategory = currentUrl.searchParams.get('category') || '';
+        const currentSort = currentUrl.searchParams.get('sort') || '';
+        
+        const catRadio = document.querySelector(`input[name="category"][value="${currentCategory}"]`);
+        if (catRadio) catRadio.checked = true;
+        
+        const sortRadio = document.querySelector(`input[name="sort"][value="${currentSort}"]`);
+        if (sortRadio) sortRadio.checked = true;
     });
 });
 </script>

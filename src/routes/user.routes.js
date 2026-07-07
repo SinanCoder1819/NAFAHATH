@@ -1,72 +1,120 @@
-import express from 'express';
-import * as profileController from '../controllers/user/profile.controller.js';
-import * as addressController from '../controllers/user/address.controller.js';
-import { getHomePage } from '../controllers/user/home.controller.js';
-import { upload } from '../config/cloudinary.js';
-import { isLogin, noCache } from '../middlewares/auth.middleware.js';
-import { getProductsDetail, getShopPage } from '../controllers/user/product.controller.js';
-import * as wishlistController from '../controllers/user/wishlist.controller.js';
-import * as cartController from '../controllers/user/cart.controller.js';
+import express from "express";
+import * as profileController from "../controllers/user/profile.controller.js";
+import * as addressController from "../controllers/user/address.controller.js";
+import { getHomePage, setLocals } from "../controllers/user/home.controller.js";
+import { upload } from "../config/cloudinary.js";
+import { isLogin, noCache } from "../middlewares/auth.middleware.js";
+import {
+  getProductsDetail,
+  getShopPage,
+} from "../controllers/user/product.controller.js";
+import * as wishlistController from "../controllers/user/wishlist.controller.js";
+import * as cartController from "../controllers/user/cart.controller.js";
 
 const router = express.Router();
 
-
 const handleUpload = (req, res, next) => {
-    upload.single('profileImage')(req, res, (err) => {
-        if (err) {
-            if (err.code === 'LIMIT_FILE_SIZE') {
-                return res.status(400).json({ message: 'Image must be under 2MB.' });
-            }
-            console.error('Multer/Cloudinary error:', err);
-            return res.status(400).json({ message: err.message || 'File upload failed.' });
-        }
-        next();
-    });
+  upload.single("profileImage")(req, res, (err) => {
+    if (err) {
+      if (err.code === "LIMIT_FILE_SIZE") {
+        return res.status(400).json({ message: "Image must be under 2MB." });
+      }
+      console.error("Multer/Cloudinary error:", err);
+      return res
+        .status(400)
+        .json({ message: err.message || "File upload failed." });
+    }
+    next();
+  });
 };
 
+router.use((req, res, next) => {
+  console.log(res.locals);
+  next();
+});
 
-router.get('/', getHomePage);
+router.get("/", getHomePage);
 
+router.get("/profile", isLogin, noCache, profileController.getProfile);
+router.get("/profile/edit", isLogin, noCache, profileController.getEditProfile);
+router.post("/profile/edit", isLogin, profileController.updateProfile);
 
-router.get('/profile', isLogin, noCache, profileController.getProfile);
-router.get('/profile/edit', isLogin, noCache, profileController.getEditProfile);
-router.post('/profile/edit', isLogin, profileController.updateProfile);
+router.post(
+  "/profile/update-image",
+  isLogin,
+  handleUpload,
+  profileController.uploadProfileImage,
+);
 
+router.get(
+  "/profile/change-password",
+  isLogin,
+  noCache,
+  profileController.blockGoogleUser,
+  profileController.getChangePassword,
+);
+router.post(
+  "/profile/change-password",
+  isLogin,
+  profileController.changePassword,
+);
 
-router.post('/profile/update-image', isLogin, handleUpload,  profileController.uploadProfileImage);
+router.get(
+  "/profile/change-email",
+  isLogin,
+  noCache,
+  profileController.blockGoogleUser,
+  profileController.getChangeEmail,
+);
+router.post(
+  "/profile/change-email/send-otp",
+  isLogin,
+  profileController.sendChangeEmailOtp,
+);
+router.get(
+  "/profile/change-email/verify-otp",
+  isLogin,
+  noCache,
+  profileController.getVerifyEmailOtp,
+);
+router.post(
+  "/profile/change-email/verify-otp",
+  isLogin,
+  profileController.verifyChangeEmailOtp,
+);
+router.post(
+  "/profile/change-email/resend-otp",
+  isLogin,
+  profileController.resendChangeEmailOtp,
+);
 
+router.get("/address", isLogin, noCache, addressController.getAddressPage);
+router.post("/address", isLogin, addressController.addAddress);
+router.put("/address/:id", isLogin, addressController.editAddress);
+router.delete("/address/:id", isLogin, addressController.deleteAddress);
 
-router.get('/profile/change-password', isLogin, noCache, profileController.blockGoogleUser, profileController.getChangePassword);
-router.post('/profile/change-password', isLogin, profileController.changePassword);
+router.get("/referrals", isLogin, noCache, profileController.getReferrals);
 
-
-router.get('/profile/change-email', isLogin, noCache, profileController.blockGoogleUser, profileController.getChangeEmail);
-router.post('/profile/change-email/send-otp', isLogin, profileController.sendChangeEmailOtp);
-router.get('/profile/change-email/verify-otp', isLogin, noCache, profileController.getVerifyEmailOtp);
-router.post('/profile/change-email/verify-otp',isLogin, profileController.verifyChangeEmailOtp);
-router.post('/profile/change-email/resend-otp',isLogin, profileController.resendChangeEmailOtp);
-
-
-router.get('/address', isLogin, noCache, addressController.getAddressPage);
-router.post('/address', isLogin, addressController.addAddress);
-router.put('/address/:id', isLogin, addressController.editAddress);
-router.delete('/address/:id', isLogin, addressController.deleteAddress);
-
-
-router.get('/referrals', isLogin, noCache, profileController.getReferrals);
-
-router.get('/productDetail/:id', getProductsDetail);
-router.get('/shop', getShopPage);
+router.get("/productDetail/:id", getProductsDetail);
+router.get("/shop", getShopPage);
 
 // Wishlist Routes
-router.get('/wishlist', isLogin, noCache, wishlistController.getWishlist);
-router.post('/wishlist/add/:productId', isLogin, wishlistController.addToWishlist);
-router.delete('/wishlist/remove/:productId', isLogin, wishlistController.removeFromWishlist);
+router.get("/wishlist", isLogin, noCache, wishlistController.getWishlist);
+router.post(
+  "/wishlist/add/:productId",
+  isLogin,
+  wishlistController.addToWishlist,
+);
+router.delete(
+  "/wishlist/remove/:productId",
+  isLogin,
+  wishlistController.removeFromWishlist,
+);
 
 // Cart Routes
-router.get('/cart', isLogin, noCache, cartController.getCart);
-router.post('/cart/add', isLogin, cartController.addToCart);
-router.put('/cart/update', isLogin, cartController.updateCartQuantity);
-router.delete('/cart/remove', isLogin, cartController.removeFromCart);
+router.get("/cart", isLogin, noCache, cartController.getCart);
+router.post("/cart/add", isLogin, cartController.addToCart);
+router.put("/cart/update", isLogin, cartController.updateCartQuantity);
+router.delete("/cart/remove", isLogin, cartController.removeFromCart);
 
 export default router;

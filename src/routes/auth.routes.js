@@ -17,7 +17,7 @@ import {
     resendForgotOtp,
     getResetPassword,
     resetPassword,
-    verifyOtp
+    verifyOtp,
 } from "../controllers/user/auth.controller.js";
 
 import { isLogout, noCache } from '../middlewares/auth.middleware.js';
@@ -34,7 +34,7 @@ router.post('/resend-otp', resendOtp);
 
 
 router.get('/login', isLogout, noCache, getLoginPage);
-router.post('/login', loginUser);
+router.post('/login', loginUser , );
 router.post('/logout', logoutUser);
 
 

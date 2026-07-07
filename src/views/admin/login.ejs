@@ -1,97 +1,203 @@
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,600&display=swap');
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+        font-family: 'Outfit', sans-serif;
+        background-color: #030712;
+        background-image: 
+            radial-gradient(circle at 15% 50%, rgba(0, 255, 255, 0.08) 0%, transparent 50%),
+            radial-gradient(circle at 85% 30%, rgba(0, 191, 255, 0.05) 0%, transparent 50%);
+        color: #fff;
+        min-height: 100vh;
+        overflow: hidden;
+    }
+
     .admin-login-wrap {
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 40px 16px;
-        background: #0a0a0a;
+        position: relative;
+        z-index: 1;
     }
+
+    /* Ambient animated glow behind the card */
+    .admin-login-wrap::before {
+        content: '';
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        background: linear-gradient(45deg, #00FFFF, #00BFFF, #0ea5e9);
+        border-radius: 50%;
+        filter: blur(120px);
+        opacity: 0.15;
+        animation: pulse-glow 8s infinite alternate;
+        z-index: -1;
+    }
+
+    @keyframes pulse-glow {
+        0% { transform: scale(0.8) translate(0, 0); opacity: 0.1; }
+        100% { transform: scale(1.2) translate(-20px, 20px); opacity: 0.2; }
+    }
+
     .admin-login-card {
         width: 100%;
-        max-width: 400px;
-        background: #111;
-        border: 1px solid #1e1e1e;
-        border-radius: 18px;
-        padding: 36px 32px 32px;
+        max-width: 440px;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        padding: 48px 40px;
+        box-shadow: 
+            0 25px 50px -12px rgba(0, 0, 0, 0.7),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
     }
-    .al-title { font-size: 21px; font-weight: 700; color: #fff; text-align: center; margin-bottom: 6px; }
-    .al-sub   { font-size: 13px; color: #6b7280; text-align: center; margin-bottom: 28px; }
+
+    /* Card subtle gradient border top */
+    .admin-login-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.5), transparent);
+    }
+
+    .al-title { 
+        font-family: 'Playfair Display', serif;
+        font-size: 32px; 
+        color: #fff; 
+        text-align: center; 
+        margin-bottom: 8px;
+        letter-spacing: 0.02em;
+    }
+    
+    .al-sub { 
+        font-size: 14px; 
+        color: #94a3b8; 
+        text-align: center; 
+        margin-bottom: 36px;
+        font-weight: 300;
+        letter-spacing: 0.05em;
+    }
 
     /* Alert */
     .al-alert {
-        padding: 10px 14px;
-        border-radius: 8px;
-        font-size: 12px;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
         font-weight: 500;
         text-align: center;
-        margin-bottom: 18px;
+        margin-bottom: 24px;
         display: none;
+        backdrop-filter: blur(10px);
     }
-    .al-alert.show { display: block; }
-    .al-alert-error   { background: rgba(127,29,29,0.35); color: #fca5a5; border: 1px solid rgba(127,29,29,0.6); }
-    .al-alert-success { background: rgba(20,83,45,0.35);  color: #86efac;  border: 1px solid rgba(20,83,45,0.6); }
+    .al-alert.show { display: block; animation: slideDown 0.3s ease; }
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .al-alert-error   { background: rgba(239, 68, 68, 0.1); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.2); }
+    .al-alert-success { background: rgba(34, 197, 94, 0.1); color: #86efac; border: 1px solid rgba(34, 197, 94, 0.2); }
 
     /* Form */
-    .al-group { margin-bottom: 18px; }
+    .al-group { margin-bottom: 24px; }
     .al-label {
         display: block;
-        font-size: 11.5px;
-        font-weight: 500;
-        color: #9ca3af;
-        margin-bottom: 7px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #cbd5e1;
+        margin-bottom: 8px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
     }
     .al-input {
         width: 100%;
-        background: transparent;
-        border: 1px solid #2a2a2a;
-        border-radius: 9px;
-        padding: 11px 14px;
-        font-size: 13px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 14px 16px;
+        font-size: 14px;
         color: #fff;
         font-family: inherit;
         outline: none;
-        transition: border-color 0.2s;
+        transition: all 0.3s ease;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
     }
-    .al-input::placeholder { color: #374151; }
-    .al-input:focus { border-color: #00BFFF; }
+    .al-input::placeholder { color: #64748b; font-weight: 300; }
+    .al-input:focus { 
+        background: rgba(0, 255, 255, 0.02);
+        border-color: #00FFFF; 
+        box-shadow: 0 0 0 4px rgba(0, 255, 255, 0.1), inset 0 2px 4px rgba(0,0,0,0.2);
+    }
     .al-input-wrap { position: relative; }
     .al-eye {
         position: absolute;
-        right: 12px;
+        right: 14px;
         top: 50%;
         transform: translateY(-50%);
         background: none;
         border: none;
         cursor: pointer;
-        color: #4b5563;
-        padding: 0;
+        color: #64748b;
+        padding: 4px;
         display: flex;
         align-items: center;
-        transition: color 0.15s;
+        transition: color 0.2s;
     }
-    .al-eye:hover { color: #9ca3af; }
+    .al-eye:hover { color: #00FFFF; }
 
     /* Submit */
     .al-submit {
         width: 100%;
-        background: #00BFFF;
+        background: linear-gradient(135deg, #00FFFF 0%, #00BFFF 100%);
         color: #000;
-        font-size: 13px;
+        font-size: 14px;
         font-weight: 700;
-        padding: 12px 0;
-        border-radius: 9px;
+        padding: 16px 0;
+        border-radius: 12px;
         border: none;
         cursor: pointer;
         font-family: inherit;
-        letter-spacing: 0.04em;
-        transition: background 0.15s, opacity 0.15s;
-        margin-top: 6px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        margin-top: 12px;
+        box-shadow: 0 10px 20px -5px rgba(0, 255, 255, 0.3);
     }
-    .al-submit:hover    { background: #009fd4; }
-    .al-submit:active   { background: #0088b3; }
-    .al-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .al-submit:hover { 
+        transform: translateY(-2px);
+        box-shadow: 0 15px 25px -5px rgba(0, 255, 255, 0.4);
+        background: linear-gradient(135deg, #33FFFF 0%, #33CCFF 100%);
+    }
+    .al-submit:active { transform: translateY(0); }
+    .al-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* Brand Logo / Top Icon placeholder */
+    .brand-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(0, 255, 255, 0.1);
+        border: 1px solid rgba(0, 255, 255, 0.2);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+        color: #00FFFF;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.15);
+        transform: rotate(45deg);
+    }
+    .brand-icon svg {
+        transform: rotate(-45deg);
+        width: 28px;
+        height: 28px;
+    }
 
     /* Loading overlay */
     .al-overlay {
@@ -99,39 +205,48 @@
         position: fixed;
         inset: 0;
         z-index: 50;
-        background: rgba(0,0,0,0.75);
-        backdrop-filter: blur(4px);
+        background: rgba(3, 7, 18, 0.8);
+        backdrop-filter: blur(8px);
         align-items: center;
         justify-content: center;
     }
-    .al-overlay.show { display: flex; }
+    .al-overlay.show { display: flex; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    
     .al-loading-box {
         display: flex;
         flex-direction: column;
         align-items: center;
-        background: #111;
-        border: 1px solid #1e1e1e;
-        border-radius: 20px;
-        padding: 36px 44px;
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 40px 48px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
     }
     .al-spinner {
-        width: 40px;
-        height: 40px;
-        border: 3px solid rgba(0,191,255,0.15);
-        border-top-color: #00BFFF;
+        width: 48px;
+        height: 48px;
+        border: 3px solid rgba(0, 255, 255, 0.1);
+        border-top-color: #00FFFF;
         border-radius: 50%;
-        animation: al-spin 0.7s linear infinite;
-        margin-bottom: 14px;
+        animation: al-spin 0.8s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        margin-bottom: 20px;
     }
     @keyframes al-spin { to { transform: rotate(360deg); } }
-    .al-loading-title { font-size: 14px; font-weight: 600; color: #fff; }
-    .al-loading-sub   { font-size: 12px; color: #6b7280; margin-top: 4px; }
+    .al-loading-title { font-size: 16px; font-weight: 600; color: #fff; letter-spacing: 0.05em; }
+    .al-loading-sub   { font-size: 13px; color: #94a3b8; margin-top: 6px; }
 </style>
 
 <div class="admin-login-wrap">
     <div class="admin-login-card">
+        
+        <div class="brand-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+            </svg>
+        </div>
 
-        <h1 class="al-title">Admin Login</h1>
+        <h1 class="al-title">Nafahath Admin</h1>
         <p class="al-sub">Enter your credentials to access the dashboard.</p>
 
         <!-- Server-side error (e.g. from session flash) -->

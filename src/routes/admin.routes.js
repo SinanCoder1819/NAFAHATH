@@ -39,8 +39,8 @@ router.post("/products/add", uploadProduct.fields([
     { name: 'galleryImage3', maxCount: 1 },
     { name: 'galleryImage4', maxCount: 1 }
 ]), postAddProduct);
-router.get("/products/edit/:id", getEditProduct);
-router.post("/products/edit/:id", uploadProduct.fields([
+router.get("/products/edit", getEditProduct);
+router.post("/products/edit", uploadProduct.fields([
     { name: 'primaryImage',  maxCount: 1 },
     { name: 'galleryImage1', maxCount: 1 },
     { name: 'galleryImage2', maxCount: 1 },

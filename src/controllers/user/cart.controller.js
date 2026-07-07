@@ -37,11 +37,14 @@ export const addToCart = async (req, res) => {
     try {
         const userId = getUserId(req);
         const { productId, variantId, quantity = 1 } = req.body;
+        
 
         const product = await Product.findById(productId);
         if (!product || product.isDeleted) {
             return res.status(404).json({ success: false, message: "Product not available" });
         }
+
+     
 
         const variant = product.variants.id(variantId);
         if (!variant) {
@@ -64,7 +67,6 @@ export const addToCart = async (req, res) => {
         );
 
         if (existingItemIndex > -1) {
-            // Check max stock if adding more
             const newQty = cart.items[existingItemIndex].quantity + parseInt(quantity);
             if (newQty > variant.stock) {
                 return res.status(400).json({ success: false, message: `Only ${variant.stock} items left in stock!` });

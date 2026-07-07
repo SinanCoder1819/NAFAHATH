@@ -1,6 +1,5 @@
 import User from "../models/User.model.js";
 
-
 export const setLocalsMiddleware = async (req, res, next) => {
     try {
         const isAdminRoute = req.path.startsWith("/admin");

@@ -185,7 +185,32 @@
             flex: 1;
             min-width: 0;
             padding: 48px 56px;
-            transition: margin-left 0.3s ease;
+            transition: margin-left 0.3s ease, opacity 0.3s ease;
+            opacity: 1;
+        }
+
+        /* Page Transition Classes */
+        body.page-transitioning .main-content {
+            opacity: 0;
+        }
+
+        /* Top Loader Bar */
+        .top-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: #00FFFF;
+            z-index: 9999;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px #00FFFF;
+            opacity: 0;
+        }
+        .top-loader.loading {
+            width: 70%;
+            opacity: 1;
+            transition: width 2s cubic-bezier(0.1, 0.5, 0.1, 1);
         }
     </style>
 </head>
@@ -264,5 +289,130 @@
     <%- body %>
 </main>
 
+<div class="top-loader" id="topLoader"></div>
+
+<script>
+    // Helper to execute scripts in order (handles external src and inline scripts)
+    async function executeScripts(container) {
+        const scripts = Array.from(container.querySelectorAll('script'));
+        for (const oldScript of scripts) {
+            await new Promise((resolve) => {
+                const newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                newScript.textContent = oldScript.textContent;
+                
+                if (newScript.src) {
+                    newScript.onload = resolve;
+                    newScript.onerror = resolve;
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                } else {
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                    resolve();
+                }
+            });
+        }
+    }
+
+    // Utility to clean up success/error params from the URL visually
+    function cleanUrlParams() {
+        const url = new URL(window.location);
+        let changed = false;
+        if (url.searchParams.has('success')) {
+            url.searchParams.delete('success');
+            changed = true;
+        }
+        if (url.searchParams.has('error')) {
+            url.searchParams.delete('error');
+            changed = true;
+        }
+        if (changed) {
+            window.history.replaceState({}, '', url.toString());
+        }
+    }
+
+    // Clean URL on initial hard load
+    document.addEventListener('DOMContentLoaded', cleanUrlParams);
+
+    // Main PJAX Navigation Function
+    async function navigateTo(url, pushToHistory = true) {
+        const topLoader = document.getElementById('topLoader');
+        const mainContent = document.querySelector('.main-content');
+        
+        // Start Loading Animation
+        topLoader.classList.add('loading');
+        document.body.classList.add('page-transitioning');
+        
+        try {
+            // Fetch the new page
+            const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            const html = await response.text();
+            
+            // Parse HTML
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+            const newMain = doc.querySelector('.main-content');
+            
+            if (newMain) {
+                // Swap HTML
+                mainContent.innerHTML = newMain.innerHTML;
+                
+                // Re-execute scripts synchronously
+                await executeScripts(mainContent);
+                
+                // Update URL using response.url to handle server redirects correctly
+                if (pushToHistory) {
+                    window.history.pushState({}, '', response.url);
+                }
+                
+                // Immediately clean up success/error parameters from the URL bar
+                cleanUrlParams();
+                
+                // Update Sidebar Active State
+                document.querySelectorAll('.sb-link').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === new URL(response.url).pathname) {
+                        link.classList.add('active');
+                    }
+                });
+
+                // Manually trigger DOMContentLoaded for any scripts that rely on it
+                window.document.dispatchEvent(new Event('DOMContentLoaded', { bubbles: true, cancelable: true }));
+            } else {
+                // Fallback to normal navigation if parsing fails
+                window.location.href = url;
+            }
+        } catch (err) {
+            console.error("PJAX Error:", err);
+            window.location.href = url; // Fallback
+        } finally {
+            // End Animation
+            topLoader.classList.remove('loading');
+            document.body.classList.remove('page-transitioning');
+        }
+    }
+
+    // Intercept all internal link clicks for true SPA experience
+    document.addEventListener('click', (e) => {
+        const link = e.target.closest('a');
+        if (!link) return;
+        
+        const href = link.getAttribute('href');
+        
+        // Ignore external, empty, or special links
+        if (!href || href === '#' || href.startsWith('javascript:') || href.startsWith('mailto:')) return;
+        if (link.hostname && link.hostname !== window.location.hostname) return;
+        if (link.target === '_blank' || link.hasAttribute('download')) return;
+
+        // Ignore if clicking the exact same URL
+        if (href === window.location.pathname + window.location.search) return;
+        
+        e.preventDefault();
+        navigateTo(href);
+    });
+
+    // Handle Browser Back/Forward Buttons
+    window.addEventListener('popstate', () => {
+        navigateTo(window.location.href, false);
+    });
+</script>
 </body>
 </html>
