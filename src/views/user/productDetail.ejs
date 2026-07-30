@@ -1,489 +1,476 @@
-<!-- Breadcrumbs -->
-<div class="max-w-7xl mx-auto px-6 pt-10 pb-4">
-    <nav class="flex text-[11px] font-bold tracking-widest text-gray-500 uppercase">
-        <a href="/" class="hover:text-[#00FFFF] transition-colors">Home</a>
-        <span class="mx-3">/</span>
-        <a href="/shop" class="hover:text-[#00FFFF] transition-colors">Shop</a>
-        <span class="mx-3">/</span>
-        <a href="/shop?category=<%= product.category %>" class="hover:text-[#00FFFF] transition-colors"><%= product.category %></a>
-        <span class="mx-3">/</span>
-        <span class="text-white"><%= product.productName %></span>
-    </nav>
-</div>
+<%# ── Minimal style block: only toast animation + pdDot keyframe ── %>
+<style>
+@keyframes pdDot { 0%,100% { opacity:1; } 50% { opacity:.3; } }
 
-<!-- Main Product Detail Section -->
-<section class="max-w-7xl mx-auto px-6 py-8 md:py-12 flex flex-col md:flex-row gap-12 md:gap-20 relative">
-    
-    <!-- Left: Product Image with Zoom -->
-    <div class="md:w-1/2 flex flex-col justify-start items-center">
-        <!-- Main Image Container (Zoomable) -->
-        <div class="w-full max-w-md aspect-[4/5] relative overflow-hidden group cursor-crosshair bg-transparent rounded-lg mb-6 flex items-center justify-center" 
-             id="zoom-container"
-             onmousemove="zoomImage(event)" 
-             onmouseleave="resetZoom()">
-            
-            <img id="mainProductImage" 
-                 src="<%= product.primaryImage %>" 
-                 alt="<%= product.productName %>" 
-                 class="w-full h-full object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-transform duration-200 pointer-events-none">
-        </div>
-             
-        <!-- Gallery Thumbnails -->
-        <% if (product.galleryImages && product.galleryImages.length > 0) { %>
-            <div class="flex gap-4 overflow-x-auto pb-2 w-full max-w-md justify-center">
-                <% product.galleryImages.forEach(img => { %>
-                    <% if (img) { %>
-                        <img src="<%= img %>" 
-                             class="w-16 h-16 object-cover border border-[#333] cursor-pointer hover:border-[#00FFFF] transition-colors rounded"
-                             onclick="document.getElementById('mainProductImage').src = this.src">
-                    <% } %>
-                <% }) %>
-            </div>
-        <% } %>
-    </div>
+</style>
 
-    <!-- Right: Product Info -->
-    <div class="md:w-1/2 flex flex-col justify-start">
-        
-        <p class="text-[#00FFFF] font-serif-italic text-sm mb-2"><%= product.brand %></p>
-        
-        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
-            <%= product.productName %>
-        </h1>
+<%# ── Root wrapper ── %>
+<div class="font-['Inter',sans-serif] text-[#c8cdd8]">
 
-        <!-- Ratings & Reviews (Placeholder) -->
-        <div class="flex items-center gap-3 mb-6">
-            <div class="flex text-[#00FFFF]">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-            </div>
-            <a href="#reviews" class="text-xs font-bold tracking-widest text-gray-500 uppercase hover:text-white transition-colors">4.8 (124 Reviews)</a>
-        </div>
+  <%# ── BREADCRUMB ── %>
+  <div class="max-w-[1280px] mx-auto px-7 pt-7 pb-3 flex items-center gap-0 text-[10px] font-bold tracking-widest uppercase">
+    <a href="/"    class="text-[#374151] no-underline transition-colors duration-200 hover:text-[#28c9f4]">Home</a>
+    <span class="text-[#1e293b] mx-2.5">/</span>
+    <a href="/shop" class="text-[#374151] no-underline transition-colors duration-200 hover:text-[#28c9f4]">Shop</a>
+    <span class="text-[#1e293b] mx-2.5">/</span>
+    <a href="/shop?category=<%= product.category %>" class="text-[#374151] no-underline transition-colors duration-200 hover:text-[#28c9f4]"><%= product.category %></a>
+    <span class="text-[#1e293b] mx-2.5">/</span>
+    <span class="text-[#64748b]"><%= product.productName.toLowerCase() %></span>
+  </div>
 
-        <!-- Dynamic Price Display with Discounts -->
-        <% 
-            const defaultVariant = (product.variants && product.variants.length > 0) ? product.variants[0] : { regularPrice: 0, salePrice: 0, stock: 0, _id: '' };
-            const hasDiscount = defaultVariant.salePrice > 0 && defaultVariant.salePrice < defaultVariant.regularPrice;
-            const displayPrice = hasDiscount ? defaultVariant.salePrice : defaultVariant.regularPrice;
-            let discountPercentage = 0;
-            if (hasDiscount && defaultVariant.regularPrice > 0) {
-                discountPercentage = Math.round(((defaultVariant.regularPrice - defaultVariant.salePrice) / defaultVariant.regularPrice) * 100);
-            }
+  <%# ── MAIN LAYOUT ── %>
+  <div class="max-w-[1280px] mx-auto px-7 py-7 pb-20 flex gap-16 items-start flex-col md:flex-row">
+
+    <%# ═══ LEFT: IMAGE PANEL ═══ %>
+    <div class="shrink-0 md:basis-[46%] md:max-w-[460px] w-full">
+
+      <%# Zoom container %>
+      <div class="relative aspect-[4/5] border border-white/[0.06] rounded-[20px] overflow-hidden cursor-crosshair mb-4 flex items-center justify-center shadow-[0_24px_60px_rgba(0,0,0,0.45)]"
+           id="zoom-container"
+           onmousemove="zoomImage(event)"
+           onmouseleave="resetZoom()"
+           style="background:radial-gradient(circle at 50% 55%, rgba(40,201,244,0.05) 0%, transparent 70%);">
+
+        <%
+          const defaultVariant = (product.variants && product.variants.length > 0)
+               ? product.variants[0]
+               : { regularPrice: 0, salePrice: 0, stock: 0, _id: '' };
+          const hasDiscount = defaultVariant.salePrice > 0 && defaultVariant.salePrice < defaultVariant.regularPrice;
+          const displayPrice = hasDiscount ? defaultVariant.salePrice : defaultVariant.regularPrice;
+          let discountPercentage = 0;
+          if (hasDiscount && defaultVariant.regularPrice > 0) {
+            discountPercentage = Math.round(((defaultVariant.regularPrice - defaultVariant.salePrice) / defaultVariant.regularPrice) * 100);
+          }
         %>
-        
-        <div class="flex items-center gap-4 mb-4">
-            <div class="text-2xl font-bold text-white" id="priceDisplay">
-                ₹<%= displayPrice %>
-            </div>
-            
-            <div id="discountContainer" class="<%= hasDiscount ? 'flex' : 'hidden' %> items-center gap-3">
-                <span class="text-gray-500 line-through text-lg" id="regularPriceDisplay">₹<%= defaultVariant.regularPrice %></span>
-                <span class="bg-[#00FFFF] text-black text-[10px] font-bold px-2 py-1 rounded-sm uppercase tracking-widest" id="discountBadge">
-                    <%= discountPercentage %>% OFF
-                </span>
-            </div>
-        </div>
+        <% if (hasDiscount) { %>
+          <div class="absolute top-4 left-4 z-[3] text-[9px] font-extrabold tracking-[0.1em] uppercase bg-[rgba(251,191,36,0.15)] text-[#fbbf24] border border-[rgba(251,191,36,0.3)] px-2.5 py-1 rounded-[20px]">
+            <%= discountPercentage %>% OFF
+          </div>
+        <% } %>
 
-        <!-- Stock Indicator -->
-        <div class="mb-8" id="stockStatusContainer">
-            <% if (defaultVariant.stock > 10) { %>
-                <span class="inline-flex items-center gap-1.5 text-xs font-bold text-green-400 uppercase tracking-widest bg-green-400/10 px-3 py-1.5 rounded border border-green-400/20">
-                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
-                    In Stock
-                </span>
-            <% } else if (defaultVariant.stock > 0 && defaultVariant.stock <= 10) { %>
-                <span class="inline-flex items-center gap-1.5 text-xs font-bold text-orange-400 uppercase tracking-widest bg-orange-400/10 px-3 py-1.5 rounded border border-orange-400/20">
-                    <span class="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse"></span>
-                    Hurry! Only <%= defaultVariant.stock %> left
-                </span>
-            <% } else { %>
-                <span class="inline-flex items-center gap-1.5 text-xs font-bold text-red-500 uppercase tracking-widest bg-red-500/10 px-3 py-1.5 rounded border border-red-500/20">
-                    <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                    Out of Stock
-                </span>
+        
+
+        <img id="mainProductImage"
+             src="<%= product.primaryImage %>"
+             alt="<%= product.productName %>"
+             class="w-4/5 h-full object-contain relative z-[1] pointer-events-none transition-transform duration-200 ease-in-out"
+             style="filter:drop-shadow(0 24px 48px rgba(0,0,0,0.7));">
+      </div>
+
+
+      <%# THUMBNAILS %>
+      <% if (product.galleryImages && product.galleryImages.length > 0) { %>
+        <div class="flex gap-2.5 flex-wrap">
+          <% product.galleryImages.forEach((img, i) => { %>
+            <% if (img) { %>
+              <div class="pd-thumb w-16 h-16 rounded-xl overflow-hidden border-[1.5px] border-white/[0.06] cursor-pointer flex items-center justify-center hover:border-[#28c9f4]/50 transition-colors flex-shrink-0 bg-white/[0.02] <%= i === 0 ? 'border-[#28c9f4]/50' : '' %>"
+                   onclick="switchImage(this, '<%= img %>')">
+                <img src="<%= img %>" alt="Gallery <%= i+1 %>" class="w-full h-full object-contain p-1.5">
+              </div>
             <% } %>
+          <% }) %>
         </div>
-
-        <!-- Format Selection -->
-        <div class="mb-8">
-            <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Select Format</h3>
-            <div class="flex flex-wrap gap-4" id="variantContainer">
-                <% if (product.variants && product.variants.length > 0) { %>
-                    <% product.variants.forEach((variant, index) => { %>
-                        <% 
-                            const vHasDiscount = variant.salePrice > 0 && variant.salePrice < variant.regularPrice;
-                            let vDiscountPct = 0;
-                            if (vHasDiscount) vDiscountPct = Math.round(((variant.regularPrice - variant.salePrice) / variant.regularPrice) * 100);
-                        %>
-                        <button 
-                            type="button"
-                            class="variant-btn px-6 py-2 text-sm transition-colors bg-transparent border <%= index === 0 ? 'text-white border-[#00FFFF]' : 'text-gray-500 border-[#333] hover:border-[#00FFFF]' %>"
-                            data-price="<%= vHasDiscount ? variant.salePrice : variant.regularPrice %>"
-                            data-regprice="<%= variant.regularPrice %>"
-                            data-hasdiscount="<%= vHasDiscount %>"
-                            data-discountpct="<%= vDiscountPct %>"
-                            data-id="<%= variant._id %>"
-                            data-stock="<%= variant.stock %>"
-                        >
-                            <%= variant.size %>
-                        </button>
-                    <% }) %>
-                <% } else { %>
-                    <span class="text-sm text-gray-500">No variants available</span>
-                <% } %>
-            </div>
-        </div>
-
-        <!-- Add to Cart Form -->
-        <form id="addToCartForm" onsubmit="event.preventDefault(); submitAddToCart('<%= product._id %>');" class="space-y-8">
-            <input type="hidden" name="productId" value="<%= product._id %>">
-            <input type="hidden" name="variantId" id="selectedVariantId" value="<%= defaultVariant._id %>">
-            
-            <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Quantity</h3>
-            <div class="flex flex-col sm:flex-row gap-4 h-auto sm:h-[46px]">
-                
-                <!-- Quantity Box -->
-                <div class="flex items-center border border-[#333] h-[46px] sm:h-full w-32">
-                    <button type="button" onclick="decrementQuantity()" class="px-4 h-full text-gray-400 hover:text-white transition-colors bg-transparent border-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15" /></svg>
-                    </button>
-                    
-                    <input type="number" name="quantity" id="qtyInput" value="<%= defaultVariant.stock > 0 ? 1 : 0 %>" min="1" max="<%= defaultVariant.stock %>" class="w-full text-center text-sm text-white bg-transparent border-none outline-none appearance-none p-0" readonly>
-                    
-                    <button type="button" id="qtyPlus" onclick="incrementQuantity()" class="px-4 h-full text-gray-400 hover:text-white transition-colors bg-transparent border-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-                    </button>
-                </div>
-
-                <!-- Add to Cart -->
-                <button type="submit" id="addToCartBtn" 
-                        class="flex-1 h-[46px] sm:h-full bg-[#00FFFF] text-black text-xs font-bold tracking-widest uppercase hover:bg-[#66FFFF] transition-all shadow-[0_0_15px_rgba(0,255,255,0.2)] hover:shadow-[0_0_20px_rgba(0,255,255,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:hover:bg-[#00FFFF]"
-                        <%= defaultVariant.stock === 0 ? 'disabled' : '' %>>
-                    <% if (defaultVariant.stock > 0) { %>
-                        Add To Cart
-                    <% } else { %>
-                        Sold Out
-                    <% } %>
-                </button>
-
-                <!-- Wishlist -->
-                <button type="button" id="wishlistBtn" onclick="toggleWishlist('<%= product._id %>', this)" data-in-wishlist="<%= inWishlist %>" class="h-[46px] sm:h-full px-5 border <%= inWishlist ? 'border-red-500 text-red-500' : 'border-[#333] text-gray-400 hover:text-white hover:border-gray-500' %> transition-all duration-500 ease-out transform active:scale-90 bg-transparent group flex items-center justify-center">
-                    <svg id="wishlistIcon" xmlns="http://www.w3.org/2000/svg" fill="<%= inWishlist ? 'currentColor' : 'none' %>" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 transition-all duration-500 ease-out <%= inWishlist ? 'text-red-500 scale-110' : 'group-hover:text-white group-hover:scale-110' %>"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>
-                </button>
-            </div>
-        </form>
-
-        <hr class="border-[#222] mb-8">
-
-        <!-- Info Tabs -->
-        <div>
-            <div class="flex gap-8 mb-6 border-b border-[#222]">
-                <button class="text-[11px] font-bold tracking-widest uppercase text-white pb-3 border-b-2 border-white">Description & Highlights</button>
-                <button class="text-[11px] font-bold tracking-widest uppercase text-gray-500 pb-3 border-b-2 border-transparent hover:text-white transition-colors" id="reviews">Reviews</button>
-            </div>
-            
-            <div class="text-sm text-gray-400 leading-relaxed max-w-xl">
-                <!-- Product Highlights List -->
-                <ul class="mb-6 space-y-2 text-white">
-                    <li class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-[#00FFFF]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        Long-lasting sillage (8+ hours)
-                    </li>
-                    <li class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-[#00FFFF]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        Premium Extrait de Parfum concentration
-                    </li>
-                    <li class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-[#00FFFF]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        100% Cruelty-free & Vegan
-                    </li>
-                </ul>
-
-                <p><%= product.description %></p>
-            </div>
-        </div>
+      <% } %>
     </div>
-</section>
 
-<!-- You Might Also Like Section -->
-<% if (typeof relatedProducts !== 'undefined' && relatedProducts.length > 0) { %>
-<section class="max-w-7xl mx-auto px-6 py-20 border-t border-[#1a1a1a]">
-    <h2 class="text-[11px] font-bold tracking-widest text-gray-400 uppercase text-center mb-16">You Might Also Like</h2>
-    
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    <%# ═══ RIGHT: INFO PANEL ═══ %>
+    <div class="flex-1 min-w-0">
+
+      <%# Brand %>
+      <div class="flex items-center gap-1.5 text-[11px] font-bold tracking-[0.16em] uppercase text-[#28c9f4] mb-2.5">
+        <span class="inline-block w-5 h-[1.5px] bg-gradient-to-r from-[#28c9f4] to-transparent"></span>
+        <%= product.brand %>
+      </div>
+
+      <%# Title %>
+      <h1 class="text-[38px] font-extrabold tracking-tight leading-[1.08] bg-gradient-to-br from-white to-slate-400 bg-clip-text text-transparent mb-4 sm:text-[28px]">
+        <%= product.productName %>
+      </h1>
+
+      <%# Stars %>
+      <div class="flex items-center gap-2.5 mb-6">
+        <div class="flex gap-0.5">
+          <% for(let i = 0; i < 4; i++) { %>
+            <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="#28c9f4"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <% } %>
+          <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="rgba(255,255,255,0.1)"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        </div>
+        <a href="#reviews" class="text-[11px] font-bold text-[#374151] tracking-[0.08em] no-underline transition-colors duration-200 hover:text-[#e2e8f0]">4.8 · 124 reviews</a>
+      </div>
+
+      <%# Price row %>
+      <div class="flex items-baseline gap-3 mb-4">
+        <span class="text-[32px] font-extrabold text-white tracking-tight" id="priceDisplay">₹<%= displayPrice %></span>
+        <div id="discountContainer" style="display:<%= hasDiscount ? 'flex' : 'none' %>; align-items:baseline; gap:10px;">
+          <span class="text-base text-[#374151] line-through" id="regularPriceDisplay">₹<%= defaultVariant.regularPrice %></span>
+          <span class="text-[10px] font-extrabold tracking-[0.08em] bg-gradient-to-br from-[#28c9f4] to-[#0ea5e9] text-[#03111a] px-2.5 py-1 rounded-[20px]" id="discountBadge"><%= discountPercentage %>% OFF</span>
+        </div>
+      </div>
+
+      <%# Stock pill %>
+      <div id="stockStatusContainer" class="mb-7">
+        <% if (defaultVariant.stock > 10) { %>
+          <span class="inline-flex items-center gap-1.5 text-[10.5px] font-extrabold tracking-[0.1em] uppercase px-3.5 py-1.5 rounded-[20px] text-[#4ade80] bg-[rgba(74,222,128,0.08)] border border-[rgba(74,222,128,0.2)]">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#4ade80]" style="animation:pdDot 1.5s ease-in-out infinite;"></span>
+            In Stock
+          </span>
+        <% } else if (defaultVariant.stock > 0) { %>
+          <span class="inline-flex items-center gap-1.5 text-[10.5px] font-extrabold tracking-[0.1em] uppercase px-3.5 py-1.5 rounded-[20px] text-[#fb923c] bg-[rgba(251,146,60,0.08)] border border-[rgba(251,146,60,0.2)]">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#fb923c]" style="animation:pdDot 1.5s ease-in-out infinite;"></span>
+            Hurry! Only <%= defaultVariant.stock %> left
+          </span>
+        <% } else { %>
+          <span class="inline-flex items-center gap-1.5 text-[10.5px] font-extrabold tracking-[0.1em] uppercase px-3.5 py-1.5 rounded-[20px] text-[#f87171] bg-[rgba(248,113,113,0.08)] border border-[rgba(248,113,113,0.2)]">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#f87171]"></span>
+            Out of Stock
+          </span>
+        <% } %>
+      </div>
+
+      <%# Variant select %>
+      <div class="text-[10px] font-extrabold tracking-[0.16em] uppercase text-[#374151] mb-3">Select Size</div>
+      <div class="flex flex-wrap gap-2.5 mb-7" id="variantContainer">
+        <% if (product.variants && product.variants.length > 0) { %>
+          <% product.variants.forEach((variant, index) => { %>
+            <%
+              const vHasDiscount = variant.salePrice > 0 && variant.salePrice < variant.regularPrice;
+              let vDiscountPct = 0;
+              if (vHasDiscount) vDiscountPct = Math.round(((variant.regularPrice - variant.salePrice) / variant.regularPrice) * 100);
+            %>
+            <button type="button"
+              class="variant-btn px-5 py-2 rounded-xl border-[1.5px] border-white/10 bg-white/[0.02] text-[#64748b] font-bold text-xs hover:border-[#28c9f4]/40 hover:text-white hover:bg-[#28c9f4]/[0.04] transition-all cursor-pointer <%= index === 0 ? 'vb-active border-[#28c9f4] text-white bg-[#28c9f4]/10 shadow-[0_0_0_1px_rgba(40,201,244,0.2)]' : '' %>"
+              data-price="<%= vHasDiscount ? variant.salePrice : variant.regularPrice %>"
+              data-regprice="<%= variant.regularPrice %>"
+              data-hasdiscount="<%= vHasDiscount %>"
+              data-discountpct="<%= vDiscountPct %>"
+              data-id="<%= variant._id %>"
+              data-stock="<%= variant.stock %>">
+              <%= variant.size %>
+            </button>
+          <% }) %>
+        <% } else { %>
+          <span class="text-[13px] text-[#374151]">No variants available</span>
+        <% } %>
+      </div>
+
+      <%# ADD TO CART FORM %>
+      <form id="addToCartForm" onsubmit="event.preventDefault(); submitAddToCart('<%= product._id %>');">
+        <input type="hidden" name="productId"  value="<%= product._id %>">
+        <input type="hidden" name="variantId"  id="selectedVariantId" value="<%= defaultVariant._id %>">
+
+        <div class="text-[10px] font-extrabold tracking-[0.16em] uppercase text-[#374151] mb-3">Quantity</div>
+
+        <%# Action row %>
+        <div class="flex gap-2.5 h-[50px] mb-8">
+
+          <%# Qty stepper %>
+          <div class="inline-flex items-center bg-white/[0.03] border-[1.5px] border-white/[0.08] rounded-xl overflow-hidden flex-shrink-0 h-full">
+            <button type="button"
+                    class="w-10 h-full flex items-center justify-center text-[#64748b] hover:text-[#28c9f4] hover:bg-[#28c9f4]/[0.08] transition-all bg-transparent border-none cursor-pointer text-lg"
+                    onclick="decrementQuantity()">−</button>
+            <span class="min-w-[42px] text-center border-l-[1.5px] border-r-[1.5px] border-white/[0.06] h-full flex items-center justify-center">
+              <input type="number" name="quantity" id="qtyInput"
+                     value="<%= defaultVariant.stock > 0 ? 1 : 0 %>"
+                     min="1" max="<%= defaultVariant.stock %>"
+                     class="w-[42px] text-center bg-transparent border-none outline-none text-[#e2e8f0] text-[15px] font-bold"
+                     readonly>
+            </span>
+            <button type="button"
+                    class="w-10 h-full flex items-center justify-center text-[#64748b] hover:text-[#28c9f4] hover:bg-[#28c9f4]/[0.08] transition-all bg-transparent border-none cursor-pointer text-lg"
+                    id="qtyPlus"
+                    onclick="incrementQuantity()">+</button>
+          </div>
+
+          <%# Add to Cart button %>
+          <button type="submit" id="addToCartBtn"
+                  class="flex-1 h-full rounded-xl bg-gradient-to-r from-[#28c9f4] to-[#0ea5e9] text-[#03111a] text-[11.5px] font-extrabold tracking-widest uppercase hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(40,201,244,0.45)] transition-all border-none cursor-pointer disabled:bg-white/[0.06] disabled:text-[#374151] disabled:shadow-none disabled:cursor-not-allowed disabled:translate-y-0"
+                  <%= defaultVariant.stock === 0 ? 'disabled' : '' %>>
+            <%= defaultVariant.stock > 0 ? 'Add To Cart' : 'Sold Out' %>
+          </button>
+
+          <%# Wishlist button %>
+          <button type="button" id="wishlistBtn"
+                  onclick="toggleWishlist('<%= product._id %>', this)"
+                  data-in-wishlist="<%= inWishlist %>"
+                  class="w-[50px] h-full rounded-xl border-[1.5px] border-white/10 bg-white/[0.03] flex items-center justify-center text-[#64748b] hover:border-red-500/40 hover:text-red-400 hover:bg-red-500/[0.06] transition-all cursor-pointer bg-transparent <%= inWishlist ? 'wl-active border-red-500/50 text-red-400 bg-red-500/[0.08]' : '' %>">
+            <svg id="wishlistIcon" width="20" height="20" viewBox="0 0 24 24"
+                 fill="<%= inWishlist ? 'currentColor' : 'none' %>"
+                 stroke="currentColor" stroke-width="1.8"
+                 stroke-linecap="round" stroke-linejoin="round"
+                 style="transition: transform .25s;">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </button>
+        </div>
+      </form>
+
+      <%# Trust badges %>
+      <div class="flex gap-5 flex-wrap mt-6">
+        <div class="flex items-center gap-1.5 text-[10px] font-bold tracking-[0.08em] uppercase text-[#374151]">
+          <svg class="text-[#28c9f4] flex-shrink-0" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Secure Payment
+        </div>
+        <div class="flex items-center gap-1.5 text-[10px] font-bold tracking-[0.08em] uppercase text-[#374151]">
+          <svg class="text-[#28c9f4] flex-shrink-0" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+          Free Shipping ₹999+
+        </div>
+        <div class="flex items-center gap-1.5 text-[10px] font-bold tracking-[0.08em] uppercase text-[#374151]">
+          <svg class="text-[#28c9f4] flex-shrink-0" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.78"/></svg>
+          Easy Returns
+        </div>
+      </div>
+
+      <%# Divider %>
+      <div class="h-px bg-white/[0.05] my-7"></div>
+
+      <%# Highlights %>
+      <ul class="list-none p-0 m-0 mb-5 flex flex-col gap-2.5">
+        <li class="flex items-center gap-2.5 text-[13px] text-[#94a3b8]">
+          <svg class="flex-shrink-0 text-[#28c9f4]" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span><strong class="text-[#e2e8f0]">Long-lasting sillage</strong> — 8+ hours on skin</span>
+        </li>
+        <li class="flex items-center gap-2.5 text-[13px] text-[#94a3b8]">
+          <svg class="flex-shrink-0 text-[#28c9f4]" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span><strong class="text-[#e2e8f0]">Premium Extrait de Parfum</strong> concentration</span>
+        </li>
+        <li class="flex items-center gap-2.5 text-[13px] text-[#94a3b8]">
+          <svg class="flex-shrink-0 text-[#28c9f4]" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span><strong class="text-[#e2e8f0]">100% Cruelty-free</strong> &amp; Vegan certified</span>
+        </li>
+      </ul>
+
+      <%# Description %>
+      <p class="text-[13.5px] text-[#64748b] leading-[1.75]" id="reviews"><%= product.description %></p>
+
+    </div>
+  </div>
+
+  <%# ═══ RELATED PRODUCTS ═══ %>
+  <% if (typeof relatedProducts !== 'undefined' && relatedProducts.length > 0) { %>
+    <div class="max-w-[1280px] mx-auto px-7 pt-[60px] pb-20 border-t border-white/[0.04]">
+      <div class="text-center mb-12 text-[10px] font-extrabold tracking-[0.22em] uppercase text-[#374151] flex items-center justify-center gap-4">
+        <span class="inline-block h-px w-[60px]" style="background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08))"></span>
+        You Might Also Like
+        <span class="inline-block h-px w-[60px]" style="background:linear-gradient(90deg,rgba(255,255,255,0.08),transparent)"></span>
+      </div>
+      <div class="grid grid-cols-4 gap-5 max-[1000px]:grid-cols-2 max-[560px]:grid-cols-1">
         <% relatedProducts.forEach(related => { %>
-            <a href="/productDetail/<%= related._id %>" class="group cursor-pointer block text-left">
-                <div class="aspect-[4/5] flex justify-center items-center mb-6 overflow-hidden bg-transparent">
-                    <img src="<%= related.primaryImage %>" alt="<%= related.productName %>" class="h-4/5 object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
-                </div>
-                <h3 class="text-sm font-semibold text-white mb-1 group-hover:text-[#00FFFF] transition-colors"><%= related.productName %></h3>
-                <p class="text-xs text-gray-500 font-serif-italic mb-3"><%= related.brand %></p>
-                <p class="text-sm font-semibold text-white">
-                    <% if (related.variants && related.variants.length > 0) { %>
-                        ₹<%= related.variants[0].salePrice > 0 ? related.variants[0].salePrice : related.variants[0].regularPrice %>
-                    <% } else { %>
-                        ₹0
-                    <% } %>
-                </p>
-            </a>
+          <%
+            let relPrice = 0;
+            if (related.variants && related.variants.length > 0) {
+              const rv = related.variants[0];
+              relPrice = rv.salePrice > 0 ? rv.salePrice : rv.regularPrice;
+            }
+          %>
+          <a href="/productDetail/<%= related._id %>"
+             class="pd-rel-card bg-[#0a0e16]/60 border border-white/5 rounded-2xl overflow-hidden block no-underline hover:-translate-y-1.5 hover:border-[#28c9f4]/[0.18] hover:shadow-[0_16px_40px_rgba(0,0,0,0.5)] transition-all duration-300">
+            <div class="aspect-[4/5] flex items-center justify-center p-[22px] overflow-hidden"
+                 style="background:radial-gradient(circle at 50% 60%, rgba(40,201,244,0.04) 0%, transparent 70%);">
+              <img src="<%= related.primaryImage %>" alt="<%= related.productName %>"
+                   class="w-[75%] h-full object-contain transition-transform duration-[450ms] [transition-timing-function:cubic-bezier(.34,1.56,.64,1)] hover:scale-[1.09] hover:-translate-y-1"
+                   style="filter:drop-shadow(0 8px 20px rgba(0,0,0,0.6));">
+            </div>
+            <div class="px-4 py-3.5 pb-[18px] border-t border-white/[0.04]">
+              <div class="text-[10px] text-[#374151] mb-2.5"><%= related.brand %></div>
+              <div class="text-[13px] font-bold text-[#e2e8f0] mb-1 leading-[1.3] transition-colors duration-200 group-hover:text-[#28c9f4]"><%= related.productName %></div>
+              <div class="text-sm font-extrabold text-white">₹<%= relPrice.toLocaleString('en-IN') %></div>
+            </div>
+          </a>
         <% }) %>
+      </div>
     </div>
-</section>
-<% } %>
+  <% } %>
 
-<!-- Client-side script -->
+</div><%# /root wrapper %>
+
 <script>
-// --- Zoom Effect Script ---
+/* ── THUMBNAIL SWITCH ── */
+function switchImage(thumbEl, src) {
+  document.getElementById('mainProductImage').src = src;
+  document.querySelectorAll('.pd-thumb').forEach(t => t.classList.remove('active'));
+  thumbEl.classList.add('active');
+}
+
+/* ── ZOOM ── */
 function zoomImage(e) {
-    const container = document.getElementById('zoom-container');
-    const img = document.getElementById('mainProductImage');
-    
-    // Get cursor position relative to the container
-    const rect = container.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    // Calculate percentage across the container
-    const xPercent = (x / rect.width) * 100;
-    const yPercent = (y / rect.height) * 100;
-    
-    // Apply transform origin and scale
-    img.style.transformOrigin = `${xPercent}% ${yPercent}%`;
-    img.style.transform = 'scale(2)'; // 2x Zoom level
+  const c = document.getElementById('zoom-container');
+  const img = document.getElementById('mainProductImage');
+  const r = c.getBoundingClientRect();
+  const xP = ((e.clientX - r.left) / r.width) * 100;
+  const yP = ((e.clientY - r.top)  / r.height) * 100;
+  img.style.transformOrigin = `${xP}% ${yP}%`;
+  img.style.transform = 'scale(2.2)';
 }
-
 function resetZoom() {
-    const img = document.getElementById('mainProductImage');
-    img.style.transformOrigin = 'center center';
-    img.style.transform = 'scale(1)';
+  const img = document.getElementById('mainProductImage');
+  img.style.transformOrigin = 'center center';
+  img.style.transform = 'scale(1)';
 }
 
+/* ── QTY ── */
 function incrementQuantity() {
-    const input = document.getElementById('qtyInput');
-    if (parseInt(input.value) < parseInt(input.max)) input.value = parseInt(input.value) + 1;
+  const i = document.getElementById('qtyInput');
+  if (parseInt(i.value) < parseInt(i.max)) i.value = parseInt(i.value) + 1;
 }
-
 function decrementQuantity() {
-    const input = document.getElementById('qtyInput');
-    if (parseInt(input.value) > parseInt(input.min)) input.value = parseInt(input.value) - 1;
+  const i = document.getElementById('qtyInput');
+  if (parseInt(i.value) > parseInt(i.min)) i.value = parseInt(i.value) - 1;
 }
 
-// --- Toast Notification System ---
-function showToast(message, type = 'success') {
-    const existingToast = document.getElementById('custom-toast');
-    if (existingToast) existingToast.remove();
 
-    const toast = document.createElement('div');
-    toast.id = 'custom-toast';
-    toast.className = `fixed bottom-10 right-10 flex items-center gap-3 px-6 py-4 rounded shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 z-50 ${type === 'success' ? 'bg-[#111] border border-[#00FFFF] text-white' : 'bg-[#111] border border-red-500 text-white'}`;
-    
-    const icon = type === 'success' 
-        ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#00FFFF]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>`
-        : `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>`;
-        
-    toast.innerHTML = `${icon} <span class="text-sm font-semibold tracking-wide">${message}</span>`;
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(() => toast.classList.remove('translate-y-20', 'opacity-0'), 10);
-    setTimeout(() => {
-        toast.classList.add('translate-y-20', 'opacity-0');
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
-
-// --- Cart Script ---
+/* ── ADD TO CART ── */
 async function submitAddToCart(productId) {
-    // Read the hidden input that tracks the currently selected size variant
-    const variantId = document.getElementById('selectedVariantId').value;
-    const quantity = document.getElementById('qtyInput').value;
+  const variantId = document.getElementById('selectedVariantId').value;
+  const quantity  = document.getElementById('qtyInput').value;
+  if (!variantId) { showToast('Please select a size first.', 'error'); return; }
+  
+  try {
+    const res  = await fetch('/cart/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId, variantId, quantity })
+    });
+    const data = await res.json();
     
-    if (!variantId) {
-        showToast("Please select a size variant first.", 'error');
-        return;
-    }
+    if (data.success) {
+      showToast('Added to cart!', 'success');
+      
+      // 1. UPDATE NAVBAR CART BADGE
+      const badge = document.getElementById('navCartBadge');
+      if (badge) {
+        let currentCount = parseInt(badge.innerText || 0);
+        badge.innerText = currentCount + 1;
+        badge.classList.remove('hidden');
+      }
 
-    try {
-        const response = await fetch('/cart/add', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                productId: productId,
-                variantId: variantId,
-                quantity: quantity
-            })
-        });
+      const btn = document.getElementById('addToCartBtn');
+      if (btn) {
+          btn.innerHTML = 'GO TO CART <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline; margin-left:5px; margin-bottom:2px;"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>';
+          btn.type = 'button'; 
+          btn.onclick = function() {
+              window.location.href = '/cart';
+          };
+      }
+
+
+      // 2. AUTO-REMOVE FROM WISHLIST (Visual UI Update)
+      const wishlistBtn = document.getElementById('wishlistBtn');
+      if (wishlistBtn && wishlistBtn.getAttribute('data-in-wishlist') === 'true') {
         
-        const data = await response.json();
+        // Unfill the heart icon
+        wishlistBtn.setAttribute('data-in-wishlist', 'false');
+        wishlistBtn.classList.remove('wl-active');
+        const icon = wishlistBtn.querySelector('svg');
+        if (icon) icon.setAttribute('fill', 'none');
         
-        if (data.success) {
-            // Show a beautiful toast notification
-            showToast("Added to cart successfully!", 'success');
-            
-            // Redirect to the cart page after a short delay so they can see the message
-            setTimeout(() => {
-                window.location.href = '/cart';
-            }, 1000);
-        } else {
-            showToast(data.message || "Failed to add to cart.", 'error');
-            if (data.message && data.message.toLowerCase().includes("login")) {
-                setTimeout(() => window.location.href = "/auth/login", 1500);
-            }
+        // Decrease the navbar wishlist badge count
+        const wlBadge = document.getElementById('navWishlistBadge');
+        if (wlBadge) {
+          let currentCount = parseInt(wlBadge.innerText || 0);
+          let newCount = Math.max(0, currentCount - 1); 
+          wlBadge.innerText = newCount;
+          if (newCount === 0) wlBadge.classList.add('hidden');
         }
-    } catch (error) {
-        console.error("Error:", error);
-        showToast("Something went wrong", 'error');
+      }
+
+    } else {
+      showToast(data.message || 'Failed to add to cart.', 'error');
+      if (data.message && data.message.toLowerCase().includes('login'))
+        setTimeout(() => window.location.href = '/auth/login', 1500);
     }
+  } catch (e) { 
+    console.error(e); 
+    showToast('Something went wrong', 'error'); 
+  }
 }
 
-// --- Wishlist Script ---
-async function toggleWishlist(productId, btnElement) {
-    const icon = btnElement.querySelector('svg');
-    const isAdding = btnElement.getAttribute('data-in-wishlist') !== 'true'; 
-    
-    const url = isAdding ? `/wishlist/add/${productId}` : `/wishlist/remove/${productId}`;
-    const method = isAdding ? 'POST' : 'DELETE';
-    
-    try {
-        const response = await fetch(url, {
-            method: method,
-            headers: { 'Content-Type': 'application/json' }
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            if (isAdding) {
-                // Update state
-                btnElement.setAttribute('data-in-wishlist', 'true');
-                
-                // SVG updates
-                icon.setAttribute('fill', 'currentColor');
-                icon.classList.remove('group-hover:text-white', 'group-hover:scale-110');
-                icon.classList.add('text-red-500', 'scale-110');
-                
-                // Button updates
-                btnElement.classList.remove('border-[#333]', 'text-gray-400', 'hover:text-white', 'hover:border-gray-500');
-                btnElement.classList.add('border-red-500', 'text-red-500');
-                
-                // Quick pop animation
-                icon.classList.add('scale-125');
-                setTimeout(() => icon.classList.remove('scale-125'), 150);
-            } else {
-                // Update state
-                btnElement.setAttribute('data-in-wishlist', 'false');
-                
-                // SVG updates
-                icon.setAttribute('fill', 'none');
-                icon.classList.remove('text-red-500', 'scale-110', 'scale-125');
-                icon.classList.add('group-hover:text-white', 'group-hover:scale-110');
-                
-                // Button updates
-                btnElement.classList.remove('border-red-500', 'text-red-500');
-                btnElement.classList.add('border-[#333]', 'text-gray-400', 'hover:text-white', 'hover:border-gray-500');
-            }
-        } else {
-            if (data.message && data.message.toLowerCase().includes("login")) {
-                window.location.href = "/auth/login";
-            }
-        }
-    } catch (error) {
-        console.error("Error:", error);
+/* ── WISHLIST TOGGLE ── */
+async function toggleWishlist(productId, btn) {
+  const icon   = btn.querySelector('svg');
+  const adding = btn.getAttribute('data-in-wishlist') !== 'true';
+  const url    = adding ? `/wishlist/add/${productId}` : `/wishlist/remove/${productId}`;
+  try {
+    const res  = await fetch(url, { method: adding ? 'POST' : 'DELETE', headers: { 'Content-Type': 'application/json' } });
+    const data = await res.json();
+    if (data.success) {
+      btn.setAttribute('data-in-wishlist', adding ? 'true' : 'false');
+      icon.setAttribute('fill', adding ? 'currentColor' : 'none');
+      btn.classList.toggle('wl-active', adding);
+      // pop animation
+      icon.style.transform = 'scale(1.4)';
+      setTimeout(() => icon.style.transform = 'scale(1)', 200);
+
+      const badge = document.getElementById('navWishlistBadge');
+      if (badge) {
+        let current = parseInt(badge.textContent) || 0;
+        if (adding) current += 1;
+        else if (current > 0) current -= 1;
+        badge.textContent = current > 99 ? '99+' : current;
+        if (current === 0) badge.classList.add('hidden');
+        else badge.classList.remove('hidden');
+      }
+    } else if (data.message && data.message.toLowerCase().includes('login')) {
+      window.location.href = '/auth/login';
     }
+  } catch (e) { console.error(e); }
 }
 
-// --- Dynamic Variant Update Script ---
+/* ── VARIANT SELECTION ── */
 document.addEventListener('DOMContentLoaded', () => {
-    const variantBtns = document.querySelectorAll('.variant-btn');
-    const priceDisplay = document.getElementById('priceDisplay');
-    const discountContainer = document.getElementById('discountContainer');
-    const regularPriceDisplay = document.getElementById('regularPriceDisplay');
-    const discountBadge = document.getElementById('discountBadge');
-    
-    const stockStatusContainer = document.getElementById('stockStatusContainer');
-    const selectedVariantIdInput = document.getElementById('selectedVariantId');
-    const qtyInput = document.getElementById('qtyInput');
-    const qtyMinus = document.getElementById('qtyMinus');
-    const qtyPlus = document.getElementById('qtyPlus');
-    const addToCartBtn = document.getElementById('addToCartBtn');
-    
-    let currentMaxStock = parseInt(qtyInput.max) || 0;
+  const variantBtns          = document.querySelectorAll('.variant-btn');
+  const priceDisplay         = document.getElementById('priceDisplay');
+  const discountContainer    = document.getElementById('discountContainer');
+  const regularPriceDisplay  = document.getElementById('regularPriceDisplay');
+  const discountBadge        = document.getElementById('discountBadge');
+  const stockStatusContainer = document.getElementById('stockStatusContainer');
+  const selectedVariantIdInput = document.getElementById('selectedVariantId');
+  const qtyInput             = document.getElementById('qtyInput');
+  const addToCartBtn = document.getElementById('addToCartBtn');
+  let   currentMaxStock      = parseInt(qtyInput.max) || 0;
 
-    variantBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            // Remove active state
-            variantBtns.forEach(b => {
-                b.classList.remove('text-white', 'border-[#00FFFF]');
-                b.classList.add('text-gray-500', 'border-[#333]');
-            });
-            
-            // Add active state
-            this.classList.remove('text-gray-500', 'border-[#333]');
-            this.classList.add('text-white', 'border-[#00FFFF]');
-            
-            // Update Price & Discounts
-            const newPrice = this.getAttribute('data-price');
-            const regPrice = this.getAttribute('data-regprice');
-            const hasDiscount = this.getAttribute('data-hasdiscount') === 'true';
-            
-            priceDisplay.textContent = '₹' + newPrice;
-            
-            if (hasDiscount) {
-                const discountPct = this.getAttribute('data-discountpct');
-                discountContainer.classList.remove('hidden');
-                discountContainer.classList.add('flex');
-                regularPriceDisplay.textContent = '₹' + regPrice;
-                discountBadge.textContent = discountPct + '% OFF';
-            } else {
-                discountContainer.classList.add('hidden');
-                discountContainer.classList.remove('flex');
-            }
-            
-            // Update hidden input for cart
-            selectedVariantIdInput.value = this.getAttribute('data-id');
-            
-            // Update Stock
-            currentMaxStock = parseInt(this.getAttribute('data-stock'));
-            qtyInput.max = currentMaxStock;
-            
-            // Update Stock Badges
-            let stockHtml = '';
-            if (currentMaxStock > 10) {
-                stockHtml = `<span class="inline-flex items-center gap-1.5 text-xs font-bold text-green-400 uppercase tracking-widest bg-green-400/10 px-3 py-1.5 rounded border border-green-400/20"><span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>In Stock</span>`;
-            } else if (currentMaxStock > 0 && currentMaxStock <= 10) {
-                stockHtml = `<span class="inline-flex items-center gap-1.5 text-xs font-bold text-orange-400 uppercase tracking-widest bg-orange-400/10 px-3 py-1.5 rounded border border-orange-400/20"><span class="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse"></span>Hurry! Only ${currentMaxStock} left</span>`;
-            } else {
-                stockHtml = `<span class="inline-flex items-center gap-1.5 text-xs font-bold text-red-500 uppercase tracking-widest bg-red-500/10 px-3 py-1.5 rounded border border-red-500/20"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>Out of Stock</span>`;
-            }
-            stockStatusContainer.innerHTML = stockHtml;
-            
-            // Update Button State
-            if (currentMaxStock > 0) {
-                qtyInput.value = 1;
-                addToCartBtn.textContent = 'Add To Cart';
-                addToCartBtn.disabled = false;
-            } else {
-                qtyInput.value = 0;
-                addToCartBtn.textContent = 'Sold Out';
-                addToCartBtn.disabled = true;
-            }
-        });
-    });
+  variantBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      variantBtns.forEach(b => b.classList.remove('vb-active'));
+      this.classList.add('vb-active');
 
-    // Quantity Handlers
-    qtyMinus.addEventListener('click', () => {
-        let current = parseInt(qtyInput.value);
-        if (current > 1) qtyInput.value = current - 1;
-    });
+      const newPrice   = this.dataset.price;
+      const regPrice   = this.dataset.regprice;
+      const hasDis     = this.dataset.hasdiscount === 'true';
 
-    qtyPlus.addEventListener('click', () => {
-        let current = parseInt(qtyInput.value);
-        if (current < currentMaxStock) qtyInput.value = current + 1;
+      priceDisplay.textContent = '₹' + newPrice;
+
+      if (hasDis) {
+        discountContainer.style.display = 'flex';
+        regularPriceDisplay.textContent = '₹' + regPrice;
+        discountBadge.textContent = this.dataset.discountpct + '% OFF';
+      } else {
+        discountContainer.style.display = 'none';
+      }
+
+      selectedVariantIdInput.value = this.dataset.id;
+      currentMaxStock = parseInt(this.dataset.stock);
+      qtyInput.max = currentMaxStock;
+
+      // Stock badge
+      let html = '';
+      if (currentMaxStock > 10)
+        html = `<span class="inline-flex items-center gap-1.5 text-[10.5px] font-extrabold tracking-[0.1em] uppercase px-3.5 py-1.5 rounded-[20px] text-[#4ade80] bg-[rgba(74,222,128,0.08)] border border-[rgba(74,222,128,0.2)]"><span class="w-1.5 h-1.5 rounded-full bg-[#4ade80]" style="animation:pdDot 1.5s ease-in-out infinite;"></span>In Stock</span>`;
+      else if (currentMaxStock > 0)
+        html = `<span class="inline-flex items-center gap-1.5 text-[10.5px] font-extrabold tracking-[0.1em] uppercase px-3.5 py-1.5 rounded-[20px] text-[#fb923c] bg-[rgba(251,146,60,0.08)] border border-[rgba(251,146,60,0.2)]"><span class="w-1.5 h-1.5 rounded-full bg-[#fb923c]" style="animation:pdDot 1.5s ease-in-out infinite;"></span>Hurry! Only ${currentMaxStock} left</span>`;
+      else
+        html = `<span class="inline-flex items-center gap-1.5 text-[10.5px] font-extrabold tracking-[0.1em] uppercase px-3.5 py-1.5 rounded-[20px] text-[#f87171] bg-[rgba(248,113,113,0.08)] border border-[rgba(248,113,113,0.2)]"><span class="w-1.5 h-1.5 rounded-full bg-[#f87171]"></span>Out of Stock</span>`;
+      stockStatusContainer.innerHTML = html;
+
+      if (currentMaxStock > 0) {
+        qtyInput.value = 1;
+        addToCartBtn.textContent = 'Add To Cart';
+        addToCartBtn.disabled = false;
+      } else {
+        qtyInput.value = 0;
+        addToCartBtn.textContent = 'Sold Out';
+        addToCartBtn.disabled = true;
+      }
     });
+  });
 });
 </script>

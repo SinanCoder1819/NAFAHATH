@@ -1,698 +1,1088 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" />
+
 <style>
-/* Import Premium Font */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-/* Base typography and layout */
-.add-product-page { 
-    color: #e2e8f0; 
-    font-family: 'Outfit', sans-serif; 
-    padding: 30px 40px; 
-    max-width: 1200px; 
-    margin: 0 auto;
-}
-.breadcrumb { 
-    font-size: 12px; 
-    font-weight: 600; 
-    letter-spacing: 0.1em; 
-    color: #64748b; 
-    text-transform: uppercase; 
-    margin-bottom: 20px; 
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.breadcrumb span { color: #28c9f4; }
-
-.page-title { 
-    font-size: 38px; 
-    font-weight: 700; 
-    background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin: 0 0 40px; 
-    letter-spacing: -0.5px;
+/* ══════════════════════════════════
+   BASE
+══════════════════════════════════ */
+.ep-page {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #c8cdd8;
+  padding: 28px 32px 60px;
+  max-width: 1160px;
+  margin: 0 auto;
 }
 
-/* Glassmorphism Sections */
-.form-section { 
-    background: rgba(20, 20, 25, 0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    padding: 40px;
-    margin-bottom: 32px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 60px;
-    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+/* ══════════════════════════════════
+   TOP NAV
+══════════════════════════════════ */
+.ep-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 32px;
 }
-.form-section:hover {
-    border-color: rgba(40, 201, 244, 0.2);
-    transform: translateY(-2px);
-    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.3);
+.ep-breadcrumb {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: #374151;
+}
+.ep-breadcrumb a  { color: #374151; text-decoration: none; transition: color .2s; }
+.ep-breadcrumb a:hover { color: #28c9f4; }
+.ep-breadcrumb .sep     { color: #1f2937; }
+.ep-breadcrumb .current { color: #6b7280; }
+
+.ep-back-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 12px; font-weight: 600; color: #4a5568;
+  text-decoration: none; padding: 8px 14px; border-radius: 9px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.03);
+  transition: all .2s;
+}
+.ep-back-btn:hover { color: #e2e8f0; border-color: rgba(255,255,255,0.14); background: rgba(255,255,255,0.07); }
+
+/* ══════════════════════════════════
+   HERO BANNER
+══════════════════════════════════ */
+.ep-hero {
+  position: relative;
+  padding: 36px 44px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #0d1b2a 0%, #0f2337 45%, #091828 100%);
+  border: 1px solid rgba(40,201,244,0.1);
+  overflow: hidden;
+  margin-bottom: 36px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(40,201,244,0.05);
+}
+.ep-hero::before {
+  content: '';
+  position: absolute; top: -60px; right: -40px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(251,191,36,0.08) 0%, transparent 70%);
+  animation: epBlob 7s ease-in-out infinite;
+}
+.ep-hero::after {
+  content: '';
+  position: absolute; bottom: -40px; left: 40%;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(40,201,244,0.07) 0%, transparent 70%);
+  animation: epBlob 10s ease-in-out infinite reverse;
+}
+@keyframes epBlob {
+  0%,100% { transform: scale(1);   opacity: .8; }
+  50%      { transform: scale(1.2); opacity: 1;  }
+}
+.ep-hero-grid {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(40,201,244,0.04) 1px, transparent 1px);
+  background-size: 28px 28px; pointer-events: none;
+}
+.ep-hero-inner { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+.ep-hero-left {}
+.ep-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+  color: #fbbf24; margin-bottom: 10px;
+  padding: 4px 10px; border: 1px solid rgba(251,191,36,0.25);
+  border-radius: 20px; background: rgba(251,191,36,0.06);
+}
+.ep-eyebrow::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%; background: #fbbf24;
+  animation: epDot 2s ease-in-out infinite;
+}
+@keyframes epDot {
+  0%,100% { opacity:1; transform:scale(1);   }
+  50%     { opacity:.4; transform:scale(0.7); }
+}
+.ep-hero-title {
+  font-size: 34px; font-weight: 800; letter-spacing: -1px; line-height: 1.1; margin: 0;
+  background: linear-gradient(135deg, #ffffff 0%, #a0d8ef 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.ep-hero-sub { font-size: 14px; color: #374151; margin: 8px 0 0; }
+
+/* Product ID chip */
+.ep-product-chip {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px; padding: 10px 16px; flex-shrink: 0;
+}
+.ep-product-chip-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #374151; }
+.ep-product-chip-name  { font-size: 14px; font-weight: 700; color: #e2e8f0; }
+.ep-product-chip-id    { font-size: 11px; color: #374151; font-family: monospace; }
+
+/* ══════════════════════════════════
+   ERROR ALERT
+══════════════════════════════════ */
+.ep-alert {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
+  color: #fca5a5; padding: 14px 18px; border-radius: 12px;
+  font-size: 14px; font-weight: 500; margin-bottom: 28px;
 }
 
-.section-info h3 { margin: 0 0 12px; font-size: 20px; font-weight: 600; color: #fff; letter-spacing: -0.3px; }
-.section-info p { margin: 0; font-size: 13px; color: #94a3b8; line-height: 1.6; }
-
-/* Form Elements */
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-.field-group { display: flex; flex-direction: column; position: relative; }
-.field-group.full-width { grid-column: 1 / -1; }
-
-.field-group label { 
-    font-size: 11px; 
-    font-weight: 700; 
-    color: #28c9f4; 
-    text-transform: uppercase; 
-    letter-spacing: 0.1em; 
-    margin-bottom: 8px;
-    position: absolute;
-    top: -10px;
-    left: 12px;
-    background: #141419;
-    padding: 0 8px;
-    z-index: 10;
+/* ══════════════════════════════════
+   FORM SECTIONS
+══════════════════════════════════ */
+.ep-section {
+  background: rgba(14,18,27,0.7);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 18px; margin-bottom: 24px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 0;
+  overflow: visible;
+  transition: border-color .3s ease, box-shadow .3s ease;
+}
+.ep-section:hover {
+  border-color: rgba(40,201,244,0.12);
+  box-shadow: 0 8px 36px rgba(0,0,0,0.45);
 }
 
-.input-field { 
-    background: rgba(0, 0, 0, 0.3); 
-    border: 1px solid rgba(255, 255, 255, 0.1); 
-    color: #fff; 
-    padding: 16px 20px; 
-    border-radius: 10px; 
-    font-size: 15px; 
-    font-family: inherit;
-    transition: all 0.3s ease;
-    width: 100%;
-    box-sizing: border-box;
+.ep-section-label {
+  padding: 36px 28px;
+  border-right: 1px solid rgba(255,255,255,0.05);
+  background: rgba(0,0,0,0.15);
+  border-radius: 18px 0 0 18px;
 }
-.input-field:focus { 
-    outline: none; 
-    border-color: #28c9f4; 
-    background: rgba(40, 201, 244, 0.05);
-    box-shadow: 0 0 0 4px rgba(40, 201, 244, 0.1);
+.ep-section-body {
+  padding: 36px 36px 28px;
+  border-radius: 0 18px 18px 0;
 }
-.input-field::placeholder { color: #475569; }
 
-select.input-field { appearance: none; background-image: url("data:image/svg+xml,%3Csvg fill='%2364748b' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; cursor: pointer; }
-select.input-field option { background: #141419; color: #fff; padding: 12px; }
-textarea.input-field { min-height: 140px; resize: vertical; line-height: 1.6; }
-
-/* Custom Premium Dropdown */
-.custom-select-wrapper { position: relative; width: 100%; user-select: none; }
-.custom-select-trigger { width: 100%; padding: 18px 24px; border-radius: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); color: #fff; font-size: 15px; font-family: inherit; transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-.custom-select-trigger:focus, .custom-select-wrapper.open .custom-select-trigger { border-color: #28c9f4; box-shadow: 0 0 0 3px rgba(40, 201, 244, 0.1); }
-.custom-options { position: absolute; display: block; top: calc(100% + 8px); left: 0; right: 0; background: #18181e; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 100; opacity: 0; visibility: hidden; pointer-events: none; transition: all 0.2s ease; transform: translateY(-10px); overflow: hidden; }
-.custom-select-wrapper.open .custom-options { opacity: 1; visibility: visible; pointer-events: all; transform: translateY(0); }
-.custom-option { padding: 16px 24px; color: #94a3b8; cursor: pointer; transition: all 0.2s; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.custom-option:last-child { border-bottom: none; }
-.custom-option:hover { background: rgba(40, 201, 244, 0.1); color: #28c9f4; padding-left: 30px; }
-.custom-option.selected { color: #28c9f4; background: rgba(40, 201, 244, 0.05); font-weight: 600; }
-
-/* Variant Row */
-.variant-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: end; margin-bottom: 24px; padding: 24px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.05); }
-.variant-header { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 2px; }
-.remove-variant { color: #f87171; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; border: none; background: #18181e; padding: 4px 8px; border-radius: 4px; transition: 0.2s; }
-.remove-variant:hover { background: #f87171; color: #000; }
-
-/* Premium Buttons */
-.btn-cyan { 
-    background: linear-gradient(135deg, #28c9f4, #0ea5e9); 
-    color: #fff; 
-    border: none; 
-    padding: 16px 36px; 
-    border-radius: 10px; 
-    font-size: 14px; 
-    font-weight: 600; 
-    letter-spacing: 0.1em; 
-    cursor: pointer; 
-    transition: all 0.3s ease; 
-    text-transform: uppercase; 
-    box-shadow: 0 10px 20px rgba(40, 201, 244, 0.2);
+.ep-section-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 8px;
+  background: rgba(40,201,244,0.1); border: 1px solid rgba(40,201,244,0.2);
+  color: #28c9f4; font-size: 12px; font-weight: 800; margin-bottom: 14px;
 }
-.btn-cyan:hover { 
-    transform: translateY(-2px); 
-    box-shadow: 0 15px 30px rgba(40, 201, 244, 0.4); 
-    background: linear-gradient(135deg, #30d5ff, #14b8a6); 
+.ep-section-title { font-size: 16px; font-weight: 700; color: #e2e8f0; margin: 0 0 10px; }
+.ep-section-desc  { font-size: 12.5px; color: #374151; line-height: 1.65; margin: 0; }
+
+/* ══════════════════════════════════
+   FORM FIELDS
+══════════════════════════════════ */
+.ep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.ep-full { grid-column: span 2; }
+.ep-field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 22px; }
+.ep-field label {
+  font-size: 11px; font-weight: 700; color: #28c9f4;
+  text-transform: uppercase; letter-spacing: 0.1em; padding-left: 2px;
 }
-.btn-cyan-outline { background: transparent; color: #28c9f4; border: 1px dashed #28c9f4; padding: 12px 24px; border-radius: 8px; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s; text-transform: uppercase; display: inline-block; }
-.btn-cyan-outline:hover { background: rgba(40, 201, 244, 0.1); border-style: solid; }
-.btn-cancel { background: transparent; color: #94a3b8; border: none; padding: 16px 24px; font-size: 13px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 0.1em; transition: 0.2s; }
-.btn-cancel:hover { color: #fff; }
-
-/* Image Upload Boxes */
-.upload-box { 
-    border: 2px dashed rgba(255, 255, 255, 0.1); 
-    border-radius: 12px; 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    justify-content: center; 
-    gap: 12px; 
-    cursor: pointer; 
-    transition: all 0.3s ease; 
-    color: #64748b; 
-    text-align: center; 
-    padding: 30px; 
-    background: rgba(0, 0, 0, 0.2);
-    position: relative;
-    overflow: hidden;
+.ep-input {
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.09);
+  color: #e2e8f0;
+  padding: 14px 16px;
+  border-radius: 11px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color .25s, box-shadow .25s, background .25s;
+  font-family: inherit;
+  box-sizing: border-box;
 }
-.upload-box input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 10; }
-.upload-box:hover { border-color: #28c9f4; background: rgba(40, 201, 244, 0.05); color: #fff; transform: scale(1.02); }
-.upload-box::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.03), transparent); transform: skewX(-25deg); transition: 0.7s; }
-.upload-box:hover::after { left: 150%; }
+.ep-input:focus {
+  border-color: rgba(40,201,244,0.5);
+  box-shadow: 0 0 0 3px rgba(40,201,244,0.08);
+  background: rgba(40,201,244,0.03);
+}
+.ep-input::placeholder { color: #2d3748; }
+select.ep-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg fill='%2364748b' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center;
+  padding-right: 40px; cursor: pointer;
+}
+select.ep-input option { background: #0d1117; color: #e2e8f0; }
+textarea.ep-input { min-height: 130px; resize: vertical; line-height: 1.65; }
 
-.upload-box svg { width: 36px; height: 36px; color: #475569; transition: 0.3s; z-index: 5; }
-.upload-box:hover svg { color: #28c9f4; transform: scale(1.1); }
-.upload-text { font-size: 13px; font-weight: 500; z-index: 5; }
-.upload-subtext { font-size: 11px; color: #475569; letter-spacing: 0.05em; z-index: 5; }
+/* ══════════════════════════════════
+   CUSTOM CATEGORY DROPDOWN
+══════════════════════════════════ */
+.ep-select-wrap { position: relative; width: 100%; user-select: none; }
+.ep-select-trigger {
+  width: 100%; padding: 14px 16px; border-radius: 11px;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.09);
+  color: #e2e8f0; font-size: 14px; font-family: inherit;
+  transition: all .25s; cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.ep-select-trigger svg { transition: transform .25s; flex-shrink: 0; }
+.ep-select-wrap.open .ep-select-trigger {
+  border-color: rgba(40,201,244,0.5);
+  box-shadow: 0 0 0 3px rgba(40,201,244,0.08);
+  background: rgba(40,201,244,0.03);
+}
+.ep-select-wrap.open .ep-select-trigger svg { transform: rotate(180deg); }
+.ep-select-opts {
+  position: absolute; top: calc(100% + 8px); left: 0; right: 0;
+  background: #0d1117; border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px; box-shadow: 0 12px 36px rgba(0,0,0,0.6);
+  z-index: 200; overflow: hidden;
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transform: translateY(-8px); transition: all .2s ease;
+  max-height: 220px; overflow-y: auto;
+}
+.ep-select-opts::-webkit-scrollbar { width: 4px; }
+.ep-select-opts::-webkit-scrollbar-thumb { background: #1e2533; border-radius: 4px; }
+.ep-select-wrap.open .ep-select-opts {
+  opacity: 1; visibility: visible; pointer-events: all; transform: translateY(0);
+}
+.ep-select-opt {
+  padding: 13px 18px; color: #64748b; cursor: pointer;
+  transition: all .2s; border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 14px;
+}
+.ep-select-opt:last-child { border-bottom: none; }
+.ep-select-opt:hover { background: rgba(40,201,244,0.08); color: #28c9f4; padding-left: 24px; }
+.ep-select-opt.selected { color: #28c9f4; background: rgba(40,201,244,0.05); font-weight: 600; }
 
-/* Image Preview (For Edit Page) */
-.image-preview { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 10px; z-index: 1; opacity: 0.8; transition: 0.3s; }
-.upload-box:hover .image-preview { opacity: 0.3; }
+/* ══════════════════════════════════
+   VARIANT ROWS
+══════════════════════════════════ */
+.ep-variant-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  padding: 24px; margin-bottom: 16px;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 13px;
+  position: relative;
+  transition: border-color .2s;
+}
+.ep-variant-row:hover { border-color: rgba(255,255,255,0.09); }
+.ep-variant-badge {
+  position: absolute; top: -1px; left: 20px;
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: #28c9f4; background: rgba(40,201,244,0.1);
+  border: 1px solid rgba(40,201,244,0.2); border-top: none;
+  padding: 3px 10px; border-radius: 0 0 6px 6px;
+}
+.ep-variant-header { display: flex; justify-content: space-between; align-items: center; }
+.ep-remove-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  color: #f87171; border: 1px solid rgba(248,113,113,0.2);
+  background: rgba(248,113,113,0.06); padding: 4px 10px;
+  border-radius: 6px; cursor: pointer; transition: all .2s;
+}
+.ep-remove-btn:hover { background: rgba(248,113,113,0.15); border-color: rgba(248,113,113,0.4); }
 
-.primary-cover { height: 220px; }
-.gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-.gallery-box { height: 160px; }
+.ep-add-variant-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: transparent; color: #28c9f4;
+  border: 1px dashed rgba(40,201,244,0.35);
+  padding: 11px 20px; border-radius: 10px;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.08em;
+  cursor: pointer; transition: all .25s; text-transform: uppercase;
+  margin-top: 8px; font-family: inherit;
+}
+.ep-add-variant-btn:hover {
+  background: rgba(40,201,244,0.07); border-style: solid;
+  border-color: rgba(40,201,244,0.5); transform: translateY(-1px);
+}
 
-.bottom-actions { display: flex; justify-content: flex-end; gap: 16px; margin-top: 40px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05); }
+/* ══════════════════════════════════
+   IMAGE UPLOAD / PREVIEW
+══════════════════════════════════ */
+.ep-gallery-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  margin-top: 4px;
+}
+.ep-upload-box {
+  height: 160px; border: 2px dashed rgba(255,255,255,0.1);
+  border-radius: 13px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 10px;
+  cursor: pointer; transition: all .3s;
+  color: #2d3748; text-align: center; padding: 20px;
+  background: rgba(0,0,0,0.2); position: relative; overflow: hidden;
+}
+.ep-upload-box input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 10; }
+.ep-upload-box:hover {
+  border-color: rgba(40,201,244,0.5); background: rgba(40,201,244,0.05);
+  color: #e2e8f0; transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(40,201,244,0.1);
+}
+/* Shimmer on hover */
+.ep-upload-box::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.03), transparent);
+  transform: skewX(-25deg); transition: .7s;
+}
+.ep-upload-box:hover::after { left: 150%; }
+
+/* Existing image preview */
+.ep-img-preview {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; border-radius: 11px; z-index: 1;
+  opacity: 0.85; transition: opacity .3s;
+}
+.ep-upload-box:hover .ep-img-preview { opacity: 0.25; }
+
+/* "Replace" badge over existing images */
+.ep-replace-badge {
+  position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+  z-index: 2; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.15);
+  color: #e2e8f0; font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; padding: 4px 10px; border-radius: 20px;
+  pointer-events: none; white-space: nowrap;
+}
+
+.ep-upload-icon  { width: 28px; height: 28px; transition: .3s; z-index: 1; }
+.ep-upload-box:hover .ep-upload-icon { color: #28c9f4; transform: scale(1.15) translateY(-2px); }
+.ep-upload-label { font-size: 12px; font-weight: 600; z-index: 1; }
+.ep-upload-sub   { font-size: 10px; z-index: 1; letter-spacing: 0.05em; color: #1f2937; }
+
+/* Delete image X button */
+.ep-delete-img-btn {
+  position: absolute; top: 8px; right: 8px; z-index: 20;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(8,8,14,0.88); border: 1px solid rgba(248,113,113,0.5);
+  color: #f87171; display: none; align-items: center; justify-content: center;
+  cursor: pointer; transition: all .2s; backdrop-filter: blur(4px);
+  flex-shrink: 0;
+}
+.ep-delete-img-btn:hover {
+  background: #ef4444; border-color: transparent; color: #fff;
+  transform: scale(1.15); box-shadow: 0 4px 12px rgba(239,68,68,0.5);
+}
+.ep-upload-box.has-preview .ep-delete-img-btn { display: flex; }
+
+/* img counter */
+.ep-img-counter {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; color: #374151; margin-bottom: 14px;
+}
+.ep-img-counter span { color: #28c9f4; }
+
+/* Image error */
+.ep-img-error {
+  display: none; align-items: center; gap: 8px;
+  background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.2);
+  color: #f87171; padding: 11px 16px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; margin-top: 14px;
+}
+
+/* ══════════════════════════════════
+   BOTTOM ACTIONS
+══════════════════════════════════ */
+.ep-actions {
+  display: flex; justify-content: flex-end; align-items: center; gap: 14px;
+  margin-top: 36px; padding-top: 28px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.ep-cancel-btn {
+  background: transparent; color: #4a5568; border: none;
+  padding: 14px 22px; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: color .2s; font-family: inherit;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+}
+.ep-cancel-btn:hover { color: #e2e8f0; }
+.ep-submit-btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #0a0a0a; border: 0; padding: 14px 32px;
+  font-size: 14px; font-weight: 800; letter-spacing: 0.04em;
+  cursor: pointer; border-radius: 12px; text-transform: uppercase;
+  box-shadow: 0 6px 22px rgba(251,191,36,0.3);
+  transition: all .25s; font-family: inherit;
+}
+.ep-submit-btn:hover {
+  background: linear-gradient(135deg, #fcd34d, #fbbf24);
+  transform: translateY(-2px); box-shadow: 0 10px 30px rgba(251,191,36,0.45);
+}
+.ep-submit-btn:active { transform: translateY(0); }
+
+/* ══════════════════════════════════
+   CROP MODAL
+══════════════════════════════════ */
+.ep-modal {
+  display: none; position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,0.82); backdrop-filter: blur(6px);
+  align-items: center; justify-content: center;
+}
+.ep-modal.open { display: flex; }
+.ep-modal-box {
+  width: 100%; max-width: 620px; margin: 0 16px;
+  background: #0d1117; border: 1px solid rgba(40,201,244,0.15);
+  border-radius: 20px; padding: 32px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.8);
+  animation: epModalIn .25s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes epModalIn {
+  from { opacity:0; transform: scale(0.93) translateY(16px); }
+  to   { opacity:1; transform: scale(1)    translateY(0);    }
+}
+.ep-modal-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.ep-modal-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: rgba(40,201,244,0.1); border: 1px solid rgba(40,201,244,0.2);
+  display: flex; align-items: center; justify-content: center; color: #28c9f4;
+}
+.ep-modal-title { font-size: 18px; font-weight: 800; color: #fff; margin: 0; }
+.ep-modal-sub   { font-size: 12px; color: #374151; margin-top: 2px; }
+.ep-img-container {
+  background: #000; border-radius: 12px; overflow: hidden;
+  max-height: 420px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.ep-modal-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 24px 0 20px; }
+.ep-modal-actions { display: flex; gap: 12px; }
+.ep-modal-cancel {
+  flex: 1; padding: 13px; border-radius: 11px;
+  font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
+  background: rgba(255,255,255,0.05); color: #9ca3af;
+  border: 1px solid rgba(255,255,255,0.1); transition: all .2s;
+}
+.ep-modal-cancel:hover { background: rgba(255,255,255,0.09); color: #e2e8f0; }
+.ep-modal-crop {
+  flex: 2; padding: 13px; border-radius: 11px;
+  font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit;
+  background: linear-gradient(135deg, #28c9f4, #0ea5e9);
+  color: #03111a; border: 0;
+  box-shadow: 0 4px 16px rgba(40,201,244,0.3); transition: all .2s;
+}
+.ep-modal-crop:hover {
+  background: linear-gradient(135deg, #4dd8f8, #38bdf8);
+  box-shadow: 0 6px 22px rgba(40,201,244,0.45); transform: translateY(-1px);
+}
 </style>
 
-<div class="add-product-page">
-  <div class="breadcrumb">DASHBOARD <span>/</span> PRODUCTS <span>/</span> <span style="color:#fff;">EDIT PRODUCT</span></div>
-  <h1 class="page-title">Edit Product</h1>
+<div class="ep-page">
 
+  <!-- ═══════ TOP NAV ═══════ -->
+  <div class="ep-topbar">
+    <div class="ep-breadcrumb">
+      <a href="/admin/dashboard">Dashboard</a>
+      <span class="sep">/</span>
+      <a href="/admin/products">Products</a>
+      <span class="sep">/</span>
+      <span class="current">Edit Product</span>
+    </div>
+    <a href="/admin/products" class="ep-back-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to Products
+    </a>
+  </div>
+
+  <!-- ═══════ HERO BANNER ═══════ -->
+  <div class="ep-hero">
+    <div class="ep-hero-grid"></div>
+    <div class="ep-hero-inner">
+      <div class="ep-hero-left">
+        <div class="ep-eyebrow">Editing Product</div>
+        <h1 class="ep-hero-title">Edit Product</h1>
+        <p class="ep-hero-sub">Update product details, variants, and images. Changes go live immediately.</p>
+      </div>
+      <% if (typeof product !== 'undefined' && product) { %>
+      <div class="ep-product-chip">
+        <div>
+          <div class="ep-product-chip-label">Editing</div>
+          <div class="ep-product-chip-name"><%= product.productName %></div>
+          <div class="ep-product-chip-id">#<%= product._id.toString().slice(-8).toUpperCase() %></div>
+        </div>
+      </div>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- ═══════ ERROR ALERT ═══════ -->
   <% if (typeof error !== 'undefined' && error) { %>
-    <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 16px; border-radius: 8px; margin-bottom: 24px; font-weight: 500;">
-        ⚠ <%= error %>
+    <div class="ep-alert">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <%= error %>
     </div>
   <% } %>
 
   <form method="POST" action="/admin/products/edit?id=<%= product._id %>" enctype="multipart/form-data" novalidate>
-    
-    <!-- 1. PRODUCT DETAILS -->
-    <div class="form-section" style="position: relative; z-index: 50;">
-      <div class="section-info">
-        <h3>Product Details</h3>
-        <p>Update the core information for this product. Changes will be reflected on the storefront immediately.</p>
+
+    <!-- ════════════════════════════
+         SECTION 1 — PRODUCT DETAILS
+    ════════════════════════════ -->
+    <div class="ep-section" style="position: relative; z-index: 50;">
+      <div class="ep-section-label">
+        <div class="ep-section-num">1</div>
+        <h3 class="ep-section-title">Product Details</h3>
+        <p class="ep-section-desc">Core information shown on the storefront. Changes reflect immediately after saving.</p>
       </div>
-      
-      <div class="form-grid">
-        <div class="field-group full-width">
-          <label>Product Name *</label>
-          <input type="text" class="input-field" name="productName" value="<%= typeof product !== 'undefined' ? product.productName : '' %>" required>
-        </div>
-        
-        <div class="field-group full-width">
-          <label>Product Description *</label>
-          <textarea class="input-field" name="description" required><%= typeof product !== 'undefined' ? product.description : '' %></textarea>
-        </div>
-        
-        <div class="field-group">
-          <label>Category *</label>
-          <div class="custom-select-wrapper">
-             <div class="custom-select-trigger">
-                 <span><%= typeof product !== 'undefined' && product.category ? product.category : 'Select Category' %></span>
-                 <svg fill="#64748b" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>
-             </div>
-             <div class="custom-options">
-                 <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
-                     <% categories.forEach(cat => { %>
-                         <div class="custom-option <%= typeof product !== 'undefined' && product.category === cat.name ? 'selected' : '' %>" data-value="<%= cat.name %>"><%= cat.name %></div>
-                     <% }) %>
-                 <% } else { %>
-                     <div class="custom-option text-gray-500" data-value="">No categories found</div>
-                 <% } %>
-             </div>
-             <input type="hidden" name="category" value="<%= typeof product !== 'undefined' ? product.category : '' %>" id="categoryInput" required>
+
+      <div class="ep-section-body">
+        <div class="ep-grid">
+
+          <div class="ep-field ep-full">
+            <label>Product Name *</label>
+            <input type="text" class="ep-input" name="productName"
+                   value="<%= typeof product !== 'undefined' ? product.productName : '' %>" required>
           </div>
-          <div id="categoryError" style="color: #ef4444; font-size: 12px; margin-top: 4px; display: none;">Please select a category</div>
-        </div>
-        
-        <div class="field-group">
-          <label>Brand *</label>
-          <input type="text" class="input-field" name="brand" value="<%= typeof product !== 'undefined' ? product.brand : '' %>" required>
+
+          <div class="ep-field ep-full">
+            <label>Product Description *</label>
+            <textarea class="ep-input" name="description" required><%= typeof product !== 'undefined' ? product.description : '' %></textarea>
+          </div>
+
+          <div class="ep-field">
+            <label>Category *</label>
+            <div class="ep-select-wrap">
+              <div class="ep-select-trigger">
+                <span><%= typeof product !== 'undefined' && product.category ? product.category : 'Select a category…' %></span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="ep-select-opts">
+                <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+                  <% categories.forEach(cat => { %>
+                    <div class="ep-select-opt <%= typeof product !== 'undefined' && product.category === cat.name ? 'selected' : '' %>"
+                         data-value="<%= cat.name %>"><%= cat.name %></div>
+                  <% }) %>
+                <% } else { %>
+                  <div class="ep-select-opt" data-value="">No categories found</div>
+                <% } %>
+              </div>
+              <input type="hidden" name="category" value="<%= typeof product !== 'undefined' ? product.category : '' %>" id="categoryInput">
+            </div>
+          </div>
+
+          <div class="ep-field">
+            <label>Brand *</label>
+            <input type="text" class="ep-input" name="brand"
+                   value="<%= typeof product !== 'undefined' ? product.brand : '' %>" required>
+          </div>
+
         </div>
       </div>
     </div>
 
-    <!-- 2. VARIANT & STOCK -->
-    <div class="form-section">
-      <div class="section-info">
-        <h3>Variant & Stock</h3>
-        <p>Update editions, inventory levels, and pricing for this specific entry.</p>
+    <!-- ════════════════════════════
+         SECTION 2 — VARIANTS & STOCK
+    ════════════════════════════ -->
+    <div class="ep-section">
+      <div class="ep-section-label">
+        <div class="ep-section-num">2</div>
+        <h3 class="ep-section-title">Variants & Stock</h3>
+        <p class="ep-section-desc">Update sizes, inventory, and pricing for each product variant.</p>
       </div>
-      
-      <div>
+
+      <div class="ep-section-body">
         <div id="variantsContainer">
-          
+
           <% if (typeof product !== 'undefined' && product.variants && product.variants.length > 0) { %>
-            <% product.variants.forEach((variant) => { %>
-              <div class="variant-row">
-                <div class="field-group">
-                  <label>Format / Variant</label>
-                  <select class="input-field" name="variantSize[]">
-                    <option value="5ml" <%= variant.size === '5ml' ? 'selected' : '' %>>5ml</option>
-                    <option value="15ml" <%= variant.size === '15ml' ? 'selected' : '' %>>15ml</option>
-                    <option value="30ml" <%= variant.size === '30ml' ? 'selected' : '' %>>30ml</option>
-                    <option value="50ml" <%= variant.size === '50ml' ? 'selected' : '' %>>50ml</option>
-                    <option value="100ml" <%= variant.size === '100ml' ? 'selected' : '' %>>100ml</option>
+            <% product.variants.forEach((variant, idx) => { %>
+              <div class="ep-variant-row">
+                <div class="ep-variant-badge">Variant <%= idx + 1 %></div>
+
+                <div class="ep-field">
+                  <label>Format / Size</label>
+                  <select class="ep-input" name="variantSize[]">
+                    <option value="5ml"   <%= variant.size === '5ml'   ? 'selected' : '' %>>5 ml</option>
+                    <option value="15ml"  <%= variant.size === '15ml'  ? 'selected' : '' %>>15 ml</option>
+                    <option value="30ml"  <%= variant.size === '30ml'  ? 'selected' : '' %>>30 ml</option>
+                    <option value="50ml"  <%= variant.size === '50ml'  ? 'selected' : '' %>>50 ml</option>
+                    <option value="100ml" <%= variant.size === '100ml' ? 'selected' : '' %>>100 ml</option>
+                    <option value="200ml" <%= variant.size === '200ml' ? 'selected' : '' %>>200 ml</option>
                   </select>
                 </div>
-                
-                <div class="field-group">
-                  <div class="variant-header">
-                    <label style="position: static; padding-left: 4px;">Stock Quantity</label>
-                    <button type="button" class="remove-variant">REMOVE</button>
+
+                <div class="ep-field">
+                  <div class="ep-variant-header">
+                    <label style="padding-left:0;">Stock Quantity</label>
+                    <button type="button" class="ep-remove-btn">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                      Remove
+                    </button>
                   </div>
-                  <input type="number" class="input-field" name="stock[]" placeholder="0" min="0" value="<%= variant.stock %>">
+                  <input type="number" class="ep-input" name="stock[]" placeholder="0" min="0" value="<%= variant.stock %>">
                 </div>
-                
-                <div class="field-group">
+
+                <div class="ep-field">
                   <label>Regular Price (MRP)</label>
-                  <input type="number" class="input-field" name="regularPrice[]" placeholder="0.00" step="0.01" value="<%= variant.regularPrice %>">
+                  <input type="number" class="ep-input" name="regularPrice[]" placeholder="0.00" step="0.01" value="<%= variant.regularPrice %>">
                 </div>
-                
-                <div class="field-group">
+
+                <div class="ep-field">
                   <label>Sale Price</label>
-                  <input type="number" class="input-field" name="salePrice[]" placeholder="0.00" step="0.01" value="<%= variant.salePrice %>">
+                  <input type="number" class="ep-input" name="salePrice[]" placeholder="0.00" step="0.01" value="<%= variant.salePrice %>">
                 </div>
               </div>
             <% }) %>
           <% } else { %>
-            <div class="variant-row">
-              <div class="field-group">
-                <label>Format / Variant</label>
-                <select class="input-field" name="variantSize[]">
-                  <option value="5ml">5ml</option>
-                  <option value="15ml">15ml</option>
-                  <option value="30ml">30ml</option>
-                  <option value="50ml">50ml</option>
-                  <option value="100ml">100ml</option>
+            <div class="ep-variant-row">
+              <div class="ep-variant-badge">Variant 1</div>
+              <div class="ep-field">
+                <label>Format / Size</label>
+                <select class="ep-input" name="variantSize[]">
+                  <option value="5ml">5 ml</option>
+                  <option value="15ml">15 ml</option>
+                  <option value="30ml">30 ml</option>
+                  <option value="50ml">50 ml</option>
+                  <option value="100ml">100 ml</option>
+                  <option value="200ml">200 ml</option>
                 </select>
               </div>
-              
-              <div class="field-group">
-                <div class="variant-header">
-                  <label style="position: static; padding-left: 4px;">Stock Quantity</label>
-                  <button type="button" class="remove-variant">REMOVE</button>
+              <div class="ep-field">
+                <div class="ep-variant-header">
+                  <label style="padding-left:0;">Stock Quantity</label>
+                  <button type="button" class="ep-remove-btn">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Remove
+                  </button>
                 </div>
-                <input type="number" class="input-field" name="stock[]" placeholder="0" min="0" value="">
+                <input type="number" class="ep-input" name="stock[]" placeholder="0" min="0">
               </div>
-              
-              <div class="field-group">
+              <div class="ep-field">
                 <label>Regular Price (MRP)</label>
-                <input type="number" class="input-field" name="regularPrice[]" placeholder="0.00" step="0.01" value="">
+                <input type="number" class="ep-input" name="regularPrice[]" placeholder="0.00" step="0.01">
               </div>
-              
-              <div class="field-group">
+              <div class="ep-field">
                 <label>Sale Price</label>
-                <input type="number" class="input-field" name="salePrice[]" placeholder="0.00" step="0.01" value="">
+                <input type="number" class="ep-input" name="salePrice[]" placeholder="0.00" step="0.01">
               </div>
             </div>
           <% } %>
-          
+
         </div>
-        
-        <button type="button" class="btn-cyan-outline" style="margin-top: 16px;">+ ADD NEW VARIANT</button>
+
+        <button type="button" class="ep-add-variant-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/>
+          </svg>
+          Add Variant
+        </button>
       </div>
     </div>
 
-    <!-- 3. PRODUCT IMAGES -->
-    <div class="form-section">
-      <div class="section-info">
-        <h3>Product Images</h3>
-        <p>Upload new images to replace the old ones. Leave empty to keep existing images.</p>
+    <!-- ════════════════════════════
+         SECTION 3 — PRODUCT IMAGES
+    ════════════════════════════ -->
+    <div class="ep-section">
+      <div class="ep-section-label">
+        <div class="ep-section-num">3</div>
+        <h3 class="ep-section-title">Product Images</h3>
+        <p class="ep-section-desc">Click any image to replace it, or leave untouched to keep the existing photos.</p>
       </div>
-      
-      <div>
-        <div class="field-group full-width" style="margin-top: 10px;">
-          <label>Gallery Images</label>
-          <div class="gallery-grid">
-            <div class="upload-box gallery-box" id="galleryBox1">
-              <input type="file" name="galleryImage1" accept="image/*">
-              <% if (typeof product !== 'undefined' && product.galleryImages && product.galleryImages[0]) { %>
-                  <img src="<%= product.galleryImages[0] %>" class="image-preview">
-              <% } %>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 24px; height: 24px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-            </div>
-            
-            <div class="upload-box gallery-box" id="galleryBox2" style="<%= (typeof product !== 'undefined' && product.galleryImages && product.galleryImages.length >= 1) ? '' : 'display: none;' %>">
-              <input type="file" name="galleryImage2" accept="image/*">
-              <% if (typeof product !== 'undefined' && product.galleryImages && product.galleryImages[1]) { %>
-                  <img src="<%= product.galleryImages[1] %>" class="image-preview">
-              <% } %>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 24px; height: 24px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-            </div>
-            
-            <div class="upload-box gallery-box" id="galleryBox3" style="<%= (typeof product !== 'undefined' && product.galleryImages && product.galleryImages.length >= 2) ? '' : 'display: none;' %>">
-              <input type="file" name="galleryImage3" accept="image/*">
-              <% if (typeof product !== 'undefined' && product.galleryImages && product.galleryImages[2]) { %>
-                  <img src="<%= product.galleryImages[2] %>" class="image-preview">
-              <% } %>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 24px; height: 24px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-            </div>
-            
-            <div class="upload-box gallery-box" id="galleryBox4" style="<%= (typeof product !== 'undefined' && product.galleryImages && product.galleryImages.length >= 3) ? '' : 'display: none;' %>">
-              <input type="file" name="galleryImage4" accept="image/*">
-              <% if (typeof product !== 'undefined' && product.galleryImages && product.galleryImages[3]) { %>
-                  <img src="<%= product.galleryImages[3] %>" class="image-preview">
-              <% } %>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 24px; height: 24px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-            </div>
-          </div>
-          <div id="imageError" style="color: #ef4444; font-size: 14px; margin-top: 12px; display: none; font-weight: 500; display: flex; align-items: center; gap: 6px; display: none;">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-              <span>Error: You must upload between 2 and 4 photos!</span>
-          </div>
+
+      <div class="ep-section-body">
+
+        <div class="ep-img-counter">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          <span id="imgCountDisplay">
+            <%= typeof product !== 'undefined' && product.galleryImages ? product.galleryImages.filter(Boolean).length : 0 %>
+          </span> / 4 images active
         </div>
+
+        <div class="ep-gallery-grid">
+
+          <!-- Box 1 -->
+          <div class="ep-upload-box <%= typeof product !== 'undefined' && product.galleryImages && product.galleryImages[0] ? 'has-preview' : '' %>" id="galleryBox1">
+            <input type="file" name="galleryImage1" accept="image/*">
+            <button type="button" class="ep-delete-img-btn" title="Remove image">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <% if (typeof product !== 'undefined' && product.galleryImages && product.galleryImages[0]) { %>
+              <img src="<%= product.galleryImages[0] %>" class="ep-img-preview" alt="Image 1">
+              <span class="ep-replace-badge">Click to Replace</span>
+            <% } %>
+            <svg class="ep-upload-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"/>
+            </svg>
+            <span class="ep-upload-label">Photo 1</span>
+            <span class="ep-upload-sub">Required</span>
+          </div>
+
+          <!-- Box 2 -->
+          <div class="ep-upload-box <%= typeof product !== 'undefined' && product.galleryImages && product.galleryImages[1] ? 'has-preview' : '' %>" id="galleryBox2"
+               style="<%= (typeof product !== 'undefined' && product.galleryImages && product.galleryImages.length >= 1) ? '' : 'display:none;' %>">
+            <input type="file" name="galleryImage2" accept="image/*">
+            <button type="button" class="ep-delete-img-btn" title="Remove image">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <% if (typeof product !== 'undefined' && product.galleryImages && product.galleryImages[1]) { %>
+              <img src="<%= product.galleryImages[1] %>" class="ep-img-preview" alt="Image 2">
+              <span class="ep-replace-badge">Click to Replace</span>
+            <% } %>
+            <svg class="ep-upload-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"/>
+            </svg>
+            <span class="ep-upload-label">Photo 2</span>
+            <span class="ep-upload-sub">Required</span>
+          </div>
+
+          <!-- Box 3 -->
+          <div class="ep-upload-box <%= typeof product !== 'undefined' && product.galleryImages && product.galleryImages[2] ? 'has-preview' : '' %>" id="galleryBox3"
+               style="<%= (typeof product !== 'undefined' && product.galleryImages && product.galleryImages.length >= 2) ? '' : 'display:none;' %>">
+            <input type="file" name="galleryImage3" accept="image/*">
+            <button type="button" class="ep-delete-img-btn" title="Remove image">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <% if (typeof product !== 'undefined' && product.galleryImages && product.galleryImages[2]) { %>
+              <img src="<%= product.galleryImages[2] %>" class="ep-img-preview" alt="Image 3">
+              <span class="ep-replace-badge">Click to Replace</span>
+            <% } %>
+            <svg class="ep-upload-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"/>
+            </svg>
+            <span class="ep-upload-label">Photo 3</span>
+            <span class="ep-upload-sub">Optional</span>
+          </div>
+
+          <!-- Box 4 -->
+          <div class="ep-upload-box <%= typeof product !== 'undefined' && product.galleryImages && product.galleryImages[3] ? 'has-preview' : '' %>" id="galleryBox4"
+               style="<%= (typeof product !== 'undefined' && product.galleryImages && product.galleryImages.length >= 3) ? '' : 'display:none;' %>">
+            <input type="file" name="galleryImage4" accept="image/*">
+            <button type="button" class="ep-delete-img-btn" title="Remove image">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <% if (typeof product !== 'undefined' && product.galleryImages && product.galleryImages[3]) { %>
+              <img src="<%= product.galleryImages[3] %>" class="ep-img-preview" alt="Image 4">
+              <span class="ep-replace-badge">Click to Replace</span>
+            <% } %>
+            <svg class="ep-upload-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"/>
+            </svg>
+            <span class="ep-upload-label">Photo 4</span>
+            <span class="ep-upload-sub">Optional</span>
+          </div>
+
+        </div>
+
+        <div id="imageError" class="ep-img-error">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          You must keep or upload between 2 and 4 photos.
+        </div>
+
       </div>
     </div>
-    
-    <!-- Submit Actions -->
-    <div class="bottom-actions">
-      <a href="/admin/products" class="btn-cancel" style="text-decoration:none;">Cancel</a>
-      <button type="submit" class="btn-cyan">SAVE CHANGES</button>
+
+    <!-- ════════════════════════════
+         SUBMIT ACTIONS
+    ════════════════════════════ -->
+    <div class="ep-actions">
+      <a href="/admin/products" class="ep-cancel-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Cancel
+      </a>
+      <button type="submit" class="ep-submit-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14a2 2 0 0 1-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+        </svg>
+        Save Changes
+      </button>
     </div>
 
   </form>
-</div>
+</div><!-- /ep-page -->
 
-<!-- Custom Crop Modal Styling -->
-<style>
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; opacity: 0; transition: opacity 0.2s; backdrop-filter: blur(4px); }
-.modal-overlay.open { display: flex; opacity: 1; }
-.modal-box { background: #141419; border: 1px solid rgba(40, 201, 244, 0.2); border-radius: 12px; padding: 24px; width: 100%; max-width: 600px; margin: 0 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); transform: scale(0.95); transition: transform 0.2s; }
-.modal-overlay.open .modal-box { transform: scale(1); }
-.modal-title { font-size: 18px; font-weight: 600; color: #fff; margin: 0 0 16px; font-family: inherit; }
-.modal-actions { display: flex; gap: 12px; margin-top: 20px; }
-.modal-btn { flex: 1; padding: 12px 0; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; border: none; transition: all 0.2s; letter-spacing: 0.5px; }
-.modal-btn-cancel { background: transparent; color: #a0a0a0; border: 1px solid #444; }
-.modal-btn-cancel:hover { background: rgba(255,255,255,0.05); color: #fff; }
-.img-container { max-height: 400px; overflow: hidden; background: #000; border-radius: 8px; display: flex; justify-content: center; align-items: center;}
-</style>
-
-<!-- Crop Modal -->
-<div id="cropModal" class="modal-overlay">
-  <div class="modal-box">
-    <h2 class="modal-title">Crop Image</h2>
-    <div class="img-container">
-      <img id="imageToCrop" src="" style="max-width: 100%; display: block;">
+<!-- ═══════════════ CROP MODAL ═══════════════ -->
+<div id="cropModal" class="ep-modal">
+  <div class="ep-modal-box">
+    <div class="ep-modal-header">
+      <div class="ep-modal-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="ep-modal-title">Crop Image</h2>
+        <p class="ep-modal-sub">Drag to select the crop area — output is 1200 × 1200 px</p>
+      </div>
     </div>
-    <div class="modal-actions">
-      <button id="cancelCropBtn" type="button" class="modal-btn modal-btn-cancel">CANCEL</button>
-      <button id="saveCropBtn" type="button" class="modal-btn btn-cyan">CROP & SAVE</button>
+    <div class="ep-img-container">
+      <img id="imageToCrop" src="" style="max-width:100%; display:block;">
+    </div>
+    <div class="ep-modal-divider"></div>
+    <div class="ep-modal-actions">
+      <button id="cancelCropBtn" type="button" class="ep-modal-cancel">Cancel</button>
+      <button id="saveCropBtn"   type="button" class="ep-modal-crop">✓ Crop & Save</button>
     </div>
   </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
 
+
+
+
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    
-    // 1. ADD NEW VARIANT BUTTON
-    const addVariantBtn = document.querySelector(".btn-cyan-outline");
-    const variantsContainer = document.getElementById("variantsContainer");
+document.addEventListener('DOMContentLoaded', function () {
 
-    addVariantBtn.addEventListener("click", function() {
-        const firstVariant = variantsContainer.querySelector(".variant-row");
-        const newVariant = firstVariant.cloneNode(true);
-        const inputs = newVariant.querySelectorAll("input");
-        inputs.forEach(input => input.value = "");
-        variantsContainer.appendChild(newVariant);
-    });
+  /* ─────────────────────────────
+     1. ADD / REMOVE VARIANT
+  ───────────────────────────── */
+  const addVariantBtn = document.querySelector('.ep-add-variant-btn');
+  const variantsContainer = document.getElementById('variantsContainer');
 
-    // 2. REMOVE VARIANT BUTTON
-    variantsContainer.addEventListener("click", function(e) {
-        if (e.target.classList.contains("remove-variant")) {
-            const allVariants = variantsContainer.querySelectorAll(".variant-row");
-            if (allVariants.length > 1) {
-                e.target.closest(".variant-row").remove();
-            } else {
-                alert("You must have at least one variant for a product!");
-            }
-        }
-    });
+  addVariantBtn.addEventListener('click', function () {
+    const allRows = variantsContainer.querySelectorAll('.ep-variant-row');
+    const newRow  = allRows[0].cloneNode(true);
+    const num     = allRows.length + 1;
+    newRow.querySelector('.ep-variant-badge').textContent = 'Variant ' + num;
+    // Clear existing image previews inside cloned row if any
+    newRow.querySelectorAll('input').forEach(inp => inp.value = '');
+    variantsContainer.appendChild(newRow);
+  });
 
-    // 3. IMAGE CROPPING LOGIC
-    let cropper = null;
-    let currentFileInput = null;
-    let currentPreviewBox = null;
-    
-    const cropModal = document.getElementById('cropModal');
-    const imageToCrop = document.getElementById('imageToCrop');
-    const cancelCropBtn = document.getElementById('cancelCropBtn');
-    const saveCropBtn = document.getElementById('saveCropBtn');
-
-    const uploadBoxes = document.querySelectorAll(".upload-box");
-    uploadBoxes.forEach(box => {
-        const fileInput = box.querySelector('input[type="file"]');
-        
-        fileInput.addEventListener("change", function(e) {
-            if (this.files && this.files[0]) {
-                const file = this.files[0];
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    currentFileInput = fileInput;
-                    currentPreviewBox = box;
-                    
-                    // Show modal
-                    imageToCrop.src = e.target.result;
-                    cropModal.classList.add('open');
-                    
-                    // Initialize cropper after a short delay
-                    setTimeout(() => {
-                        if (cropper) cropper.destroy();
-                        cropper = new Cropper(imageToCrop, {
-                            aspectRatio: 1, // 1:1 Square crop
-                            viewMode: 2,
-                            background: false,
-                        });
-                    }, 100);
-                }
-                reader.readAsDataURL(file);
-            }
-        });
-    });
-
-    cancelCropBtn.addEventListener('click', () => {
-        cropModal.classList.remove('open');
-        if (cropper) {
-            cropper.destroy();
-            cropper = null;
-        }
-        if (currentFileInput) currentFileInput.value = '';
-    });
-
-    saveCropBtn.addEventListener('click', () => {
-        if (!cropper) return;
-        
-        cropper.getCroppedCanvas({
-            width: 1200,
-            height: 1200,
-        }).toBlob((blob) => {
-            const fileName = currentFileInput.files[0].name || 'cropped.jpg';
-            const croppedFile = new File([blob], fileName, { type: 'image/jpeg', lastModified: new Date().getTime() });
-            
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(croppedFile);
-            currentFileInput.files = dataTransfer.files;
-            
-            let preview = currentPreviewBox.querySelector('.image-preview');
-            if (!preview) {
-                preview = document.createElement('img');
-                preview.className = 'image-preview';
-                preview.style.position = 'absolute';
-                preview.style.inset = '0';
-                preview.style.width = '100%';
-                preview.style.height = '100%';
-                preview.style.objectFit = 'cover';
-                preview.style.borderRadius = '10px';
-                preview.style.zIndex = '1';
-                preview.style.opacity = '0.8';
-                currentPreviewBox.insertBefore(preview, currentPreviewBox.firstChild);
-            }
-            preview.src = URL.createObjectURL(blob);
-            
-            cropModal.classList.remove('open');
-            cropper.destroy();
-            cropper = null;
-            
-            // DYNAMIC UNLOCK LOGIC for Gallery Images
-            if (currentPreviewBox.id === 'galleryBox1') {
-                document.getElementById('galleryBox2').style.display = 'flex';
-            } else if (currentPreviewBox.id === 'galleryBox2') {
-                document.getElementById('galleryBox3').style.display = 'flex';
-            } else if (currentPreviewBox.id === 'galleryBox3') {
-                document.getElementById('galleryBox4').style.display = 'flex';
-            }
-            
-        }, 'image/jpeg', 0.9);
-    });
-
-    // FORM VALIDATION: Minimum 2 gallery photos & Category required
-    const productForm = document.querySelector('form[enctype="multipart/form-data"]');
-    if (productForm) {
-        productForm.addEventListener('submit', function(e) {
-            const previewCount = document.querySelectorAll('.gallery-box .image-preview').length;
-            const categoryInput = document.getElementById('categoryInput');
-            const categoryError = document.getElementById('categoryError');
-            
-            let isValid = true;
-
-            // FORM VALIDATION
-            const name = document.querySelector('input[name="productName"]').value.trim();
-            const desc = document.querySelector('textarea[name="description"]').value.trim();
-            const brand = document.querySelector('input[name="brand"]').value.trim();
-            
-            const variantSizes = document.querySelectorAll('select[name="variantSize[]"], select[name="variantSize"]');
-            const stocks = document.querySelectorAll('input[name="stock[]"], input[name="stock"]');
-            const regularPrices = document.querySelectorAll('input[name="regularPrice[]"], input[name="regularPrice"]');
-            const salePrices = document.querySelectorAll('input[name="salePrice[]"], input[name="salePrice"]');
-            
-            const formError = document.getElementById('imageError');
-            if (formError) formError.style.display = 'none';
-
-            function showFieldError(inputElement, msg) {
-                const fieldGroup = inputElement.closest('.field-group');
-                if (!fieldGroup) return;
-                
-                // Check if error already exists to prevent duplicates
-                const existingError = fieldGroup.querySelector('.inline-error');
-                if (existingError) existingError.remove();
-                
-                let errDiv = document.createElement('div');
-                errDiv.className = 'inline-error';
-                errDiv.style.color = '#ef4444';
-                errDiv.style.fontSize = '12px';
-                errDiv.style.marginTop = '4px';
-                errDiv.textContent = `⚠ ${msg}`;
-                
-                // For custom select, append after the wrapper
-                const customWrapper = fieldGroup.querySelector('.custom-select-wrapper');
-                if (customWrapper) {
-                    customWrapper.after(errDiv);
-                    customWrapper.querySelector('.custom-select-trigger').style.borderColor = '#ef4444';
-                } else {
-                    inputElement.after(errDiv);
-                    inputElement.style.borderColor = '#ef4444';
-                }
-
-                if (isValid) { // Scroll to the very first error found
-                    fieldGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-                isValid = false;
-                
-                // Make error disappear after 4 seconds
-                setTimeout(() => {
-                    errDiv.style.transition = 'opacity 0.5s ease';
-                    errDiv.style.opacity = '0';
-                    if (customWrapper) {
-                        const trigger = customWrapper.querySelector('.custom-select-trigger');
-                        trigger.style.transition = 'border-color 0.5s ease';
-                        trigger.style.borderColor = '';
-                    } else {
-                        inputElement.style.transition = 'border-color 0.5s ease';
-                        inputElement.style.borderColor = '';
-                    }
-                    setTimeout(() => errDiv.remove(), 500);
-                }, 4000);
-            }
-
-            const textRegex = /[a-zA-Z0-9]/;
-            const nameInput = document.querySelector('input[name="productName"]');
-            if (name.length < 3) {
-                showFieldError(nameInput, 'Product Name must be at least 3 characters.');
-            } else if (!textRegex.test(name)) {
-                showFieldError(nameInput, 'Product Name must contain valid letters or numbers.');
-            }
-            
-            const descInput = document.querySelector('textarea[name="description"]');
-            if (desc.length < 10) {
-                showFieldError(descInput, 'Description must be at least 10 characters.');
-            } else if (!textRegex.test(desc)) {
-                showFieldError(descInput, 'Description must contain valid letters or numbers.');
-            }
-            
-            const brandInput = document.querySelector('input[name="brand"]');
-            if (!brand) {
-                showFieldError(brandInput, 'Brand is required.');
-            } else if (!textRegex.test(brand)) {
-                showFieldError(brandInput, 'Brand must contain valid letters or numbers.');
-            }
-            
-            // Validate Variants
-            for (let i = 0; i < stocks.length; i++) {
-                const stockVal = Number(stocks[i].value);
-                const regPrice = Number(regularPrices[i].value);
-                const salePrice = Number(salePrices[i].value);
-                
-                if (stockVal < 0 || !Number.isInteger(stockVal) || stocks[i].value === "") {
-                    showFieldError(stocks[i], 'Stock must be a valid positive whole number.');
-                }
-                if (regPrice <= 0 || regularPrices[i].value === "") {
-                    showFieldError(regularPrices[i], 'Regular Price must be greater than 0.');
-                }
-                if (salePrice < 0 || salePrices[i].value === "") {
-                    showFieldError(salePrices[i], 'Sale Price cannot be negative.');
-                } else if (salePrice > 0 && salePrice >= regPrice) {
-                    showFieldError(salePrices[i], 'Sale Price must be LESS THAN Regular Price.');
-                }
-            }
-
-            // 1. Validate Category
-            if (categoryInput && categoryInput.value === "") {
-                if (categoryError) categoryError.style.display = 'block';
-                isValid = false;
-            } else if (categoryError) {
-                categoryError.style.display = 'none';
-            }
-
-            // 2. Validate Photos
-            if (previewCount < 2 || previewCount > 4) {
-                showFormError('You must upload between 2 and 4 photos!');
-                isValid = false;
-            }
-
-            // Final check
-            if (!isValid) {
-                e.preventDefault();
-                return false;
-            }
-        });
+  variantsContainer.addEventListener('click', function (e) {
+    const btn = e.target.closest('.ep-remove-btn');
+    if (!btn) return;
+    const allRows = variantsContainer.querySelectorAll('.ep-variant-row');
+    if (allRows.length > 1) {
+      btn.closest('.ep-variant-row').remove();
+      variantsContainer.querySelectorAll('.ep-variant-row').forEach((row, i) => {
+        row.querySelector('.ep-variant-badge').textContent = 'Variant ' + (i + 1);
+      });
+    } else {
+      alert('You must keep at least one variant.');
     }
-    // Custom Select JS
-    document.querySelectorAll('.custom-select-wrapper').forEach(wrapper => {
-        const trigger = wrapper.querySelector('.custom-select-trigger');
-        const hiddenInput = wrapper.querySelector('input[type="hidden"]');
-        const options = wrapper.querySelectorAll('.custom-option');
-        const textSpan = trigger.querySelector('span');
+  });
 
-        trigger.addEventListener('click', (e) => {
-            e.stopPropagation();
-            wrapper.classList.toggle('open');
-        });
+  /* ─────────────────────────────
+     2. IMAGE CROPPING
+  ───────────────────────────── */
+  let cropper           = null;
+  let currentFileInput  = null;
+  let currentPreviewBox = null;
 
-        options.forEach(option => {
-            option.addEventListener('click', () => {
-                options.forEach(opt => opt.classList.remove('selected'));
-                option.classList.add('selected');
-                hiddenInput.value = option.getAttribute('data-value');
-                textSpan.textContent = option.textContent;
-                wrapper.classList.remove('open');
-            });
-        });
+  const cropModal     = document.getElementById('cropModal');
+  const imageToCrop   = document.getElementById('imageToCrop');
+  const cancelCropBtn = document.getElementById('cancelCropBtn');
+  const saveCropBtn   = document.getElementById('saveCropBtn');
 
-        document.addEventListener('click', (e) => {
-            if (!wrapper.contains(e.target)) wrapper.classList.remove('open');
-        });
+  document.querySelectorAll('.ep-upload-box').forEach(box => {
+    const fileInput = box.querySelector('input[type="file"]');
+    fileInput.addEventListener('change', function () {
+      if (!this.files || !this.files[0]) return;
+      const reader = new FileReader();
+      reader.onload = function (ev) {
+        currentFileInput  = fileInput;
+        currentPreviewBox = box;
+        imageToCrop.src   = ev.target.result;
+        cropModal.classList.add('open');
+        setTimeout(() => {
+          if (cropper) cropper.destroy();
+          cropper = new Cropper(imageToCrop, { aspectRatio: 1, viewMode: 2, background: false });
+        }, 100);
+      };
+      reader.readAsDataURL(this.files[0]);
     });
+  });
+
+  cancelCropBtn.addEventListener('click', () => {
+    cropModal.classList.remove('open');
+    if (cropper) { cropper.destroy(); cropper = null; }
+    if (currentFileInput) currentFileInput.value = '';
+  });
+
+  saveCropBtn.addEventListener('click', () => {
+    if (!cropper) return;
+    cropper.getCroppedCanvas({ width: 1200, height: 1200 }).toBlob(blob => {
+      const fileName    = currentFileInput.files[0].name || 'cropped.jpg';
+      const croppedFile = new File([blob], fileName, { type: 'image/jpeg', lastModified: Date.now() });
+      const dt = new DataTransfer();
+      dt.items.add(croppedFile);
+      currentFileInput.files = dt.files;
+
+      /* Update or create preview */
+      let preview = currentPreviewBox.querySelector('.ep-img-preview');
+      if (!preview) {
+        preview = document.createElement('img');
+        preview.className = 'ep-img-preview';
+        preview.alt = 'Preview';
+        currentPreviewBox.insertBefore(preview, currentPreviewBox.firstChild);
+      }
+      preview.src = URL.createObjectURL(blob);
+      currentPreviewBox.classList.add('has-preview');
+
+      /* Ensure replace badge exists */
+      let badge = currentPreviewBox.querySelector('.ep-replace-badge');
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'ep-replace-badge';
+        badge.textContent = 'Click to Replace';
+        currentPreviewBox.appendChild(badge);
+      }
+
+      cropModal.classList.remove('open');
+      cropper.destroy(); cropper = null;
+
+      /* Unlock next box */
+      const boxMap = { galleryBox1:'galleryBox2', galleryBox2:'galleryBox3', galleryBox3:'galleryBox4' };
+      const nextId = boxMap[currentPreviewBox.id];
+      if (nextId) document.getElementById(nextId).style.display = 'flex';
+
+    }, 'image/jpeg', 0.9);
+  });
+
+  /* ─────────────────────────────
+     3. DELETE IMAGE BUTTON
+  ───────────────────────────── */
+  document.querySelector('.ep-gallery-grid').addEventListener('click', function (e) {
+    const delBtn = e.target.closest('.ep-delete-img-btn');
+    if (!delBtn) return;
+    e.stopPropagation(); /* prevent file picker opening */
+
+    const box     = delBtn.closest('.ep-upload-box');
+    const preview = box.querySelector('.ep-img-preview');
+    if (preview) preview.remove();
+    const badge   = box.querySelector('.ep-replace-badge');
+    if (badge) badge.remove();
+    const fileInput = box.querySelector('input[type="file"]');
+    if (fileInput) fileInput.value = '';
+    box.classList.remove('has-preview');
+    
+    /* Tell backend this image index was deleted */
+    const order = ['galleryBox1','galleryBox2','galleryBox3','galleryBox4'];
+    const idx   = order.indexOf(box.id);
+    const hiddenInput = document.createElement('input');
+    hiddenInput.type = 'hidden';
+    hiddenInput.name = 'deletedImages[]';
+    hiddenInput.value = idx;
+    document.querySelector('form[enctype="multipart/form-data"]').appendChild(hiddenInput);
+
+    /* Cascade: hide subsequent empty boxes */
+    for (let i = idx + 1; i < order.length; i++) {
+      const nextBox = document.getElementById(order[i]);
+      if (!nextBox) continue;
+      if (!nextBox.classList.contains('has-preview')) {
+        nextBox.style.display = 'none';
+        const nf = nextBox.querySelector('input[type="file"]');
+        if (nf) nf.value = '';
+      }
+    }
+  });
+
+  /* ─────────────────────────────
+     4. CUSTOM CATEGORY DROPDOWN
+  ───────────────────────────── */
+  document.querySelectorAll('.ep-select-wrap').forEach(wrap => {
+    const trigger  = wrap.querySelector('.ep-select-trigger');
+    const hidden   = wrap.querySelector('input[type="hidden"]');
+    const opts     = wrap.querySelectorAll('.ep-select-opt');
+    const textSpan = trigger.querySelector('span');
+
+    trigger.addEventListener('click', e => { e.stopPropagation(); wrap.classList.toggle('open'); });
+    opts.forEach(opt => {
+      opt.addEventListener('click', () => {
+        opts.forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        hidden.value         = opt.dataset.value;
+        textSpan.textContent = opt.textContent.trim();
+        wrap.classList.remove('open');
+      });
+    });
+    document.addEventListener('click', e => { if (!wrap.contains(e.target)) wrap.classList.remove('open'); });
+  });
+
+  /* ─────────────────────────────
+     4. FORM VALIDATION
+  ───────────────────────────── */
+  const productForm = document.querySelector('form[enctype="multipart/form-data"]');
+  if (!productForm) return;
+
+  productForm.addEventListener('submit', function (e) {
+    let isValid = true;
+
+    /* Clear old errors */
+    document.querySelectorAll('.ep-field-error-inline').forEach(el => el.remove());
+    document.querySelectorAll('.ep-input').forEach(el => el.style.borderColor = '');
+    document.querySelectorAll('.ep-select-trigger').forEach(el => el.style.borderColor = '');
+    document.getElementById('imageError').style.display = 'none';
+
+    function showErr(inputEl, msg) {
+      const field = inputEl.closest('.ep-field');
+      if (!field || field.querySelector('.ep-field-error-inline')) return;
+
+      const errDiv = document.createElement('div');
+      errDiv.className = 'ep-field-error-inline';
+      Object.assign(errDiv.style, {
+        color:'#f87171', fontSize:'12px', fontWeight:'500',
+        marginTop:'6px', display:'flex', alignItems:'center', gap:'5px',
+      });
+      errDiv.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg> ${msg}`;
+
+      const wrap = field.querySelector('.ep-select-wrap');
+      if (wrap) {
+        wrap.after(errDiv);
+        wrap.querySelector('.ep-select-trigger').style.borderColor = '#f87171';
+      } else {
+        inputEl.after(errDiv);
+        inputEl.style.borderColor = '#f87171';
+      }
+
+      if (isValid) field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      isValid = false;
+
+      setTimeout(() => {
+        errDiv.style.transition = 'opacity .5s';
+        errDiv.style.opacity = '0';
+        if (wrap) wrap.querySelector('.ep-select-trigger').style.borderColor = '';
+        else { inputEl.style.transition = 'border-color .5s'; inputEl.style.borderColor = ''; }
+        setTimeout(() => errDiv.remove(), 500);
+      }, 4000);
+    }
+
+    const textRx  = /[a-zA-Z0-9]/;
+    const nameEl  = document.querySelector('input[name="productName"]');
+    const descEl  = document.querySelector('textarea[name="description"]');
+    const brandEl = document.querySelector('input[name="brand"]');
+    const catEl   = document.getElementById('categoryInput');
+    const name    = nameEl.value.trim();
+    const desc    = descEl.value.trim();
+    const brand   = brandEl.value.trim();
+
+    if (name.length < 3)         showErr(nameEl,  'Product name must be at least 3 characters.');
+    else if (!textRx.test(name)) showErr(nameEl,  'Product name must contain valid letters or numbers.');
+    if (desc.length < 10)        showErr(descEl,  'Description must be at least 10 characters.');
+    else if (!textRx.test(desc)) showErr(descEl,  'Description must contain valid letters or numbers.');
+    if (!brand)                  showErr(brandEl, 'Brand is required.');
+    else if (!textRx.test(brand))showErr(brandEl, 'Brand must contain valid letters or numbers.');
+    if (catEl && catEl.value === '') showErr(catEl, 'Please select a category.');
+
+    /* Variants */
+    const stocks    = document.querySelectorAll('input[name="stock[]"]');
+    const regPrices = document.querySelectorAll('input[name="regularPrice[]"]');
+    const salePrices= document.querySelectorAll('input[name="salePrice[]"]');
+    stocks.forEach((s, i) => {
+      const sv = Number(s.value), rp = Number(regPrices[i].value), sp = Number(salePrices[i].value);
+      if (sv < 0 || !Number.isInteger(sv) || s.value === '')  showErr(s,            'Stock must be a valid positive whole number.');
+      if (rp <= 0 || regPrices[i].value === '')               showErr(regPrices[i], 'Regular price must be greater than 0.');
+      if (sp < 0  || salePrices[i].value === '')              showErr(salePrices[i],'Sale price cannot be negative.');
+      else if (sp > 0 && sp >= rp)                            showErr(salePrices[i],'Sale price must be less than regular price.');
+    });
+
+    /* Prevent Duplicate Variant Sizes */
+    const variantSizes = document.querySelectorAll('select[name="variantSize[]"]');
+    const selectedSizes = [];
+    variantSizes.forEach((selectEl) => {
+      const sizeValue = selectEl.value;
+      if (selectedSizes.includes(sizeValue)) {
+        showErr(selectEl, 'Duplicate variant! You cannot add the exact same size twice.');
+      } else {
+        selectedSizes.push(sizeValue);
+      }
+    });
+
+    /* Images — count existing + newly cropped */
+    const existingImgs = document.querySelectorAll('.ep-img-preview').length;
+    const newPreviews  = document.querySelectorAll('.ep-upload-box .ep-img-preview').length;
+    const imgCount     = Math.max(existingImgs, newPreviews);
+    if (imgCount < 2 || imgCount > 4) {
+      const imgErr = document.getElementById('imageError');
+      imgErr.style.display = 'flex';
+      if (isValid) imgErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      isValid = false;
+    }
+
+    if (!isValid) { e.preventDefault(); return false; }
+  });
 });
 </script>

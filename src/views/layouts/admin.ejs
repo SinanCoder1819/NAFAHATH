@@ -313,16 +313,50 @@
         }
     }
 
-    // Utility to clean up success/error params from the URL visually
+    // Global Toast Function
+    window.showToast = function(message, type = 'success') {
+      const toast = document.getElementById('ct-toast-el');
+      if (!toast) return;
+      
+      const icon = type === 'success' 
+          ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#28c9f4" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>'
+          : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+          
+      toast.className = `ct-toast ${type} show`;
+      toast.innerHTML = `${icon} <span>${message}</span>`;
+      
+      clearTimeout(window._toastTimeout);
+      window._toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    };
+
+    // Utility to read and show toast, then clean up params
     function cleanUrlParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        let toastMsg = urlParams.get('toast');
+        let toastType = urlParams.get('type') || 'success';
+        
+        if (urlParams.has('success')) {
+            toastMsg = urlParams.get('success');
+            toastType = 'success';
+        } else if (urlParams.has('error')) {
+            toastMsg = urlParams.get('error');
+            toastType = 'error';
+        }
+        
+        if (toastMsg) {
+            window.showToast(toastMsg, toastType);
+        }
+
+        // Clean URL
         const url = new URL(window.location);
         let changed = false;
-        if (url.searchParams.has('success')) {
+        if (url.searchParams.has('success') || url.searchParams.has('error') || url.searchParams.has('toast')) {
             url.searchParams.delete('success');
-            changed = true;
-        }
-        if (url.searchParams.has('error')) {
             url.searchParams.delete('error');
+            url.searchParams.delete('toast');
+            url.searchParams.delete('type');
             changed = true;
         }
         if (changed) {
@@ -330,7 +364,7 @@
         }
     }
 
-    // Clean URL on initial hard load
+    // Check on initial hard load
     document.addEventListener('DOMContentLoaded', cleanUrlParams);
 
     // Main PJAX Navigation Function
@@ -414,5 +448,25 @@
         navigateTo(window.location.href, false);
     });
 </script>
+
+<!-- GLOBAL TOAST NOTIFICATION SYSTEM -->
+<div id="ct-toast-el" class="ct-toast"></div>
+<style>
+  .ct-toast {
+    position: fixed; bottom: 32px; right: 32px; z-index: 9999;
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 20px; border-radius: 14px;
+    background: rgba(8,12,20,0.95); backdrop-filter: blur(14px);
+    font-size: 13px; font-weight: 600; color: #e2e8f0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    transform: translateY(20px); opacity: 0; transition: transform .3s, opacity .3s;
+    pointer-events: none;
+  }
+  .ct-toast.show { transform: translateY(0); opacity: 1; }
+  .ct-toast.success { border: 1px solid rgba(40,201,244,0.3); }
+  .ct-toast.error   { border: 1px solid rgba(248,113,113,0.3); }
+</style>
+
+
 </body>
 </html>

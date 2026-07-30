@@ -10,6 +10,9 @@ export const getCategories = async (req,res) => {
 
     const filter = {}
 
+
+    
+   
     
     if(search){
 
@@ -30,6 +33,8 @@ export const getCategories = async (req,res) => {
     .skip((currentPage - 1) * PAGE_SIZE)
     .limit(PAGE_SIZE)
     .lean()
+
+
 
     res.render("admin/categories", {
       layout: "layouts/admin",
@@ -56,7 +61,8 @@ export const addCategory = async (req, res) => {
     const description = (req.body.description || "").trim();
 
     const isActive = req.body.isActive === "true" || req.body.isActive === "on";
- 
+    
+    
 
     if (!name || name.length < 3 || name.length > 50) {
       return res.redirect("/admin/categories?error=Category name must be between 3 and 50 characters.");
@@ -77,6 +83,7 @@ export const addCategory = async (req, res) => {
       return res.redirect("/admin/categories?error=Category already exists");
     }
 
+    
     await Category.create({
       name,
       description,

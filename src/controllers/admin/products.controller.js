@@ -12,7 +12,11 @@ export const getProducts = async (req, res) => {
     const page = Math.max(1, parseInt(req.query.page) || 1);
     const search = (req.query.search || "").trim();
     const filter = {};
-    
+
+
+ 
+
+   
     if (search) {
       const safeSearch = escapeRegex(search);
       filter.$or = [
@@ -31,18 +35,20 @@ export const getProducts = async (req, res) => {
       .limit(PAGE_SIZE)
       .lean();
 
-    res.render("admin/products", {
-      layout: "layouts/admin",   
-      admin: req.session.admin,  
-      activePage: "products",    
-      products: products,   
-      search: search,
-      currentPage: currentPage,
-      totalPages: totalPages,
-      error: req.query.error || "",
-      success: req.query.success || "",
-    });
-    
+      
+      res.render("admin/products", {
+        layout: "layouts/admin",   
+        admin: req.session.admin,  
+        activePage: "products",
+        products: products,
+        search: search,
+        currentPage: currentPage,
+        totalPages: totalPages,
+        error: req.query.error || "",
+        success: req.query.success || "",
+      });
+      
+      
   } catch (error) {
     console.error("Error fetching products:", error);
     res.status(500).send("Server Error while loading products");
@@ -51,6 +57,9 @@ export const getProducts = async (req, res) => {
 
 export const getAddProduct = async (req, res) => {
   try {
+    const { name } = req.query
+    const productNames = await Product.find({name})
+      
     const categories = await Category.find({ isDeleted: false }).sort({ name: 1 }).lean();
     res.render("admin/addProducts", {
       layout: "layouts/admin",
@@ -58,6 +67,7 @@ export const getAddProduct = async (req, res) => {
       activePage: "products",
       categories: categories,
       error: req.query.error || "",
+      
     });
   } catch (error) {
     console.error("Error loading add product page:", error);
@@ -71,6 +81,9 @@ export const postAddProduct = async (req, res) => {
       productName, description, category, brand, 
       variantSize, stock, regularPrice, salePrice 
     } = req.body;
+
+
+    
 
     if (!productName || productName.length < 3) {
       return res.redirect("/admin/addProducts").send({message: "Product Name must be at least 3 characters"});
@@ -134,6 +147,8 @@ export const getEditProduct = async (req, res) => {
   try {
     const productId = req.query.id;
     if (!productId) return res.redirect("/admin/products?error=Product ID is missing");
+
+    
     
     const product = await Product.findById(productId);
     if (!product) return res.redirect("/admin/products?error=Product not found");
@@ -162,6 +177,15 @@ export const postEditProduct = async (req, res) => {
       variantSize, stock, regularPrice, salePrice 
     } = req.body;
 
+
+    const duplicateProduct = await Product.findOne({_id: { $ne: productId },productName: {$regex: `${escapeRegex(productName)}$`,$options: "i"}})
+    
+    
+    if(duplicateProduct){
+      return res.redirect(`/admin/products/edit?id=${productId}&error=Product already exists`);
+    }
+
+
     if (!productName || productName.length < 3) {
       return res.redirect(`/admin/products/edit?id=${productId}&error=Product Name must be at least 3 characters`);
     }
@@ -175,6 +199,9 @@ export const postEditProduct = async (req, res) => {
     const existingProduct = await Product.findById(productId);
     if (!existingProduct) return res.redirect("/admin/products?error=Product not found");
 
+
+    
+    
     const variants = [];
     if (Array.isArray(variantSize)) {
       for (let i = 0; i < variantSize.length; i++) {
@@ -210,6 +237,16 @@ export const postEditProduct = async (req, res) => {
       }
     }
 
+    // Handle deleted images first
+    if (req.body.deletedImages) {
+      const deletedIndices = Array.isArray(req.body.deletedImages) ? req.body.deletedImages : [req.body.deletedImages];
+      for (const idx of deletedIndices) {
+        if (existingProduct.galleryImages[Number(idx)]) {
+          existingProduct.galleryImages[Number(idx)] = ""; 
+        }
+      }
+    }
+
     if (req.files) {
       // If they uploaded NEW gallery images, replace them at the correct index
       for (let i = 1; i <= 4; i++) {
@@ -220,6 +257,9 @@ export const postEditProduct = async (req, res) => {
       }
     }
     
+    // Clean up empty slots from deletions
+    existingProduct.galleryImages = existingProduct.galleryImages.filter(img => img && img.trim() !== "");
+
     // Secretly set primaryImage to the first gallery image
     let primaryImage = existingProduct.primaryImage;
     if (existingProduct.galleryImages && existingProduct.galleryImages.length > 0) {
@@ -242,10 +282,14 @@ export const postEditProduct = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
   try {
-    await Product.findByIdAndDelete(req.params.id);
-    res.redirect("/admin/products?success=Product deleted successfully");
+    const product = await Product.findById(req.params.id);
+    product.isDeleted = !product.isDeleted;
+    await product.save();
+    
+    // Respond with JSON so the frontend can update without reloading
+    res.json({ success: true, isDeleted: product.isDeleted });
   } catch (error) {
     console.error("Error deleting product:", error);
-    res.redirect("/admin/products?error=Failed to delete product");
+    res.status(500).json({ success: false, message: "Failed to update product" });
   }
 };

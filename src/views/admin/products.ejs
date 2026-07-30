@@ -1,260 +1,1229 @@
 <style>
-/* Base typography and layout (Matching Categories) */
-.product-page { color:#d8d8d8; font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; }
-.product-top { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:40px; }
-.product-title { font-size:36px; font-weight:600; color:#ffffff; margin:0 0 16px; letter-spacing:-0.5px; }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-/* Search and Add Buttons */
-.search-form { width:430px; }
-.search-line { display:flex; align-items:center; gap:12px; background: rgba(255, 255, 255, 0.03); border: 1px solid #333; border-radius: 8px; padding: 10px 16px; transition: border-color 0.3s ease, background 0.3s ease; }
-.search-line:focus-within { border-color: #28c9f4; background: rgba(40, 201, 244, 0.05); }
-.search-line input { flex:1; background:transparent; border:0; outline:0; color:#f1f1f1; font-size:14px; font-family:inherit; }
-.search-line input::placeholder { color:#666; }
-.search-btn { background: #28c9f4; color: #061014; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
-.search-btn:hover { background: #6ae2ff; }
+  /* ══════════════════════════════════════════
+   BASE
+══════════════════════════════════════════ */
+  .prod-page {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #ffffff;
+    padding: 28px 32px 48px;
+    min-height: 100vh;
+  }
 
-.top-actions { display:flex; flex-direction:column; align-items:flex-end; gap:20px; }
-.add-btn { background:#28c9f4; color:#061014; border:0; padding:12px 24px; font-size:13px; font-weight:700; letter-spacing:0.05em; cursor:pointer; border-radius:6px; box-shadow: 0 4px 12px rgba(40, 201, 244, 0.2); transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; text-decoration: none; display: inline-block; }
-.add-btn:hover { background:#30d5ff; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(40, 201, 244, 0.3); }
+  /* ══════════════════════════════════════════
+   HERO HEADER
+══════════════════════════════════════════ */
+  .prod-header {
+    position: relative;
+    margin-bottom: 32px;
+    padding: 36px 40px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #0d1b2a 0%, #0f2337 40%, #0b1e35 70%, #091828 100%);
+    border: 1px solid rgba(40, 201, 244, 0.1);
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(40, 201, 244, 0.06);
+  }
 
-/* Table styling */
-.product-table { width:100%; border-collapse: separate; border-spacing: 0; background: rgba(25, 25, 25, 0.6); border: 1px solid #333; border-radius: 10px; overflow: hidden; }
-.product-table th { background: rgba(0, 0, 0, 0.2); color:#a0a0a0; font-size:11px; font-weight:600; letter-spacing:0.08em; text-align:left; padding:20px 24px; border-bottom:1px solid #333; text-transform: uppercase; white-space: nowrap; }
-.product-table td { padding:16px 24px; border-bottom:1px solid #333; vertical-align:middle; font-size:14px; }
-.product-table tbody tr:hover td { background: rgba(255, 255, 255, 0.02); }
-.product-table tbody tr:last-child td { border-bottom: none; }
+  .prod-header::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -40px;
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, rgba(40, 201, 244, 0.1) 0%, transparent 70%);
+    animation: pBlob 7s ease-in-out infinite;
+  }
 
-/* Columns */
-.col-img img { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; border: 1px solid #444; }
-.col-name { font-weight:600; color:#ffffff; font-size: 14px; }
-.col-name span { display: block; font-size: 12px; color: #888; font-weight: 400; margin-top: 4px; }
-.col-category { color:#b0b0b0; font-size: 13px; }
-.col-price { color:#b0b0b0; font-size: 13px; }
-.col-sale { color:#4ade80; font-weight: 500; font-size: 13px; }
-.col-stock { font-size: 13px; color: #f1f1f1; font-weight: 600; }
-.col-status { font-size:12px; font-weight: 700; letter-spacing: 0.05em; }
-.col-actions { text-align:right; }
+  .prod-header::after {
+    content: '';
+    position: absolute;
+    bottom: -50px;
+    left: 30%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(100, 80, 255, 0.07) 0%, transparent 70%);
+    animation: pBlob 9s ease-in-out infinite reverse;
+  }
 
-/* Status Colors */
-.status-instock { color:#4ade80; }
-.status-outofstock { color:#f87171; }
-.status-pending { color:#fbbf24; }
+  @keyframes pBlob {
 
-/* Action Buttons & Icons */
-.action-row { display:flex; justify-content:flex-end; gap:8px; align-items: center; }
-.icon-action { background:transparent; border:0; color:#888; cursor:pointer; transition: all 0.2s ease; padding: 6px; border-radius: 6px; display: flex; align-items: center; justify-content: center; text-decoration: none; }
-.icon-action:hover { color:#28c9f4; background: rgba(255, 255, 255, 0.08); }
-.icon-action.delete:hover { color:#f87171; background: rgba(248, 113, 113, 0.1); }
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: .8;
+    }
 
-/* Custom Modal Styling */
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; opacity: 0; transition: opacity 0.2s; backdrop-filter: blur(4px); }
-.modal-overlay.open { display: flex; opacity: 1; }
-.modal-box { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 24px; width: 100%; max-width: 380px; margin: 0 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); transform: scale(0.95); transition: transform 0.2s; }
-.modal-overlay.open .modal-box { transform: scale(1); }
-.modal-title { font-size: 18px; font-weight: 600; color: #fff; margin: 0 0 8px; font-family: inherit; }
-.modal-msg { font-size: 14px; color: #a0a0a0; line-height: 1.5; margin: 0 0 24px; }
-.modal-actions { display: flex; gap: 12px; }
-.modal-btn { flex: 1; padding: 12px 0; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; border: none; transition: all 0.2s; letter-spacing: 0.5px; }
-.modal-btn-cancel { background: transparent; color: #a0a0a0; border: 1px solid #444; }
-.modal-btn-cancel:hover { background: rgba(255,255,255,0.05); color: #fff; }
-.modal-btn-delete { background: #ef4444; color: #fff; }
-.modal-btn-delete:hover { background: #dc2626; }
+    50% {
+      transform: scale(1.2);
+      opacity: 1;
+    }
+  }
+
+  .prod-header-grid {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(40, 201, 244, 0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+  }
+
+  .prod-header-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  /* Left */
+  .prod-header-left {
+    flex: 1;
+    min-width: 260px;
+  }
+
+  .prod-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #28c9f4;
+    margin-bottom: 10px;
+    padding: 4px 10px;
+    border: 1px solid rgba(40, 201, 244, 0.25);
+    border-radius: 20px;
+    background: rgba(40, 201, 244, 0.06);
+  }
+
+  .prod-eyebrow::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #28c9f4;
+    animation: pDot 2s ease-in-out infinite;
+  }
+
+  @keyframes pDot {
+
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    50% {
+      opacity: .4;
+      transform: scale(0.7);
+    }
+  }
+
+  .prod-title {
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin: 0 0 20px;
+    background: linear-gradient(135deg, #ffffff 0%, #a0d8ef 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Search bar */
+  .prod-search-form {
+    width: 100%;
+    max-width: 440px;
+  }
+
+  .prod-search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 10px 14px;
+    transition: border-color .3s, background .3s, box-shadow .3s;
+    backdrop-filter: blur(8px);
+  }
+
+  .prod-search-bar:focus-within {
+    border-color: rgba(40, 201, 244, 0.5);
+    background: rgba(40, 201, 244, 0.04);
+    box-shadow: 0 0 0 3px rgba(40, 201, 244, 0.08), 0 4px 20px rgba(40, 201, 244, 0.06);
+  }
+
+  .prod-search-icon {
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .prod-search-bar input {
+    flex: 1;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    color: #ffffff;
+    font-size: 14px;
+    font-family: inherit;
+  }
+
+  .prod-search-bar input::placeholder {
+    color: #4a5568;
+  }
+
+  .prod-search-submit {
+    background: linear-gradient(135deg, #28c9f4, #0ea5e9);
+    color: #03111a;
+    border: none;
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(40, 201, 244, 0.25);
+    transition: all .2s;
+  }
+
+  .prod-search-submit:hover {
+    background: linear-gradient(135deg, #4dd8f8, #38bdf8);
+    box-shadow: 0 4px 14px rgba(40, 201, 244, 0.4);
+    transform: translateY(-1px);
+  }
+
+  .prod-clear-link {
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: color .2s;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .prod-clear-link:hover {
+    color: #f87171;
+  }
+
+  /* Right */
+  .prod-header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 20px;
+  }
+
+  .prod-stats {
+    display: flex;
+    gap: 12px;
+  }
+
+  .prod-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 20px;
+    border-radius: 12px;
+    min-width: 80px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(4px);
+  }
+
+  .prod-stat-num {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+
+  .prod-stat-lbl {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #ffffff;
+  }
+
+  .prod-stat.--instock .prod-stat-num {
+    color: #4ade80;
+  }
+
+  .prod-stat.--low .prod-stat-num {
+    color: #fbbf24;
+  }
+
+  .prod-stat.--out .prod-stat-num {
+    color: #f87171;
+  }
+
+  .prod-add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #28c9f4, #0ea5e9);
+    color: #03111a;
+    border: 0;
+    padding: 12px 22px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(40, 201, 244, 0.3);
+    transition: all .25s;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .prod-add-btn:hover {
+    background: linear-gradient(135deg, #4dd8f8, #38bdf8);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(40, 201, 244, 0.45);
+  }
+
+  .prod-add-btn:active {
+    transform: translateY(0);
+  }
+
+  /* ══════════════════════════════════════════
+   TABLE CARD
+══════════════════════════════════════════ */
+  .prod-card {
+    background: rgba(14, 18, 27, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 18px;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+  }
+
+  .prod-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .prod-table thead tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .prod-table th {
+    background: rgba(0, 0, 0, 0.22);
+    color: #ffffff; /* Made much brighter for dark theme */
+    font-size: 12px; /* Slightly larger for readability */
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: left;
+    padding: 16px 20px;
+    white-space: nowrap;
+  }
+
+  .prod-table th:last-child {
+    text-align: right;
+  }
+
+  .prod-table tbody tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    transition: background .2s;
+  }
+
+  .prod-table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .prod-table tbody tr:hover {
+    background: rgba(40, 201, 244, 0.02);
+  }
+
+  .prod-table td {
+    padding: 14px 20px;
+    vertical-align: middle;
+  }
+
+  /* Product image */
+  .prod-img-wrap {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .prod-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Name cell */
+  .prod-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .prod-name-info {}
+
+  .prod-name-text {
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 14px;
+    line-height: 1.3;
+  }
+
+  .prod-brand-text {
+    font-size: 11px;
+    color: #ffffff;
+    font-weight: 500;
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .prod-brand-text svg {
+    color: #ffffff;
+  }
+
+  /* Category badge */
+  .prod-cat-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #28c9f4;
+    background: transparent;
+    border: 1px solid #28c9f4;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: capitalize;
+  }
+
+  /* Price cells */
+  .prod-price {
+    font-size: 13px;
+    color: #ffffff;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .prod-sale-price {
+    font-size: 13px;
+    color: #4ade80;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .prod-sale-price.--none {
+    color: #ffffff;
+  }
+
+  /* Stock cell */
+  .prod-stock-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .prod-stock-num {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .prod-stock-num.--ok {
+    color: #ffffff;
+  }
+
+  .prod-stock-num.--low {
+    color: #fbbf24;
+  }
+
+  .prod-stock-num.--out {
+    color: #f87171;
+  }
+
+  .prod-stock-bar {
+    flex: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 4px;
+    overflow: hidden;
+    max-width: 48px;
+  }
+
+  .prod-stock-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width .4s ease;
+  }
+
+  .prod-stock-bar-fill.--ok {
+    background: linear-gradient(90deg, #4ade80, #22c55e);
+  }
+
+  .prod-stock-bar-fill.--low {
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  }
+
+  .prod-stock-bar-fill.--out {
+    background: #f87171;
+  }
+
+  /* Status pill */
+  .prod-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .prod-status-pill::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+  }
+
+  .prod-status-pill.--instock {
+    background: rgba(74, 222, 128, 0.1);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.2);
+  }
+
+  .prod-status-pill.--instock::before {
+    background: #4ade80;
+    animation: pPulse 2s ease-in-out infinite;
+  }
+
+  .prod-status-pill.--low {
+    background: rgba(251, 191, 36, 0.1);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.2);
+  }
+
+  .prod-status-pill.--low::before {
+    background: #fbbf24;
+  }
+
+  .prod-status-pill.--outofstock {
+    background: rgba(248, 113, 113, 0.1);
+    color: #f87171;
+    border: 1px solid rgba(248, 113, 113, 0.2);
+  }
+
+  .prod-status-pill.--outofstock::before {
+    background: #f87171;
+  }
+
+  @keyframes pPulse {
+
+    0%,
+    100% {
+      box-shadow: 0 0 4px #4ade80;
+    }
+
+    50% {
+      box-shadow: 0 0 8px #4ade80;
+    }
+  }
+
+  /* Action icons */
+  .prod-action-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .prod-icon-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    color: #ffffff;
+    cursor: pointer;
+    transition: all .2s;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .prod-icon-btn:hover {
+    background: rgba(40, 201, 244, 0.1);
+    border-color: rgba(40, 201, 244, 0.25);
+    color: #28c9f4;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(40, 201, 244, 0.15);
+  }
+
+  .prod-icon-btn.--delete:hover {
+    background: rgba(248, 113, 113, 0.1);
+    border-color: rgba(248, 113, 113, 0.25);
+    color: #f87171;
+    box-shadow: 0 4px 12px rgba(248, 113, 113, 0.12);
+  }
+
+  /* Empty state */
+  .prod-empty {
+    text-align: center;
+    padding: 70px 24px;
+  }
+
+  .prod-empty-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 20px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+  }
+
+  .prod-empty p {
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .prod-empty span {
+    color: #ffffff;
+    font-size: 13px;
+    display: block;
+    margin-top: 6px;
+  }
+
+  .prod-empty-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 20px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    background: rgba(40, 201, 244, 0.1);
+    border: 1px solid rgba(40, 201, 244, 0.2);
+    color: #28c9f4;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all .2s;
+  }
+
+  .prod-empty-link:hover {
+    background: rgba(40, 201, 244, 0.18);
+    transform: translateY(-1px);
+  }
+
+  /* ══════════════════════════════════════════
+   FOOTER & PAGINATION
+══════════════════════════════════════════ */
+  .prod-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 28px;
+    padding: 0 4px;
+  }
+
+  .prod-count {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #ffffff;
+  }
+
+  .prod-count strong {
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  .prod-pagination {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .prod-pg-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 34px;
+    padding: 0 10px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all .2s;
+    border: 1px solid transparent;
+    color: #ffffff;
+    background: transparent;
+  }
+
+  .prod-pg-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+
+  .prod-pg-btn.--current {
+    background: linear-gradient(135deg, #28c9f4, #0ea5e9);
+    border-color: transparent;
+    color: #03111a;
+    font-weight: 800;
+    box-shadow: 0 4px 14px rgba(40, 201, 244, 0.3);
+  }
+
+  .prod-pg-btn.--disabled {
+    color: #ffffff;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .prod-pg-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    color: #ffffff;
+  }
+
+  /* ══════════════════════════════════════════
+   DELETE MODAL
+══════════════════════════════════════════ */
+  .prod-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    background: rgba(0, 0, 0, 0.78);
+    backdrop-filter: blur(6px);
+    align-items: center;
+    justify-content: center;
+  }
+
+  .prod-modal.open {
+    display: flex;
+  }
+
+  .prod-modal-box {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 16px;
+    background: #0d1117;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 36px 32px 28px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    animation: pModalIn .25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes pModalIn {
+    from {
+      opacity: 0;
+      transform: scale(0.92) translateY(16px);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .prod-modal-icon-wrap {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    background: rgba(248, 113, 113, 0.1);
+    border: 1px solid rgba(248, 113, 113, 0.2);
+    color: #f87171;
+  }
+
+  .prod-modal-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.4px;
+    margin: 0 0 8px;
+  }
+
+  .prod-modal-msg {
+    font-size: 13.5px;
+    color: #ffffff;
+    line-height: 1.65;
+    margin: 0 0 28px;
+  }
+
+  .prod-modal-msg strong {
+    color: #ffffff;
+  }
+
+  .prod-modal-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+    margin: 0 0 24px;
+  }
+
+  .prod-modal-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .prod-modal-btn {
+    flex: 1;
+    padding: 13px;
+    border-radius: 11px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: all .2s;
+  }
+
+  .prod-modal-btn.--cancel {
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .prod-modal-btn.--cancel:hover {
+    background: rgba(255, 255, 255, 0.09);
+    color: #ffffff;
+  }
+
+  .prod-modal-btn.--delete {
+    flex: 2;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+  }
+
+  .prod-modal-btn.--delete:hover {
+    background: linear-gradient(135deg, #f87171, #ef4444);
+    box-shadow: 0 6px 22px rgba(239, 68, 68, 0.45);
+    transform: translateY(-1px);
+  }
 </style>
 
-<div class="product-page">
-  <div class="product-top">
-    <div>
-      <h1 class="product-title">Product Management</h1>
-      
-      <!-- Search Form -->
-      <form method="GET" action="/admin/products" class="search-form">
-        <div class="search-line">
-            <!-- Using locals.search prevents any crash if the variable is missing -->
-            <input type="text" name="search" value="<%= locals.search || '' %>" placeholder="Search by title, brand...">
-            <button type="submit" class="search-btn">Search</button>
+<div class="prod-page">
 
-            <!-- CLEAR Button -->
+  <!-- ═══════════ HERO HEADER ═══════════ -->
+  <div class="prod-header">
+    <div class="prod-header-grid"></div>
+    <div class="prod-header-inner">
+
+      <!-- Left -->
+      <div class="prod-header-left">
+        <div class="prod-eyebrow">Admin Panel</div>
+        <h1 class="prod-title">Product Management</h1>
+
+        <form method="GET" action="/admin/products" class="prod-search-form">
+          <div class="prod-search-bar">
+            <span class="prod-search-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+            </span>
+            <input type="text" name="search" value="<%= locals.search || '' %>" placeholder="Search by title, brand…"
+              autocomplete="off">
+            <button type="submit" class="prod-search-submit">Search</button>
             <% if (locals.search) { %>
-                <a href="/admin/products" style="background:transparent; border:0; color:#28c9f4; font-size:13px; font-weight:600; cursor:pointer; text-decoration:none; margin-left: 8px;">CLEAR</a>
-            <% } %>
-        </div>
-      </form>
-    </div>
-
-    <div class="top-actions">
-      <!-- Add Product Button (Usually links to a new page for products) -->
-      <a href="/admin/addProducts" class="add-btn">+ ADD PRODUCT</a>
-      
-      <!-- Filter/Sort (Optional placeholders) -->
-      <div style="display:flex; gap: 20px;">
-        <!-- <button style="background:transparent; border:0; color:#28c9f4; font-size:13px; font-weight:600; cursor:pointer;">FILTER</button> -->
-        <!-- <button style="background:transparent; border:0; color:#28c9f4; font-size:13px; font-weight:600; cursor:pointer;">SORT</button> -->
+              <a class="prod-clear-link" href="/admin/products" title="Clear">✕</a>
+              <% } %>
+          </div>
+        </form>
       </div>
-    </div>
-  </div>
 
-  <table class="product-table">
-    <thead>
-      <tr>
-        <th>IMG</th>
-        <th>PRODUCT NAME</th>
-        <th>CATEGORY</th>
-        <th>REG. PRICE</th>
-        <th>SALE PRICE</th>
-        <th>OFFER</th>
-        <th>STOCK</th>
-        <th>STATUS</th>
-        <th style="text-align:right;">ACTIONS</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <% if (products && products.length > 0) { %>
-        <% products.forEach(product => { %>
-          <tr>
-            <td class="col-img">
-              <!-- If there's a primary image, use it. If not, try the first gallery image. If both are empty, use the placeholder! -->
-              <img src="<%= product.primaryImage || (product.galleryImages && product.galleryImages.length > 0 ? product.galleryImages[0] : 'https://via.placeholder.com/48/222/555?text=No+Img') %>" alt="Product">
-            </td>
-            <td class="col-name">
-              <%= product.productName %>
-              <span><%= product.brand %></span>
-            </td>
-            <td class="col-category" style="text-transform: capitalize;"><%= product.category %></td>
-            
-            <% 
-               // We grab the price from the very first variant to display on the table
-               let regPrice = product.variants && product.variants.length > 0 ? product.variants[0].regularPrice : 0;
-               let salePrice = product.variants && product.variants.length > 0 ? product.variants[0].salePrice : 0;
-               
-               // Add up the stock from all variants combined (e.g. 50ml + 100ml)
-               let totalStock = product.variants ? product.variants.reduce((sum, variant) => sum + variant.stock, 0) : 0;
+      <!-- Right — stats + add button -->
+      <div class="prod-header-right">
+        <% const totalP=(products && products.length) || 0; const inStockP=products ? products.filter(p=> { const s =
+          p.variants ? p.variants.reduce((a,v)=>a+v.stock,0) : 0; return s >= 10; }).length : 0;
+          const lowP = products ? products.filter(p => { const s = p.variants ? p.variants.reduce((a,v)=>a+v.stock,0) :
+          0; return s > 0 && s < 10; }).length : 0; const outP=products ? products.filter(p=> { const s = p.variants ?
+            p.variants.reduce((a,v)=>a+v.stock,0) : 0; return s === 0; }).length : 0;
             %>
-            
-            <td class="col-price">$<%= regPrice.toFixed(2) %></td>
-            <td class="col-sale"><%= salePrice > 0 ? '$' + salePrice.toFixed(2) : '-' %></td>
-            <td class="col-category">ADD</td>
-            <td class="col-stock" style="<%= totalStock === 0 ? 'color: #f87171;' : '' %>"><%= totalStock %></td>
-            
-            <% if (totalStock <= 0) { %>
-                <td class="col-status status-outofstock">OUT OF STOCK</td>
-            <% } else if (totalStock < 10) { %>
-                <td class="col-status status-pending">LOW IN STOCK</td>
-            <% } else { %>
-                <td class="col-status status-instock">IN STOCK</td>
-            <% } %>
-
-            <td class="col-actions">
-              <div class="action-row">
-                
-                <!-- Edit Icon linked to real Product ID -->
-                <a href="/admin/products/edit?id=<%= product._id %>" class="icon-action edit" title="Edit Product">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
-                  </svg>
-                </a>
-                
-                <!-- Delete Icon linked to real Product ID -->
-                <form method="POST" action="/admin/products/delete/<%= product._id %>" style="margin:0;" class="delete-product-form" data-name="<%= product.productName %>">
-                  <button type="button" class="icon-action delete delete-btn-trigger" title="Delete Product">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-7.5 0" />
-                    </svg>
-                  </button>
-                </form>
-
+            <div class="prod-stats">
+              <div class="prod-stat">
+                <span class="prod-stat-num">
+                  <%= totalP %>
+                </span>
+                <span class="prod-stat-lbl">Total</span>
               </div>
-            </td>
-          </tr>
-        <% }) %>
-      <% } else { %>
-        <tr>
-          <td colspan="9" style="text-align: center; color: #888; padding: 40px;">
-            No products found. Add your first product!
-          </td>
-        </tr>
-      <% } %>
-    </tbody>
-  </table>
-</div>
+              <div class="prod-stat --instock">
+                <span class="prod-stat-num">
+                  <%= inStockP %>
+                </span>
+                <span class="prod-stat-lbl">In Stock</span>
+              </div>
+              <div class="prod-stat --low">
+                <span class="prod-stat-num">
+                  <%= lowP %>
+                </span>
+                <span class="prod-stat-lbl">Low</span>
+              </div>
+              <div class="prod-stat --out">
+                <span class="prod-stat-num">
+                  <%= outP %>
+                </span>
+                <span class="prod-stat-lbl">Out</span>
+              </div>
+            </div>
 
-<!-- Pagination -->
-<% if (totalPages > 1) { %>
-<div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 30px; margin-bottom: 20px;">
-  
-  <!-- Previous Button -->
-  <a href="<%= currentPage > 1 ? '?page=' + (currentPage - 1) + (search ? '&search=' + search : '') : '#' %>" 
-     style="padding: 8px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: <%= currentPage === 1 ? '#444' : '#fff' %>; text-decoration: none; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; pointer-events: <%= currentPage === 1 ? 'none' : 'auto' %>;">
-    Prev
-  </a>
-  
-  <!-- Page Numbers -->
-  <% for(let i = 1; i <= totalPages; i++) { %>
-    <a href="?page=<%= i %><%= search ? '&search=' + search : '' %>" 
-       style="padding: 8px 16px; border: 1px solid <%= currentPage === i ? '#28c9f4' : 'rgba(255,255,255,0.1)' %>; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; transition: 0.2s; <%= currentPage === i ? 'background: #28c9f4; color: #000;' : 'background: rgba(0,0,0,0.3); color: #fff;' %>">
-      <%= i %>
-    </a>
-  <% } %>
+            <a href="/admin/addProducts" class="prod-add-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 8v8M8 12h8" />
+              </svg>
+              Add Product
+            </a>
+      </div>
 
-  <!-- Next Button -->
-  <a href="<%= currentPage < totalPages ? '?page=' + (currentPage + 1) + (search ? '&search=' + search : '') : '#' %>" 
-     style="padding: 8px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: <%= currentPage === totalPages ? '#444' : '#fff' %>; text-decoration: none; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; pointer-events: <%= currentPage === totalPages ? 'none' : 'auto' %>;">
-    Next
-  </a>
-  
-</div>
-<% } %>
-
-<!-- Custom Delete Modal -->
-<div id="deleteModal" class="modal-overlay">
-  <div class="modal-box">
-    <h2 class="modal-title">Delete Product</h2>
-    <p class="modal-msg">Delete "<span id="deleteProductName"></span>"? This action cannot be undone.</p>
-    <div class="modal-actions">
-      <button id="cancelDeleteBtn" class="modal-btn modal-btn-cancel">CANCEL</button>
-      <button id="confirmDeleteBtn" class="modal-btn modal-btn-delete">DELETE</button>
     </div>
   </div>
-</div>
 
+  <!-- ═══════════ TABLE CARD ═══════════ -->
+  <div class="prod-card">
+    <table class="prod-table">
+      <thead>
+        <tr>
+          <th style="width:5%"></th>
+          <th style="width:24%">Product</th>
+          <th style="width:14%">Category</th>
+          <th style="width:12%">Reg. Price</th>
+          <th style="width:12%">Sale Price</th>
+          <th style="width:14%">Stock</th>
+          <th style="width:11%">Status</th>
+          <th style="width:8%; text-align:right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <% if (products && products.length> 0) { %>
+          <% products.forEach(product=> {
+            const regPrice = product.variants && product.variants.length > 0 ? product.variants[0].regularPrice : 0;
+            const salePrice = product.variants && product.variants.length > 0 ? product.variants[0].salePrice : 0;
+            const totalStock = product.variants ? product.variants.reduce((sum, v) => sum + v.stock, 0) : 0;
+
+            const stockClass = totalStock === 0 ? '--out' : totalStock < 10 ? '--low' : '--ok' ; const
+              stockBarW=totalStock===0 ? 0 : Math.min(100, Math.round(totalStock / 50 * 100)); const
+              statusClass=totalStock===0 ? '--outofstock' : totalStock < 10 ? '--low' : '--instock' ; const
+              statusLabel=totalStock===0 ? 'Out of Stock' : totalStock < 10 ? 'Low Stock' : 'In Stock' ; const
+              outOfStock=totalStock===0; const imgSrc=product.primaryImage || (product.galleryImages.length &&
+              product.galleryImages.length> 3 ? product.galleryImages[3] : null);
+              %>
+              <tr style="<%= product.isDeleted ? 'opacity: 0.5;' : '' %>">
+                
+                <!-- Image -->
+                <td>
+                  <div class="prod-img-wrap">
+                    <% if (imgSrc) { %>
+                      <img src="<%= imgSrc %>" alt="<%= product.productName %>">
+                      <% } else { %>
+                        <div
+                          style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color: #ffffff;">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+                            <polyline points="21 15 16 10 5 21" />
+                          </svg>
+                        </div>
+                        <% } %>
+                  </div>
+                </td>
+
+                <!-- Name + brand -->
+                <td>
+                  <div class="prod-name-cell">
+                    <div class="prod-name-info">
+                      <div class="prod-name-text">
+                        <%= product.productName %>
+                      </div>
+                      <div class="prod-brand-text">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                          <line x1="7" y1="7" x2="7.01" y2="7" />
+                        </svg>
+                        <%= product.brand || '—' %>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Category -->
+                <td>
+                  <span class="prod-cat-badge">
+                    <%= product.category %>
+                  </span>
+                </td>
+
+                <!-- Regular price -->
+                <td>
+                  <span class="prod-price">₹<%= regPrice.toFixed(2) %></span>
+                </td>
+
+                <!-- Sale price -->
+                <td>
+                  <% if (salePrice> 0) { %>
+                    <span class="prod-sale-price">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                          d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                      </svg>
+                      ₹<%= salePrice.toFixed(2) %>
+                    </span>
+                    <% } else { %>
+                      <span class="prod-sale-price --none">—</span>
+                      <% } %>
+                </td>
+
+                <!-- Stock with mini bar -->
+                <td>
+                  <div class="prod-stock-cell">
+                    <span class="prod-stock-num <%= stockClass %>">
+                      <%= totalStock %>
+                    </span>
+                    <!-- <div class="prod-stock-bar">
+                      <div class="prod-stock-bar-fill <%= stockClass %>" style="width:<%= stockBarW %>%"></div>
+                    </div> -->
+                  </div>
+                </td>
+
+                <!-- Status pill -->
+                <td>
+                  <span class="prod-status-pill <%= statusClass %>">
+                    <%= statusLabel %>
+                  </span>
+                </td>
+
+                <!-- Actions -->
+                <td>
+                  <div class="prod-action-row">
+                    <a href="/admin/products/edit?id=<%= product._id %>" class="prod-icon-btn" title="Edit Product">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                      </svg>
+                    </a>
+
+                    <form method="POST" action="/admin/products/delete/<%= product._id %>" style="margin:0;"
+                      class="delete-product-form flex items-center justify-center"
+                      data-name="<%= product.productName %>">
+                      <button type="button" class="delete-btn-trigger border-0 bg-transparent p-0 cursor-pointer group flex items-center" title="Toggle Status">
+                        <div class="relative inline-flex items-center">
+                          <div class="toggle-track w-11 h-6 rounded-full transition-colors duration-300 <%= product.isDeleted ? 'bg-[#374151] border-[#4b5563]' : 'bg-[#0f2e1f] border-[#166534] group-hover:bg-[#133c28]' %>"></div>
+                          <div class="toggle-thumb absolute top-[3px] w-[18px] h-[18px] rounded-full transition-all duration-300 <%= product.isDeleted ? 'left-[3px] bg-[#9ca3af]' : 'left-[23px] bg-[#4ade80] shadow-[0_0_10px_rgba(74,222,128,0.6)] group-hover:shadow-[0_0_14px_rgba(74,222,128,0.8)]' %>"></div>
+                        </div>
+                      </button>
+                    </form>
+
+                  </div>
+                </td>
+              </tr>
+              <% }) %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="8">
+                      <div class="prod-empty">
+                        <div class="prod-empty-icon">
+                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                            <line x1="3" y1="6" x2="21" y2="6" />
+                            <path d="M16 10a4 4 0 0 1-8 0" />
+                          </svg>
+                        </div>
+                        <% if (locals.search) { %>
+                          <p>No results for "<strong>
+                              <%= locals.search %>
+                            </strong>"</p>
+                          <span>Try a different product name or brand</span>
+                          <% } else { %>
+                            <p>No products yet</p>
+                            <span>Add your first product to get started</span>
+                            <a href="/admin/addProducts" class="prod-empty-link">
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 8v8M8 12h8" />
+                              </svg>
+                              Add First Product
+                            </a>
+                            <% } %>
+                      </div>
+                    </td>
+                  </tr>
+                  <% } %>
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════ FOOTER / PAGINATION ═══════════ -->
+  <% if (typeof totalPages !=='undefined' ) { %>
+    <div class="prod-footer">
+      <div class="prod-count">
+        <% if (products && products.length> 0) { %>
+          Showing&nbsp;<strong>
+            <%= products.length %>
+          </strong>&nbsp;of&nbsp;<strong>
+            <%= typeof totalProducts !=='undefined' ? totalProducts : products.length %>
+          </strong>&nbsp;products
+          <% } %>
+      </div>
+
+      <% if (totalPages> 1) { %>
+        <nav class="prod-pagination">
+          <% if (currentPage> 1) { %>
+            <a class="prod-pg-btn"
+              href="?page=<%= currentPage - 1 %><%= locals.search ? '&search=' + encodeURIComponent(locals.search) : '' %>">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </a>
+            <% } else { %>
+              <span class="prod-pg-btn --disabled">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </span>
+              <% } %>
+
+                <% for (let i=1; i <=totalPages; i++) { const show=i===1 || i===totalPages || (i>= currentPage - 1 && i
+                  <= currentPage + 1); const dot=i===currentPage - 2 || i===currentPage + 2; %>
+                    <% if (show) { %>
+                      <a class="prod-pg-btn <%= i === currentPage ? '--current' : '' %>"
+                        href="?page=<%= i %><%= locals.search ? '&search=' + encodeURIComponent(locals.search) : '' %>">
+                        <%= i %>
+                      </a>
+                      <% } else if (dot) { %>
+                        <span class="prod-pg-dots">…</span>
+                        <% } %>
+                          <% } %>
+
+                            <% if (currentPage < totalPages) { %>
+                              <a class="prod-pg-btn"
+                                href="?page=<%= currentPage + 1 %><%= locals.search ? '&search=' + encodeURIComponent(locals.search) : '' %>">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                  stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                  <polyline points="9 18 15 12 9 6" />
+                                </svg>
+                              </a>
+                              <% } else { %>
+                                <span class="prod-pg-btn --disabled">
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="9 18 15 12 9 6" />
+                                  </svg>
+                                </span>
+                                <% } %>
+        </nav>
+        <% } %>
+    </div>
+    <% } %>
+
+</div><!-- /prod-page -->
+
+<script src="https://cdn.tailwindcss.com"></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const modal = document.getElementById('deleteModal');
-    const cancelBtn = document.getElementById('cancelDeleteBtn');
-    const confirmBtn = document.getElementById('confirmDeleteBtn');
-    const nameSpan = document.getElementById('deleteProductName');
-    
-    let formToSubmit = null;
-
-    // Open modal when any delete button is clicked
+    /* Plain Toggle Switch (No Alert) */
     document.querySelectorAll('.delete-btn-trigger').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        
+        const track = btn.querySelector('.toggle-track');
+        const thumb = btn.querySelector('.toggle-thumb');
         const form = e.target.closest('.delete-product-form');
-        formToSubmit = form;
-        nameSpan.textContent = form.getAttribute('data-name');
-        modal.classList.add('open');
+        
+        if (!form || !track || !thumb) return;
+        
+        const url = form.action;
+
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+          });
+
+          const data = await response.json();
+          if (data.success) {
+            if (data.isDeleted) {
+              // Soft delete activated: visually toggle the switch to gray
+              track.className = 'toggle-track w-11 h-6 rounded-full transition-colors duration-300 bg-[#374151] border-[#4b5563]';
+              thumb.className = 'toggle-thumb absolute top-[3px] w-[18px] h-[18px] rounded-full transition-all duration-300 left-[3px] bg-[#9ca3af]';
+              
+              // Dim the row to show it is hidden from the shop
+              const rowToDim = form.closest('tr');
+              if (rowToDim) {
+                rowToDim.style.transition = 'opacity 0.3s';
+                rowToDim.style.opacity = '0.5';
+              }
+            } else {
+              // Product is now Listed
+              track.className = 'toggle-track w-11 h-6 rounded-full transition-colors duration-300 bg-[#0f2e1f] border-[#166534] group-hover:bg-[#133c28]';
+              thumb.className = 'toggle-thumb absolute top-[3px] w-[18px] h-[18px] rounded-full transition-all duration-300 left-[23px] bg-[#4ade80] shadow-[0_0_10px_rgba(74,222,128,0.6)] group-hover:shadow-[0_0_14px_rgba(74,222,128,0.8)]';
+              
+              // Restore row opacity
+              const rowToRestore = form.closest('tr');
+              if (rowToRestore) {
+                rowToRestore.style.transition = 'opacity 0.3s';
+                rowToRestore.style.opacity = '1';
+              }
+            }
+          }
+        } catch (err) {
+          console.error("Failed to toggle status silently:", err);
+          // Fails silently, no alert popup for the user
+        }
       });
-    });
-
-    // Cancel deletes
-    cancelBtn.addEventListener('click', () => {
-      modal.classList.remove('open');
-      formToSubmit = null;
-    });
-
-    // Confirm deletes
-    confirmBtn.addEventListener('click', () => {
-      if (formToSubmit) {
-        formToSubmit.submit();
-      }
-    });
-
-    // Close on background click
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.classList.remove('open');
-        formToSubmit = null;
-      }
     });
   });
 </script>

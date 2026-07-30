@@ -18,12 +18,13 @@ import passport from "passport";
 import "./config/passport.js";
 
 import { setLocalsMiddleware } from "./middlewares/locals.middleware.js";
-import { setLocals } from "./controllers/user/home.controller.js";
+
 
 const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 
 app.use(morgan("dev"));
 app.use(cookieParser());
@@ -51,8 +52,8 @@ app.use(expressEjsLayouts);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.set("layout", "layouts/user");
-
-app.use(setLocals);
+app.use(express.static(path.join(__dirname, "..", "public")));
+app.get("/favicon.ico", (req, res) => res.redirect("/favicon.png"));
 app.use("/admin", adminRoutes);
 app.use("/auth", authRoutes);
 app.use("/", userRoutes);

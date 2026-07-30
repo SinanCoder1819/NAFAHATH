@@ -1,388 +1,705 @@
 <% const activePage = 'customers'; %>
 
 <style>
-    /* ── Page header ────────────────────────────────────── */
-    .page-title     { font-size: 22px; font-weight: 600; color: #fff; margin-bottom: 8px; }
-    .page-title-bar { width: 40px; height: 2px; background: #fff; margin-bottom: 32px; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-    /* ── Search row ─────────────────────────────────────── */
-    .search-row  { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
-    .search-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;}
-    .search-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0;}
-    .search-wrap { position: relative; flex: 1; min-width: 200px; }
-    .search-wrap svg {
-        position: absolute; left: 12px; top: 50%;
-        transform: translateY(-50%); color: #6b7280; pointer-events: none;
-    }
-    .search-input {
-        width: 100%;
-        background: #111;
-        border: 1px solid #2a2a2a;
-        border-radius: 8px;
-        padding: 10px 14px 10px 38px;
-        font-size: 13px;
-        color: #fff;
-        font-family: inherit;
-        outline: none;
-        transition: border-color 0.2s;
-    }
-    .search-input::placeholder { color: #4b5563; }
-    .search-input:focus { border-color: #00BFFF; }
+/* ══════════════════════════════════════════
+   BASE
+══════════════════════════════════════════ */
+.cust-page {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #ffffff;
+  padding: 28px 32px 48px;
+  min-height: 100vh;
+}
 
-    /* Buttons */
-    .btn {
-        display: inline-flex; align-items: center; justify-content: center;
-        padding: 10px 22px;
-        font-size: 12px; font-weight: 700; font-family: inherit;
-        letter-spacing: 0.07em; text-transform: uppercase;
-        border-radius: 8px; cursor: pointer; border: none;
-        text-decoration: none; white-space: nowrap; line-height: 1;
-        transition: background 0.15s, opacity 0.15s;
-    }
-    .btn-primary         { background: #00BFFF; color: #000; }
-    .btn-primary:hover   { background: #009fd4; }
-    .btn-primary:active  { background: #0088b3; }
-    .btn-outline         { background: transparent; color: #9ca3af; border: 1px solid #2a2a2a; }
-    .btn-outline:hover   { background: rgba(255,255,255,0.05); color: #fff; border-color: #4b5563; }
+/* ══════════════════════════════════════════
+   HERO HEADER
+══════════════════════════════════════════ */
+.cust-header {
+  position: relative;
+  margin-bottom: 32px;
+  padding: 36px 40px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #0d1b2a 0%, #0f2337 40%, #0b1e35 70%, #091828 100%);
+  border: 1px solid rgba(40, 201, 244, 0.1);
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(40,201,244,0.06);
+}
+/* Glow blobs */
+.cust-header::before {
+  content: '';
+  position: absolute; top: -60px; right: -40px;
+  width: 260px; height: 260px;
+  background: radial-gradient(circle, rgba(40,201,244,0.1) 0%, transparent 70%);
+  animation: cBlob 6s ease-in-out infinite;
+}
+.cust-header::after {
+  content: '';
+  position: absolute; bottom: -50px; left: 25%;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(120,80,255,0.07) 0%, transparent 70%);
+  animation: cBlob 9s ease-in-out infinite reverse;
+}
+@keyframes cBlob {
+  0%,100% { transform: scale(1);   opacity: .8; }
+  50%      { transform: scale(1.2); opacity: 1;  }
+}
+/* Grid dots */
+.cust-header-grid {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(40,201,244,0.05) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+.cust-header-inner {
+  position: relative; z-index: 1;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 24px;
+}
 
-    /* ── Table ──────────────────────────────────────────── */
-    .table-wrap {
-        background: #111;
-        border: 1px solid #1e1e1e;
-        border-radius: 12px;
-        overflow: hidden;
-    }
-    .data-table { width: 100%; border-collapse: collapse; }
+/* Left */
+.cust-header-left { flex: 1; min-width: 260px; }
+.cust-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+  color: #28c9f4; margin-bottom: 10px;
+  padding: 4px 10px; border: 1px solid rgba(40,201,244,0.25);
+  border-radius: 20px; background: rgba(40,201,244,0.06);
+}
+.cust-eyebrow::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%; background: #28c9f4;
+  animation: cDot 2s ease-in-out infinite;
+}
+@keyframes cDot {
+  0%,100% { opacity:1; transform:scale(1);   }
+  50%     { opacity:.4; transform:scale(0.7); }
+}
+.cust-title {
+  font-size: 34px; font-weight: 800; letter-spacing: -1px; line-height: 1.1;
+  margin: 0 0 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #a0d8ef 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
 
-    .data-table thead tr { border-bottom: 1px solid #1e1e1e; }
-    .data-table th {
-        padding: 14px 24px;
-        font-size: 11px; font-weight: 600;
-        color: #4b5563;
-        text-transform: uppercase; letter-spacing: 0.09em;
-        text-align: left; white-space: nowrap;
-        background: #111;
-    }
+/* Search bar */
+.cust-search-form { width: 100%; max-width: 440px; }
+.cust-search-bar {
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px; padding: 10px 14px;
+  transition: border-color .3s, background .3s, box-shadow .3s;
+  backdrop-filter: blur(8px);
+}
+.cust-search-bar:focus-within {
+  border-color: rgba(40,201,244,0.5);
+  background: rgba(40,201,244,0.04);
+  box-shadow: 0 0 0 3px rgba(40,201,244,0.08), 0 4px 20px rgba(40,201,244,0.06);
+}
+.cust-search-icon { color: #ffffff; display: flex; align-items: center; flex-shrink: 0; }
+.cust-search-bar input {
+  flex: 1; background: transparent; border: 0; outline: 0;
+  color: #ffffff; font-size: 14px; font-family: inherit;
+}
+.cust-search-bar input::placeholder { color: #4a5568; }
+.cust-search-submit {
+  background: linear-gradient(135deg, #28c9f4, #0ea5e9);
+  color: #03111a; border: none; padding: 7px 16px;
+  border-radius: 8px; font-size: 12px; font-weight: 700;
+  cursor: pointer; letter-spacing: 0.04em; flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(40,201,244,0.25);
+  transition: all .2s;
+}
+.cust-search-submit:hover {
+  background: linear-gradient(135deg, #4dd8f8, #38bdf8);
+  box-shadow: 0 4px 14px rgba(40,201,244,0.4); transform: translateY(-1px);
+}
+.cust-clear-link {
+  color: #ffffff; font-size: 12px; font-weight: 600; letter-spacing: 0.05em;
+  padding: 4px 8px; border-radius: 6px; cursor: pointer;
+  transition: color .2s; text-decoration: none; flex-shrink: 0;
+}
+.cust-clear-link:hover { color: #f87171; }
 
-    .data-table tbody tr {
-        border-bottom: 1px solid #181818;
-        transition: background 0.12s;
-    }
-    .data-table tbody tr:last-child { border-bottom: none; }
-    .data-table tbody tr:hover      { background: rgba(255,255,255,0.03); }
+/* Right */
+.cust-header-right {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 20px;
+}
+.cust-stats { display: flex; gap: 12px; }
+.cust-stat {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 12px 20px; border-radius: 12px; min-width: 80px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.03); backdrop-filter: blur(4px);
+}
+.cust-stat-num  { font-size: 22px; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 3px; }
+.cust-stat-lbl  { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #ffffff; }
+.cust-stat.--active   .cust-stat-num { color: #4ade80; }
+.cust-stat.--blocked  .cust-stat-num { color: #f87171; }
 
-    .data-table td {
-        padding: 16px 24px;
-        font-size: 13.5px;
-        vertical-align: middle;
-    }
-    .td-name  { color: #fff; font-weight: 500; }
-    .td-muted { color: #6b7280; }
+/* ══════════════════════════════════════════
+   TABLE CARD
+══════════════════════════════════════════ */
+.cust-card {
+  background: rgba(14,18,27,0.7);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 18px; overflow: hidden;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.4);
+}
+.cust-table { width: 100%; border-collapse: collapse; }
+.cust-table thead tr { border-bottom: 1px solid rgba(255,255,255,0.06); }
+.cust-table th {
+  background: rgba(0,0,0,0.22);
+  color: #ffffff; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  text-align: left; padding: 18px 24px; white-space: nowrap;
+}
+.cust-table th:last-child { text-align: right; }
+.cust-table tbody tr {
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background .2s;
+}
+.cust-table tbody tr:last-child  { border-bottom: none; }
+.cust-table tbody tr:hover       { background: rgba(40,201,244,0.02); }
+.cust-table td { padding: 18px 24px; vertical-align: middle; }
 
-    /* Status */
-    .badge         { font-size: 12.5px; font-weight: 500; }
-    .badge-active  { color: #4ade80; }
-    .badge-blocked { color: #f87171; }
+/* Avatar + name */
+.cust-name-cell { display: flex; align-items: center; gap: 12px; }
+.cust-avatar {
+  width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; letter-spacing: 0.02em;
+  background: linear-gradient(135deg, rgba(40,201,244,0.15), rgba(14,165,233,0.1));
+  border: 1px solid rgba(40,201,244,0.18); color: #28c9f4;
+  text-transform: uppercase;
+}
+.cust-name-text { font-weight: 600; color: #ffffff; font-size: 14px; }
 
-    /* Action btn */
-    .action-btn {
-        background: none; border: none; padding: 0;
-        font-size: 12px; font-weight: 700; font-family: inherit;
-        letter-spacing: 0.07em; text-transform: uppercase;
-        cursor: pointer; transition: opacity 0.15s;
-    }
-    .action-btn:hover  { opacity: 0.7; }
-    .action-btn:active { opacity: 0.5; }
-    .action-btn-block   { color: #f87171; }
-    .action-btn-unblock { color: #00BFFF; }
+/* Muted cells */
+.cust-muted { color: #ffffff; font-size: 13.5px; }
 
-    /* Empty */
-    .empty-row td {
-        text-align: center; padding: 60px 24px;
-        color: #4b5563; font-size: 13px;
-    }
+/* Email with icon */
+.cust-email-cell { display: flex; align-items: center; gap: 8px; }
+.cust-email-cell svg { color: #ffffff; flex-shrink: 0; }
 
-    /* ── Footer ─────────────────────────────────────────── */
-    .table-footer {
-        display: flex; align-items: center;
-        justify-content: space-between;
-        margin-top: 20px;
-    }
-    .count-label {
-        font-size: 11px; color: #4b5563;
-        text-transform: uppercase; letter-spacing: 0.06em;
-    }
+/* Phone with icon */
+.cust-phone-cell { display: flex; align-items: center; gap: 8px; }
+.cust-phone-cell svg { color: #ffffff; flex-shrink: 0; }
 
-    /* Pagination */
-    .pagination { display: flex; align-items: center; gap: 3px; }
-    .pg-btn {
-        display: inline-flex; align-items: center; gap: 5px;
-        padding: 6px 12px; font-size: 12px; font-weight: 500;
-        color: #6b7280; text-decoration: none; border-radius: 6px;
-        transition: background 0.15s, color 0.15s;
-        white-space: nowrap; font-family: inherit; cursor: pointer;
-    }
-    .pg-btn:hover { background: rgba(255,255,255,0.06); color: #fff; }
-    .pg-btn.disabled { color: #2d2d2d; cursor: not-allowed; pointer-events: none; }
-    .pg-num {
-        display: inline-flex; align-items: center; justify-content: center;
-        width: 30px; height: 30px; font-size: 12px; font-weight: 500;
-        color: #6b7280; text-decoration: none; border-radius: 6px;
-        transition: background 0.15s, color 0.15s;
-    }
-    .pg-num:hover   { background: rgba(255,255,255,0.06); color: #fff; }
-    .pg-num.current { background: #fff; color: #000; font-weight: 700; }
-    .pg-dots {
-        display: inline-flex; align-items: center; justify-content: center;
-        width: 30px; height: 30px; font-size: 12px; color: #374151;
-    }
+/* Status pill */
+.cust-status-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 5px 11px; border-radius: 20px;
+}
+.cust-status-pill::before {
+  content: ''; width: 5px; height: 5px; border-radius: 50%;
+}
+.cust-status-pill.--active {
+  background: rgba(74,222,128,0.1); color: #4ade80;
+  border: 1px solid rgba(74,222,128,0.2);
+}
+.cust-status-pill.--active::before {
+  background: #4ade80; box-shadow: 0 0 5px #4ade80;
+  animation: cPulse 2s ease-in-out infinite;
+}
+.cust-status-pill.--blocked {
+  background: rgba(248,113,113,0.1); color: #f87171;
+  border: 1px solid rgba(248,113,113,0.2);
+}
+.cust-status-pill.--blocked::before { background: #f87171; }
+@keyframes cPulse {
+  0%,100% { box-shadow: 0 0 4px #4ade80; }
+  50%     { box-shadow: 0 0 8px #4ade80; }
+}
 
-    /* ── Modal ──────────────────────────────────────────── */
-    .modal-overlay {
-        display: none; position: fixed; inset: 0; z-index: 200;
-        background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
-        align-items: center; justify-content: center;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal-box {
-        background: #161616; border: 1px solid #2a2a2a;
-        border-radius: 16px; padding: 32px 28px 26px;
-        width: 100%; max-width: 380px; margin: 0 16px;
-        box-shadow: 0 40px 80px rgba(0,0,0,0.7);
-        animation: modalIn 0.18s ease;
-    }
-    @keyframes modalIn {
-        from { opacity: 0; transform: scale(0.95) translateY(10px); }
-        to   { opacity: 1; transform: scale(1) translateY(0); }
-    }
-    .modal-title { font-size: 17px; font-weight: 600; color: #fff; margin-bottom: 8px; }
-    .modal-msg   { font-size: 13px; color: #9ca3af; line-height: 1.65; margin-bottom: 24px; }
-    .modal-error {
-        display: none; margin-bottom: 16px; padding: 10px 14px;
-        background: rgba(127,29,29,0.35); color: #fca5a5;
-        border: 1px solid rgba(127,29,29,0.5);
-        border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center;
-    }
-    .modal-actions { display: flex; gap: 10px; }
-    .modal-actions .btn { flex: 1; padding: 12px 0; font-size: 13px; }
-    .btn-danger        { background: #ef4444; color: #fff; }
-    .btn-danger:hover  { background: #dc2626; }
-    .btn-danger:active { background: #b91c1c; }
-    .btn-success        { background: #00BFFF; color: #000; }
-    .btn-success:hover  { background: #009fd4; }
-    .btn-success:active { background: #0088b3; }
+/* Action buttons */
+.cust-actions-cell { text-align: right; }
+.cust-action-row { display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
+.cust-block-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.05em;
+  padding: 7px 14px; border-radius: 8px; border: 1px solid transparent;
+  cursor: pointer; transition: all .2s; font-family: inherit;
+}
+.cust-block-btn.--block {
+  background: rgba(248,113,113,0.08); color: #f87171;
+  border-color: rgba(248,113,113,0.2);
+}
+.cust-block-btn.--block:hover {
+  background: rgba(248,113,113,0.15); border-color: rgba(248,113,113,0.35);
+  transform: translateY(-1px);
+}
+.cust-block-btn.--unblock {
+  background: rgba(40,201,244,0.08); color: #28c9f4;
+  border-color: rgba(40,201,244,0.2);
+}
+.cust-block-btn.--unblock:hover {
+  background: rgba(40,201,244,0.15); border-color: rgba(40,201,244,0.35);
+  transform: translateY(-1px);
+}
+
+/* Empty state */
+.cust-empty {
+  text-align: center; padding: 70px 24px;
+}
+.cust-empty-icon {
+  width: 72px; height: 72px; margin: 0 auto 20px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center; justify-content: center; color: #ffffff;
+}
+.cust-empty p   { color: #ffffff; font-size: 15px; font-weight: 500; margin: 0; }
+.cust-empty span { color: #ffffff; font-size: 13px; display: block; margin-top: 6px; }
+
+/* ══════════════════════════════════════════
+   FOOTER & PAGINATION
+══════════════════════════════════════════ */
+.cust-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 28px; padding: 0 4px;
+}
+.cust-count {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; color: #ffffff;
+}
+.cust-count strong { color: #ffffff; font-weight: 700; }
+
+.cust-pagination { display: flex; gap: 6px; align-items: center; }
+.cust-pg-btn {
+  display: flex; align-items: center; justify-content: center;
+  min-width: 34px; height: 34px; padding: 0 10px;
+  border-radius: 9px; font-size: 13px; font-weight: 600;
+  text-decoration: none; transition: all .2s;
+  border: 1px solid transparent; color: #ffffff;
+  background: transparent; cursor: pointer; font-family: inherit;
+}
+.cust-pg-btn:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.1); color: #ffffff;
+}
+.cust-pg-btn.--current {
+  background: linear-gradient(135deg, #28c9f4, #0ea5e9);
+  border-color: transparent; color: #03111a;
+  font-weight: 800; box-shadow: 0 4px 14px rgba(40,201,244,0.3);
+}
+.cust-pg-btn.--disabled {
+  color: #ffffff; cursor: not-allowed; pointer-events: none;
+}
+.cust-pg-dots {
+  display: flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; color: #ffffff; font-size: 13px;
+}
+
+/* ══════════════════════════════════════════
+   MODAL
+══════════════════════════════════════════ */
+.cust-modal {
+  display: none; position: fixed; inset: 0; z-index: 400;
+  background: rgba(0,0,0,0.78); backdrop-filter: blur(6px);
+  align-items: center; justify-content: center;
+}
+.cust-modal.open { display: flex; }
+
+.cust-modal-box {
+  width: 100%; max-width: 400px; margin: 0 16px;
+  background: #0d1117;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px; padding: 36px 32px 28px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.04);
+  animation: cModalIn .25s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes cModalIn {
+  from { opacity:0; transform: scale(0.92) translateY(16px); }
+  to   { opacity:1; transform: scale(1)    translateY(0);    }
+}
+
+.cust-modal-icon-wrap {
+  width: 52px; height: 52px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+}
+.cust-modal-icon-wrap.--danger {
+  background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.2); color: #f87171;
+}
+.cust-modal-icon-wrap.--success {
+  background: rgba(40,201,244,0.1); border: 1px solid rgba(40,201,244,0.2); color: #28c9f4;
+}
+
+.cust-modal-title {
+  font-size: 20px; font-weight: 800; color: #fff;
+  letter-spacing: -0.4px; margin: 0 0 8px;
+}
+.cust-modal-msg {
+  font-size: 13.5px; color: #ffffff; line-height: 1.65; margin: 0 0 24px;
+}
+
+.cust-modal-error {
+  display: none; margin-bottom: 16px; padding: 10px 14px;
+  background: rgba(127,29,29,0.3); color: #fca5a5;
+  border: 1px solid rgba(248,113,113,0.25);
+  border-radius: 10px; font-size: 12px; font-weight: 500; text-align: center;
+}
+
+.cust-modal-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 0 0 24px; }
+
+.cust-modal-actions { display: flex; gap: 10px; }
+
+.cust-modal-btn {
+  flex: 1; padding: 13px; border-radius: 11px;
+  font-size: 14px; font-weight: 700; letter-spacing: 0.02em;
+  cursor: pointer; border: none; font-family: inherit;
+  transition: all .2s;
+}
+.cust-modal-btn.--cancel {
+  background: rgba(255,255,255,0.05); color: #ffffff;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.cust-modal-btn.--cancel:hover {
+  background: rgba(255,255,255,0.09); color: #ffffff;
+  border-color: rgba(255,255,255,0.18);
+}
+.cust-modal-btn.--confirm-block {
+  flex: 2;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #fff; box-shadow: 0 4px 16px rgba(239,68,68,0.3);
+}
+.cust-modal-btn.--confirm-block:hover {
+  background: linear-gradient(135deg, #f87171, #ef4444);
+  box-shadow: 0 6px 22px rgba(239,68,68,0.45); transform: translateY(-1px);
+}
+.cust-modal-btn.--confirm-unblock {
+  flex: 2;
+  background: linear-gradient(135deg, #28c9f4, #0ea5e9);
+  color: #03111a; box-shadow: 0 4px 16px rgba(40,201,244,0.3);
+}
+.cust-modal-btn.--confirm-unblock:hover {
+  background: linear-gradient(135deg, #4dd8f8, #38bdf8);
+  box-shadow: 0 6px 22px rgba(40,201,244,0.45); transform: translateY(-1px);
+}
 </style>
 
-<!-- Header -->
-<p class="page-title">Customer Management</p>
-<div class="page-title-bar"></div>
+<div class="cust-page">
 
-<!-- Search -->
-<form id="searchForm" method="GET" action="/admin/customers" class="search-row">
-    <div class="search-left">
-        <div class="search-wrap">
-            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
-            </svg>
+  <!-- ═══════════ HERO HEADER ═══════════ -->
+  <div class="cust-header">
+    <div class="cust-header-grid"></div>
+    <div class="cust-header-inner">
+
+      <!-- Left -->
+      <div class="cust-header-left">
+        <div class="cust-eyebrow">Admin Panel</div>
+        <h1 class="cust-title">Customer Management</h1>
+
+        <form id="searchForm" method="GET" action="/admin/customers" class="cust-search-form">
+          <div class="cust-search-bar">
+            <span class="cust-search-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+              </svg>
+            </span>
             <input type="text" name="search" id="searchInput"
-                   value="<%= search %>" placeholder="Search by name or email..."
-                   class="search-input" autocomplete="off"/>
-        </div>
-    </div>
-    <div class="search-right">
-        <button type="submit" class="btn btn-primary">Search</button>
-        <a href="/admin/customers" class="btn btn-outline">Clear</a>
-    </div>
-</form>
-
-<!-- Table -->
-<div class="table-wrap">
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th style="width:24%">Name</th>
-                <th style="width:30%">Email</th>
-                <th style="width:18%">Phone</th>
-                <th style="width:14%">Status</th>
-                <th style="width:14%">Actions</th>
-            </tr>
-        </thead>
-        <tbody id="customersTableBody">
-            <% if (users.length === 0) { %>
-            <tr class="empty-row">
-                <td colspan="5">
-                    <% if (search) { %>No customers found for "<strong><%= search %></strong>".<% } else { %>No customers yet.<% } %>
-                </td>
-            </tr>
-            <% } else { %>
-            <% users.forEach(function(u) { %>
-            <tr>
-                <td class="td-name"><%= u.name %></td>
-                <td class="td-muted"><%= u.email %></td>
-                <td class="td-muted"><%= u.phone || '—' %></td>
-                <td>
-                    <span class="badge status-badge <%= u.isBlocked ? 'badge-blocked' : 'badge-active' %>">
-                        <%= u.isBlocked ? 'Blocked' : 'Active' %>
-                    </span>
-                </td>
-                <td>
-                    <button class="action-btn block-btn <%= u.isBlocked ? 'action-btn-unblock' : 'action-btn-block' %>"
-                            data-user-id="<%= u._id %>"
-                            data-user-name="<%= u.name %>"
-                            data-action="<%= u.isBlocked ? 'unblock' : 'block' %>">
-                        <%= u.isBlocked ? 'Unblock' : 'Block' %>
-                    </button>
-                </td>
-            </tr>
-            <% }); %>
+                   value="<%= search %>" placeholder="Search by name or email…" autocomplete="off">
+            <button type="submit" class="cust-search-submit">Search</button>
+            <% if (search) { %>
+              <a class="cust-clear-link" href="/admin/customers" title="Clear">✕</a>
             <% } %>
-        </tbody>
-    </table>
-</div>
+          </div>
+        </form>
+      </div>
 
-<!-- Footer -->
-<div class="table-footer">
-    <span class="count-label">
-        Showing <%= (currentPage - 1) * pageSize + 1 %>–<%= Math.min(currentPage * pageSize, totalUsers) %>
-        of <%= totalUsers %> customer<%= totalUsers !== 1 ? 's' : '' %>
-    </span>
+      <!-- Right — stats -->
+      <div class="cust-header-right">
+        <div class="cust-stats">
+          <div class="cust-stat">
+            <span class="cust-stat-num"><%= totalUsers %></span>
+            <span class="cust-stat-lbl">Total</span>
+          </div>
+          <div class="cust-stat --active">
+            <span class="cust-stat-num"><%= users.filter(u => !u.isBlocked).length %></span>
+            <span class="cust-stat-lbl">Active</span>
+          </div>
+          <div class="cust-stat --blocked">
+            <span class="cust-stat-num"><%= users.filter(u => u.isBlocked).length %></span>
+            <span class="cust-stat-lbl">Blocked</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════ TABLE CARD ═══════════ -->
+  <div class="cust-card">
+    <table class="cust-table">
+      <thead>
+        <tr>
+          <th style="width:26%">Customer</th>
+          <th style="width:30%">Email</th>
+          <th style="width:18%">Phone</th>
+          <th style="width:13%">Status</th>
+          <th style="width:13%; text-align:right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="customersTableBody">
+
+        <% if (users.length === 0) { %>
+          <tr>
+            <td colspan="5">
+              <div class="cust-empty">
+                <div class="cust-empty-icon">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                </div>
+                <% if (search) { %>
+                  <p>No results for "<strong><%= search %></strong>"</p>
+                  <span>Try a different name or email address</span>
+                <% } else { %>
+                  <p>No customers yet</p>
+                  <span>Customers will appear here once they sign up</span>
+                <% } %>
+              </div>
+            </td>
+          </tr>
+        <% } else { %>
+          <% users.forEach(function(u) {
+              const initials = u.name ? u.name.split(' ').map(w => w[0]).slice(0,2).join('') : '?';
+          %>
+          <tr>
+            <!-- Name with avatar -->
+            <td>
+              <div class="cust-name-cell">
+                <div class="cust-avatar"><%= initials %></div>
+                <span class="cust-name-text"><%= u.name %></span>
+              </div>
+            </td>
+
+            <!-- Email -->
+            <td>
+              <div class="cust-email-cell cust-muted">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                </svg>
+                <%= u.email %>
+              </div>
+            </td>
+
+            <!-- Phone -->
+            <td>
+              <div class="cust-phone-cell cust-muted">
+                <% if (u.phone) { %>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.36 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.77a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                  </svg>
+                  <%= u.phone %>
+                <% } else { %>
+                  —
+                <% } %>
+              </div>
+            </td>
+
+            <!-- Status -->
+            <td>
+              <span class="cust-status-pill status-badge <%= u.isBlocked ? '--blocked' : '--active' %>">
+                <%= u.isBlocked ? 'Blocked' : 'Active' %>
+              </span>
+            </td>
+
+            <!-- Actions -->
+            <td class="cust-actions-cell">
+              <div class="cust-action-row">
+                <button class="cust-block-btn block-btn <%= u.isBlocked ? '--unblock' : '--block' %>"
+                        data-user-id="<%= u._id %>"
+                        data-user-name="<%= u.name %>"
+                        data-action="<%= u.isBlocked ? 'unblock' : 'block' %>">
+                  <% if (u.isBlocked) { %>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>
+                    </svg>
+                    Unblock
+                  <% } else { %>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    Block
+                  <% } %>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <% }); %>
+        <% } %>
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════ FOOTER / PAGINATION ═══════════ -->
+  <div class="cust-footer">
+    <div class="cust-count">
+      Showing&nbsp;
+      <strong>
+        <%= (currentPage - 1) * pageSize + 1 %>–<%= Math.min(currentPage * pageSize, totalUsers) %>
+      </strong>
+      &nbsp;of&nbsp;<strong><%= totalUsers %></strong>
+      &nbsp;customer<%= totalUsers !== 1 ? 's' : '' %>
+    </div>
 
     <% if (totalPages > 1) { %>
-    <nav class="pagination">
-        <% if (currentPage > 1) { %>
-        <a class="pg-btn" href="/admin/customers?page=<%= currentPage - 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
-            Prev
+    <nav class="cust-pagination">
+      <% if (currentPage > 1) { %>
+        <a class="cust-pg-btn" href="/admin/customers?page=<%= currentPage - 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
         </a>
-        <% } else { %>
-        <span class="pg-btn disabled">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
-            Prev
+      <% } else { %>
+        <span class="cust-pg-btn --disabled">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
         </span>
-        <% } %>
+      <% } %>
 
-        <% for (let i = 1; i <= totalPages; i++) {
-            const show = i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1);
-            const dot  = i === currentPage - 2 || i === currentPage + 2;
-        %>
-            <% if (show) { %>
-            <a class="pg-num <%= i === currentPage ? 'current' : '' %>"
-               href="/admin/customers?page=<%= i %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">
-                <%= String(i).padStart(2,'0') %>
-            </a>
-            <% } else if (dot) { %>
-            <span class="pg-dots">…</span>
-            <% } %>
+      <% for (let i = 1; i <= totalPages; i++) {
+          const show = i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1);
+          const dot  = i === currentPage - 2 || i === currentPage + 2;
+      %>
+        <% if (show) { %>
+          <a class="cust-pg-btn <%= i === currentPage ? '--current' : '' %>"
+             href="/admin/customers?page=<%= i %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">
+            <%= i %>
+          </a>
+        <% } else if (dot) { %>
+          <span class="cust-pg-dots">…</span>
         <% } %>
+      <% } %>
 
-        <% if (currentPage < totalPages) { %>
-        <a class="pg-btn" href="/admin/customers?page=<%= currentPage + 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">
-            Next
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+      <% if (currentPage < totalPages) { %>
+        <a class="cust-pg-btn" href="/admin/customers?page=<%= currentPage + 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </a>
-        <% } else { %>
-        <span class="pg-btn disabled">
-            Next
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+      <% } else { %>
+        <span class="cust-pg-btn --disabled">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </span>
-        <% } %>
+      <% } %>
     </nav>
     <% } %>
-</div>
+  </div>
 
-<!-- Modal -->
-<div id="confirmModal" class="modal-overlay">
-    <div class="modal-box">
-        <p class="modal-title" id="modalTitle"></p>
-        <p class="modal-msg"   id="modalMessage"></p>
-        <div id="modalError"   class="modal-error"></div>
-        <div class="modal-actions">
-            <button id="modalCancelBtn"  class="btn btn-outline">Cancel</button>
-            <button id="modalConfirmBtn" class="btn">Confirm</button>
-        </div>
+</div><!-- /cust-page -->
+
+<!-- ═══════════════════════════════════ MODAL ═══════════════════════════════════ -->
+<div id="confirmModal" class="cust-modal">
+  <div class="cust-modal-box">
+    <div class="cust-modal-icon-wrap" id="modalIconWrap">
+      <!-- icon injected by JS -->
     </div>
+    <h2 class="cust-modal-title" id="modalTitle"></h2>
+    <p  class="cust-modal-msg"   id="modalMessage"></p>
+    <div id="modalError" class="cust-modal-error"></div>
+    <div class="cust-modal-divider"></div>
+    <div class="cust-modal-actions">
+      <button id="modalCancelBtn"  class="cust-modal-btn --cancel">Cancel</button>
+      <button id="modalConfirmBtn" class="cust-modal-btn">Confirm</button>
+    </div>
+  </div>
 </div>
 
 <script>
 (function () {
-    const overlay = document.getElementById('confirmModal');
-    const titleEl = document.getElementById('modalTitle');
-    const msgEl = document.getElementById('modalMessage');
-    const errorEl = document.getElementById('modalError');
-    const confirmBtn = document.getElementById('modalConfirmBtn');
-    const cancelBtn  = document.getElementById('modalCancelBtn');
+  const overlay    = document.getElementById('confirmModal');
+  const titleEl    = document.getElementById('modalTitle');
+  const msgEl      = document.getElementById('modalMessage');
+  const errorEl    = document.getElementById('modalError');
+  const confirmBtn = document.getElementById('modalConfirmBtn');
+  const cancelBtn  = document.getElementById('modalCancelBtn');
+  const iconWrap   = document.getElementById('modalIconWrap');
 
-    let pending = null;
+  let pending = null;
 
-    function showError(text) { errorEl.textContent = text; errorEl.style.display = 'block'; }
-    function hideError()     { errorEl.textContent = '';   errorEl.style.display = 'none';  }
+  const LOCK_ICON = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
+  const UNLOCK_ICON = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>`;
 
-    /* Event delegation — survives DOM updates */
-    document.getElementById('customersTableBody').addEventListener('click', (e) => {
-        const btn = e.target.closest('.block-btn');
-        if (!btn) return;
+  function showError(t) { errorEl.textContent = t; errorEl.style.display = 'block'; }
+  function hideError()  { errorEl.textContent = '';  errorEl.style.display = 'none'; }
 
-        const { userId, userName, action } = btn.dataset;
-        pending = { userId, action, btn };
+  /* Event delegation */
+  document.getElementById('customersTableBody').addEventListener('click', (e) => {
+    const btn = e.target.closest('.block-btn');
+    if (!btn) return;
 
-        hideError();
-        titleEl.textContent = action === 'block' ? 'Block User' : 'Unblock User';
-        msgEl.textContent = action === 'block' ? `Block "${userName}"? They won't be able to log in until unblocked.`
-            : `Unblock "${userName}"? They'll regain full access to their account.`;
-        confirmBtn.textContent = action === 'block' ? 'Block' : 'Unblock';
-        confirmBtn.className   = 'btn ' + (action === 'block' ? 'btn-danger' : 'btn-success');
+    const { userId, userName, action } = btn.dataset;
+    pending = { userId, action, btn };
+    hideError();
 
-        overlay.classList.add('open');
-    });
+    const isBlock = action === 'block';
+    iconWrap.className = 'cust-modal-icon-wrap ' + (isBlock ? '--danger' : '--success');
+    iconWrap.innerHTML = isBlock ? LOCK_ICON : UNLOCK_ICON;
 
-    /* Close */
-    function closeModal() { overlay.classList.remove('open'); hideError(); pending = null; }
-    cancelBtn.addEventListener('click', closeModal);
-    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+    titleEl.textContent = isBlock ? 'Block Customer' : 'Unblock Customer';
+    msgEl.textContent   = isBlock
+      ? `Block "${userName}"? They won't be able to log in until unblocked.`
+      : `Unblock "${userName}"? They'll regain full access to their account.`;
 
-    /* Confirm */
-    confirmBtn.addEventListener('click', async () => {
-        if (!pending) return;
-        const { userId, action, btn } = pending;
+    confirmBtn.textContent = isBlock ? 'Yes, Block'   : 'Yes, Unblock';
+    confirmBtn.className   = 'cust-modal-btn ' + (isBlock ? '--confirm-block' : '--confirm-unblock');
 
-        hideError();
-        confirmBtn.disabled    = true;
-        confirmBtn.textContent = 'Processing…';
+    overlay.classList.add('open');
+  });
 
-        try {
-            const res = await fetch(`/admin/customers/${userId}/block`, {
-                method:  'PATCH',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body:    JSON.stringify({ action }),
-            });
+  /* Close */
+  function closeModal() { overlay.classList.remove('open'); hideError(); pending = null; }
+  cancelBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-            let data = {};
-            try { data = await res.json(); } catch { /* empty */ }
+  /* Confirm */
+  confirmBtn.addEventListener('click', async () => {
+    if (!pending) return;
+    const { userId, action, btn } = pending;
 
-            if (res.ok) {
-                const isNowBlocked = action === 'block';
-                const row   = btn.closest('tr');
-                const badge = row.querySelector('.status-badge');
+    hideError();
+    confirmBtn.disabled    = true;
+    confirmBtn.textContent = 'Processing…';
 
-                badge.textContent = isNowBlocked ? 'Blocked' : 'Active';
-                badge.className   = 'badge status-badge ' + (isNowBlocked ? 'badge-blocked' : 'badge-active');
+    try {
+      const res = await fetch(`/admin/customers/${userId}/block`, {
+        method:  'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body:    JSON.stringify({ action }),
+      });
 
-                btn.textContent    = isNowBlocked ? 'Unblock' : 'Block';
-                btn.dataset.action = isNowBlocked ? 'unblock' : 'block';
-                btn.className      = 'action-btn block-btn ' + (isNowBlocked ? 'action-btn-unblock' : 'action-btn-block');
+      let data = {};
+      try { data = await res.json(); } catch { /* empty */ }
 
-                closeModal();
-            } else {
-                showError(data.message || 'Something went wrong. Please try again.');
-            }
-        } catch (err) {
-            showError('Request failed. Please check your connection.');
-            console.error('Block/unblock error:', err);
-        } finally {
-            confirmBtn.disabled    = false;
-            confirmBtn.textContent = 'Confirm';
-        }
-    });
+      if (res.ok) {
+        const isNowBlocked = action === 'block';
+        const row   = btn.closest('tr');
+        const badge = row.querySelector('.status-badge');
+
+        /* Update badge */
+        badge.textContent = isNowBlocked ? 'Blocked' : 'Active';
+        badge.className   = 'cust-status-pill status-badge ' + (isNowBlocked ? '--blocked' : '--active');
+
+        /* Update button */
+        const lockSvg   = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
+        const unlockSvg = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>`;
+        btn.innerHTML      = isNowBlocked ? unlockSvg + ' Unblock' : lockSvg + ' Block';
+        btn.dataset.action = isNowBlocked ? 'unblock' : 'block';
+        btn.className      = 'cust-block-btn block-btn ' + (isNowBlocked ? '--unblock' : '--block');
+
+        closeModal();
+      } else {
+        showError(data.message || 'Something went wrong. Please try again.');
+      }
+    } catch (err) {
+      showError('Request failed. Please check your connection.');
+      console.error('Block/unblock error:', err);
+    } finally {
+      confirmBtn.disabled    = false;
+      confirmBtn.textContent = 'Confirm';
+    }
+  });
 })();
 </script>

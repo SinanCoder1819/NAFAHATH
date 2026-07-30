@@ -28,6 +28,8 @@ const upload = multer({
   },
 });
 
+
+
 // --- ADD THIS NEW PRODUCT STORAGE ---
 const productStorage = cloudinaryStorage({
   cloudinary: cloudinaryPackage,

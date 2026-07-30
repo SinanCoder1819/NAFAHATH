@@ -1,152 +1,234 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600&display=swap');
+
+  @keyframes nvSheen {
+    0% {
+      background-position: 0% center;
+    }
+
+    100% {
+      background-position: 200% center;
+    }
+  }
+
+  .nv-brand-name {
+    font-family: 'Playfair Display', serif;
+    background: linear-gradient(135deg, #C5A267 0%, #f0d08a 50%, #C5A267 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: nvSheen 4s linear infinite;
+  }
+</style>
+
 <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-<nav x-data="{ open: false, profileOpen: false }"
-    class="sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-gray-900">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <a href="/" class="flex flex-col">
-            <h1 class="text-xl font-serif-brand tracking-[0.2em] text-[#C5A267]">NAFAHATH</h1>
-            <span class="text-[7px] tracking-[0.4em] text-[#C5A267] uppercase">Perfumes & Fragrances</span>
+<nav
+  class="sticky top-0 z-[100] font-[Inter,sans-serif] bg-black/80 backdrop-blur-lg border-b border-white/5 shadow-[0_1px_0_rgba(40,201,244,0.08)]"
+  x-data="{ open: false, profileOpen: false }">
+  <div class="max-w-[1400px] mx-auto px-7 h-[68px] flex items-center justify-between">
+
+
+    <!-- Favicon -->
+    
+    <!-- BRAND -->
+    <a href="/" class="flex flex-col no-underline leading-[1.1] shrink-0">
+      <span class="nv-brand-name text-[19px] font-semibold tracking-[0.22em]">NAFAHATH</span>
+      <span class="text-[7px] tracking-[0.45em] text-[#8a6d3b] uppercase pl-px">Perfumes &amp; Fragrances</span>
+    </a>
+    
+    <!-- DESKTOP NAV LINKS -->
+    <ul class="hidden md:flex items-center gap-9 list-none m-0 p-0">
+      <li>
+        <a href="/" class="relative text-[10.5px] font-bold tracking-[0.22em] uppercase text-gray-500 hover:text-white no-underline transition-colors duration-[250ms] pb-[3px]
+                  after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1.5px]
+                  after:bg-gradient-to-r after:from-[#28c9f4] after:to-[#0ea5e9]
+                  after:w-0 hover:after:w-full after:transition-all after:duration-300 after:rounded-full">
+          Home
+        </a>
+      </li>
+      <li>
+        <a href="/shop" class="relative text-[10.5px] font-bold tracking-[0.22em] uppercase text-gray-500 hover:text-white no-underline transition-colors duration-[250ms] pb-[3px]
+                  after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1.5px]
+                  after:bg-gradient-to-r after:from-[#28c9f4] after:to-[#0ea5e9]
+                  after:w-0 hover:after:w-full after:transition-all after:duration-300 after:rounded-full">
+          Shop
+        </a>
+      </li>
+      <li>
+        <a href="/about" class="relative text-[10.5px] font-bold tracking-[0.22em] uppercase text-gray-500 hover:text-white no-underline transition-colors duration-[250ms] pb-[3px]
+                  after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1.5px]
+                  after:bg-gradient-to-r after:from-[#28c9f4] after:to-[#0ea5e9]
+                  after:w-0 hover:after:w-full after:transition-all after:duration-300 after:rounded-full">
+          About
+        </a>
+      </li>
+    </ul>
+
+    <!-- RIGHT ACTIONS -->
+    <div class="flex items-center gap-2">
+
+      <% if (user) { %>
+        <!-- CART -->
+        <!-- CART -->
+        <a href="/cart" title="Cart"
+          class="relative w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 bg-white/[0.02] text-gray-500 hover:text-[#28c9f4] hover:border-[#28c9f4]/30 hover:bg-[#28c9f4]/5 hover:shadow-[0_0_16px_rgba(40,201,244,0.15)] transition-all duration-[220ms] no-underline">
+
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <path d="M16 10a4 4 0 0 1-8 0" />
+          </svg>
+
+          <!-- Add this badge code right below the SVG -->
+          <span id="navCartBadge"
+            class="absolute -top-[5px] -right-[5px] min-w-[17px] h-[17px] px-1 bg-[#28c9f4] text-[#03111a] text-[9px] font-extrabold rounded-[20px] flex items-center justify-center border-[1.5px] border-[#04080e] <%= locals.cartCount > 0 ? '' : 'hidden' %>">
+            <%= locals.cartCount> 99 ? '99+' : (locals.cartCount || 0) %>
+          </span>
+
         </a>
 
-        <div class="hidden md:flex space-x-10 text-[11px] tracking-[0.2em] font-medium text-gray-300">
-            <a href="/" class="hover:text-white transition">HOME</a>
-            <a href="/shop" class="hover:text-white transition">SHOP</a>
-            <a href="/about" class="hover:text-white transition">ABOUT</a>
-        </div>
+        <!-- WISHLIST -->
+        <a href="/wishlist" title="Wishlist" class="relative w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 bg-white/[0.02] text-gray-500
+                  hover:text-[#28c9f4] hover:border-[#28c9f4]/30 hover:bg-[#28c9f4]/5 hover:shadow-[0_0_16px_rgba(40,201,244,0.15)]
+                  transition-all duration-[220ms] no-underline">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+          <span id="navWishlistBadge"
+            class="absolute -top-[5px] -right-[5px] min-w-[17px] h-[17px] px-1 bg-[#28c9f4] text-[#03111a] text-[9px] font-extrabold rounded-[20px] flex items-center justify-center border-[1.5px] border-[#04080e] <%= locals.wishlistCount > 0 ? '' : 'hidden' %>">
+            <%= locals.wishlistCount> 99 ? '99+' : (locals.wishlistCount || 0) %>
+          </span>
+        </a>
+        <% } %>
 
-        <div class="flex items-center space-x-4 md:space-x-6">
-            <div class="flex items-center space-x-3 md:space-x-5 text-gray-300">
-                <% if (user) { %>
-                    <a href="/cart" class="hover:text-white transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+          <!-- PROFILE -->
+          <div class="relative flex items-center gap-2" @click.away="profileOpen = false">
+            <% if (user && (user.name || user.fullname)) { %>
+              <span
+                class="hidden sm:inline text-[10px] font-bold tracking-[0.1em] uppercase text-[#C5A267] whitespace-nowrap">
+                <%= user.name || user.fullname %>
+              </span>
+              <% } %>
+
+                <button class="bg-transparent border-0 cursor-pointer p-0 flex items-center gap-2"
+                  @click="profileOpen = !profileOpen">
+                  <div
+                    class="w-9 h-9 rounded-full border border-[#C5A267]/35 bg-[#C5A267]/10 flex items-center justify-center text-[#C5A267] overflow-hidden hover:border-[#C5A267]/70 transition-colors duration-200">
+                    <% if (user && user.profileImage) { %>
+                      <img id="navProfilePic" src="<%= user.profileImage %>" alt="Profile"
+                        class="w-full h-full object-cover">
+                      <% } else { %>
+                        <svg id="navDefaultIcon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                          <circle cx="12" cy="7" r="4" />
                         </svg>
-                    </a>
+                        <% } %>
+                  </div>
+                </button>
 
-                    <a href="/wishlist" class="relative hidden md:block hover:text-white transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                        </svg>
-
-                        <% if ((wishlistCount || 0)> 0) { %>
-                            <span
-                                class="absolute -top-2 -right-2 bg-red-600 text-white text-[10px] font-bold rounded-full min-w-5 h-5 px-1 flex items-center justify-center leading-none">
-                                <%= wishlistCount> 99 ? "99+" : wishlistCount %>
-                            </span>
-                            <% } %>
-                    </a>
-                    <% } %>
-
-                        <div class="relative flex items-center" @click.away="profileOpen = false">
-                            <% if (user && (user.name || user.fullname)) { %>
-                                <span
-                                    class="hidden sm:inline mr-2 text-[10px] font-bold tracking-widest text-[#C5A267] uppercase">
-                                    <%= user.name || user.fullname %>
-                                </span>
-                                <% } %>
-
-                                    <button @click="profileOpen = !profileOpen"
-                                        class="hover:text-white transition focus:outline-none flex items-center">
-                                        <div
-                                            class="w-8 h-8 rounded-full overflow-hidden border border-gray-700 flex items-center justify-center bg-gray-800">
-                                            <% if (user && user.profileImage) { %>
-                                                <img id="navProfilePic" src="<%= user.profileImage %>" alt="Profile"
-                                                    class="w-full h-full object-cover rounded-full">
-                                                <% } else { %>
-                                                    <svg id="navDefaultIcon" xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                                        stroke="currentColor" class="w-5 h-5">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                                                    </svg>
-                                                    <% } %>
-                                        </div>
-                                    </button>
-
-                                    <div x-show="profileOpen" x-transition:enter="transition ease-out duration-200"
-                                        x-transition:enter-start="opacity-0 translate-y-2"
-                                        x-transition:enter-end="opacity-100 translate-y-0"
-                                        class="absolute right-0 mt-3 w-56 bg-[#0a0a0a]/95 backdrop-blur-xl border border-gray-800 rounded-2xl shadow-2xl py-3 z-[60]"
-                                        style="display: none; top: 100%;">
-
-                                        <% if (user) { %>
-                                            <div class="px-5 py-3 border-b border-gray-800/50 mb-2 text-white">
-                                                <p class="text-sm font-semibold truncate">
-                                                    <%= user.name || user.fullname %>
-                                                </p>
-                                                <p class="text-[10px] text-gray-500 truncate">
-                                                    <%= user.email %>
-                                                </p>
-                                            </div>
-                                            <div class="px-2 space-y-1">
-                                                <a href="/profile"
-                                                    class="block px-3 py-2 text-xs text-gray-300 hover:text-[#C5A267] hover:bg-[#C5A267]/5 rounded-xl">My
-                                                    Profile</a>
-                                                <a href="/orders"
-                                                    class="block px-3 py-2 text-xs text-gray-300 hover:text-[#C5A267] hover:bg-[#C5A267]/5 rounded-xl">Order
-                                                    History</a>
-                                                <form action="/auth/logout" method="post">
-                                                    <button
-                                                        class="block px-3 py-2 text-xs text-red-500 hover:bg-red-500/5 rounded-xl">Sign
-                                                        Out</button>
-                                                </form>
-                                            </div>
-                                            <% } else { %>
-                                                <div class="p-4 space-y-3">
-                                                    <a href="/auth/login"
-                                                        class="block w-full text-center bg-[#C5A267] text-black py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest">Log
-                                                        in</a>
-                                                    <a href="/auth/signup"
-                                                        class="block w-full text-center border border-gray-700 text-white py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest">Signup</a>
-                                                </div>
-                                                <% } %>
-                                    </div>
-                        </div>
-
-                        <button @click="open = !open"
-                            class="md:hidden text-gray-300 hover:text-white focus:outline-none">
-                            <svg x-show="!open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 6h16M4 12h16m-7 6h7"></path>
-                            </svg>
-                            <svg x-show="open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
+                <!-- DROPDOWN -->
+                <div
+                  class="absolute top-[calc(100%+12px)] right-0 w-56 bg-[#060a12]/95 backdrop-blur-xl border border-white/[0.08] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] overflow-hidden z-50"
+                  x-show="profileOpen" x-transition:enter="transition ease-out duration-200"
+                  x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+                  style="display:none;">
+                  <% if (user) { %>
+                    <div class="px-[18px] py-4 border-b border-white/[0.06]">
+                      <div class="text-[13px] font-semibold text-slate-200">
+                        <%= user.name || user.fullname %>
+                      </div>
+                      <div class="text-[10px] text-gray-700 mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
+                        <%= user.email %>
+                      </div>
+                    </div>
+                    <div class="p-2">
+                      <a href="/profile"
+                        class="block px-3 py-2.5 rounded-[10px] text-xs font-medium text-slate-500 no-underline transition-all duration-200 hover:text-[#C5A267] hover:bg-[#C5A267]/[0.06]">
+                        My Profile
+                      </a>
+                      <a href="/orders"
+                        class="block px-3 py-2.5 rounded-[10px] text-xs font-medium text-slate-500 no-underline transition-all duration-200 hover:text-[#C5A267] hover:bg-[#C5A267]/[0.06]">
+                        Order History
+                      </a>
+                      <div class="h-px bg-white/5 my-1"></div>
+                      <form action="/auth/logout" method="post" class="m-0">
+                        <button
+                          class="w-full bg-transparent border-0 cursor-pointer text-left font-[inherit] block px-3 py-2.5 rounded-[10px] text-xs font-medium text-red-400 transition-all duration-200 hover:bg-red-400/[0.06] hover:text-red-500">
+                          Sign Out
                         </button>
-            </div>
-        </div>
+                      </form>
+                    </div>
+                    <% } else { %>
+                      <div class="p-4 flex flex-col gap-2">
+                        <a href="/auth/login" class="block text-center px-2.5 py-2.5 rounded-[10px] text-[10px] font-extrabold tracking-[0.1em] uppercase no-underline transition-all duration-200
+                        bg-gradient-to-br from-[#C5A267] to-[#f0d08a] text-[#04080e]">
+                          Log In
+                        </a>
+                        <a href="/auth/signup" class="block text-center px-2.5 py-2.5 rounded-[10px] text-[10px] font-extrabold tracking-[0.1em] uppercase no-underline transition-all duration-200
+                        border border-white/10 text-slate-200 hover:border-[#C5A267]/40 hover:text-[#C5A267]">
+                          Sign Up
+                        </a>
+                      </div>
+                      <% } %>
+                </div>
+          </div>
+
+          <!-- MOBILE BURGER -->
+          <button
+            class="flex md:hidden items-center justify-center bg-transparent border-0 cursor-pointer p-1.5 text-slate-500 hover:text-slate-200 transition-colors duration-200"
+            @click="open = !open">
+            <svg x-show="!open" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+            <svg x-show="open" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+
     </div>
+  </div>
 
-    <div x-show="open" x-transition:enter="transition ease-out duration-200"
-        x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
-        x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
-        x-transition:leave-end="opacity-0 -translate-y-4"
-        class="md:hidden bg-black border-b border-gray-900 px-6 py-6 space-y-4" style="display: none;">
-
-        <a href="/"
-            class="block text-[11px] tracking-[0.2em] font-medium text-gray-300 hover:text-[#C5A267] transition">HOME</a>
-        <a href="/shop"
-            class="block text-[11px] tracking-[0.2em] font-medium text-gray-300 hover:text-[#C5A267] transition">SHOP</a>
-        <a href="/about"
-            class="block text-[11px] tracking-[0.2em] font-medium text-gray-300 hover:text-[#C5A267] transition">ABOUT</a>
-
-        <% if (user) { %>
-            <div class="pt-4 border-t border-gray-900 flex space-x-6">
-                <a href="/wishlist"
-                    class="text-gray-300 hover:text-white flex items-center space-x-2 text-[10px] tracking-widest uppercase">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-4 h-4 text-[#C5A267]">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                    </svg>
-                    <span>Wishlist</span>
-                </a>
-            </div>
-            <% } %>
-    </div>
+  <!-- MOBILE DRAWER -->
+  <div class="bg-[#04080e]/[0.97] backdrop-blur-lg border-t border-white/5 px-7 py-6" x-show="open"
+    x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2"
+    x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150"
+    x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2"
+    style="display:none;">
+    <a href="/"
+      class="block py-3 text-[11px] font-bold tracking-[0.2em] uppercase text-slate-500 no-underline border-b border-white/[0.04] transition-colors duration-200 hover:text-[#28c9f4]">
+      Home
+    </a>
+    <a href="/shop"
+      class="block py-3 text-[11px] font-bold tracking-[0.2em] uppercase text-slate-500 no-underline border-b border-white/[0.04] transition-colors duration-200 hover:text-[#28c9f4]">
+      Shop
+    </a>
+    <a href="/about"
+      class="block py-3 text-[11px] font-bold tracking-[0.2em] uppercase text-slate-500 no-underline border-b border-white/[0.04] transition-colors duration-200 hover:text-[#28c9f4] last:border-b-0">
+      About
+    </a>
+    <% if (user) { %>
+      <div class="mt-5 pt-5 border-t border-white/[0.06] flex gap-3">
+        <a href="/wishlist" title="Wishlist" class="relative w-10 h-10 rounded-xl flex items-center justify-center border border-white/5 bg-white/[0.02] text-gray-500
+                  hover:text-[#28c9f4] hover:border-[#28c9f4]/30 hover:bg-[#28c9f4]/5
+                  transition-all duration-[220ms] no-underline">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+        </a>
+      </div>
+      <% } %>
+  </div>
 </nav>

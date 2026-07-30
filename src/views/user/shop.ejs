@@ -1,314 +1,612 @@
-<!-- Main Layout using Tailwind CSS matching the dark glassmorphism theme -->
-<section class="max-w-[1400px] mx-auto px-6 py-12 flex flex-col lg:flex-row gap-12">
-    
-    <!-- LEFT SIDEBAR: FILTERS & SORT -->
-    <aside class="w-full lg:w-64 flex-shrink-0">
-        <div class="flex justify-between items-end border-b border-[#333] pb-4 mb-6">
-            <h2 class="text-xs font-bold tracking-widest text-white uppercase">Filters & Sort</h2>
-            <a href="/shop" class="text-[10px] text-gray-400 hover:text-[#00FFFF] uppercase tracking-wider transition-colors">Clear All</a>
-        </div>
+<%# ── Tiny style block: ONLY animation keyframes (no layout CSS) ── %>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+*{font-family:'Inter',-apple-system,sans-serif;}
 
-        <form id="filterForm" action="/shop" method="GET" class="space-y-6">
-    <!-- Retain current search if any -->
-    <% if (search) { %>
-        <input type="hidden" name="search" value="<%= search %>">
-    <% } %>
-
-    <!-- CATEGORIES ACCORDION -->
-    <div class="border-b border-[#333] pb-4">
-        <button type="button" class="flex justify-between items-center w-full text-xs font-bold tracking-widest text-white uppercase mb-4 focus:outline-none group" onclick="toggleAccordion('categories-content', this)">
-            <span class="group-hover:text-[#00FFFF] transition-colors">Categories</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transform transition-transform duration-200 text-gray-500 group-hover:text-[#00FFFF]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-        </button>
-        
-        <div id="categories-content" class="space-y-4 pt-2">
-            <label class="flex items-center cursor-pointer group">
-                <input type="radio" name="category" value="" <%= category === '' ? 'checked' : '' %> class="peer hidden">
-                <div class="w-4 h-4 border border-[#444] rounded-sm mr-3 peer-checked:bg-[#00FFFF] peer-checked:border-[#00FFFF] transition-all flex items-center justify-center">
-                    <svg class="w-3 h-3 text-black opacity-0 peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
-                </div>
-                <span class="text-sm text-gray-400 peer-checked:text-white peer-checked:font-semibold group-hover:text-white transition-colors">All Categories</span>
-            </label>
-            
-            <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
-                <% categories.forEach(cat => { %>
-                    <label class="flex items-center cursor-pointer group">
-                        <input type="radio" name="category" value="<%= cat.name %>" <%= category.toLowerCase() === cat.name.toLowerCase() ? 'checked' : '' %> class="peer hidden">
-                        <div class="w-4 h-4 border border-[#444] rounded-sm mr-3 peer-checked:bg-[#00FFFF] peer-checked:border-[#00FFFF] transition-all flex items-center justify-center">
-                            <svg class="w-3 h-3 text-black opacity-0 peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
-                        </div>
-                        <span class="text-sm text-gray-400 peer-checked:text-white peer-checked:font-semibold group-hover:text-white transition-colors"><%= cat.name %></span>
-                    </label>
-                <% }) %>
-            <% } else { %>
-                <span class="text-sm text-gray-600">No categories found</span>
-            <% } %>
-        </div>
-    </div>
-
-    <!-- NEW PRICE RANGE ACCORDION -->
-    <div class="border-b border-[#333] pb-4">
-        <button type="button" class="flex justify-between items-center w-full text-xs font-bold tracking-widest text-white uppercase mb-4 focus:outline-none group" onclick="toggleAccordion('price-content', this)">
-            <span class="group-hover:text-[#00FFFF] transition-colors">Price Range</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transform transition-transform duration-200 text-gray-500 group-hover:text-[#00FFFF]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-        </button>
-        
-        <div id="price-content" class="space-y-4 pt-2">
-            <div class="flex items-center gap-2">
-                <input type="number" name="minPrice" value="<%= typeof minPrice !== 'undefined' ? minPrice : '' %>" placeholder="Min ₹" class="w-1/2 bg-[#141414] border border-[#333] focus:border-[#00FFFF] text-white text-sm rounded px-2 py-1.5 outline-none">
-                <span class="text-gray-500">-</span>
-                <input type="number" name="maxPrice" value="<%= typeof maxPrice !== 'undefined' ? maxPrice : '' %>" placeholder="Max ₹" class="w-1/2 bg-[#141414] border border-[#333] focus:border-[#00FFFF] text-white text-sm rounded px-2 py-1.5 outline-none">
-            </div>
-            <button type="submit" class="w-full bg-[#333] hover:bg-[#00FFFF] text-white hover:text-black text-xs font-bold uppercase tracking-widest py-2 rounded transition-colors">Apply Price</button>
-        </div>
-    </div>
-
-    <!-- SORT BY ACCORDION -->
-    <div class="border-b border-[#333] pb-4">
-        <button type="button" class="flex justify-between items-center w-full text-xs font-bold tracking-widest text-white uppercase mb-4 focus:outline-none group" onclick="toggleAccordion('sort-content', this)">
-            <span class="group-hover:text-[#00FFFF] transition-colors">Sort By</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transform transition-transform duration-200 text-gray-500 group-hover:text-[#00FFFF]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-        </button>
-        
-        <div id="sort-content" class="flex flex-col space-y-1 pt-2">
-            <!-- Newest -->
-            <label class="cursor-pointer group py-1.5 flex items-center justify-between">
-                <input type="radio" name="sort" value="newest" <%= sort === 'newest' ? 'checked' : '' %> class="peer hidden">
-                <span class="text-sm font-medium text-gray-500 peer-checked:text-[#00FFFF] group-hover:text-white transition-colors">Newest Arrivals</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#00FFFF] opacity-0 peer-checked:opacity-100 transition-opacity" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-            </label>
-
-            <!-- Price: Low to High -->
-            <label class="cursor-pointer group py-1.5 flex items-center justify-between">
-                <input type="radio" name="sort" value="priceAsc" <%= sort === 'priceAsc' ? 'checked' : '' %> class="peer hidden">
-                <span class="text-sm font-medium text-gray-500 peer-checked:text-[#00FFFF] group-hover:text-white transition-colors">Price: Low to High</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#00FFFF] opacity-0 peer-checked:opacity-100 transition-opacity" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-            </label>
-
-            <!-- Price: High to Low -->
-            <label class="cursor-pointer group py-1.5 flex items-center justify-between">
-                <input type="radio" name="sort" value="priceDesc" <%= sort === 'priceDesc' ? 'checked' : '' %> class="peer hidden">
-                <span class="text-sm font-medium text-gray-500 peer-checked:text-[#00FFFF] group-hover:text-white transition-colors">Price: High to Low</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#00FFFF] opacity-0 peer-checked:opacity-100 transition-opacity" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-            </label>
-
-            <!-- Name: A to Z -->
-            <label class="cursor-pointer group py-1.5 flex items-center justify-between">
-                <input type="radio" name="sort" value="aToZ" <%= sort === 'aToZ' ? 'checked' : '' %> class="peer hidden">
-                <span class="text-sm font-medium text-gray-500 peer-checked:text-[#00FFFF] group-hover:text-white transition-colors">Name: A to Z</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#00FFFF] opacity-0 peer-checked:opacity-100 transition-opacity" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-            </label>
-
-            <!-- Name: Z to A -->
-            <label class="cursor-pointer group py-1.5 flex items-center justify-between">
-                <input type="radio" name="sort" value="zToA" <%= sort === 'zToA' ? 'checked' : '' %> class="peer hidden">
-                <span class="text-sm font-medium text-gray-500 peer-checked:text-[#00FFFF] group-hover:text-white transition-colors">Name: Z to A</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#00FFFF] opacity-0 peer-checked:opacity-100 transition-opacity" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-            </label>
-        </div>
-    </div>
-</form>
-    </aside>
-
-    <!-- RIGHT MAIN CONTENT -->
-    <main class="flex-1">
-        
-        <!-- Top Bar (Title & Search) -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
-            <h1 class="text-3xl font-bold text-white tracking-tight">All Products</h1>
-            
-            <form action="/shop" method="GET" class="w-full md:w-[450px]">
-                <!-- Retain current filters if any -->
-                <% if (category) { %><input type="hidden" name="category" value="<%= category %>"><% } %>
-                <% if (sort) { %><input type="hidden" name="sort" value="<%= sort %>"><% } %>
-                <% if (typeof minPrice !== 'undefined' && !isNaN(minPrice)) { %><input type="hidden" name="minPrice" value="<%= minPrice %>"><% } %>
-                <% if (typeof maxPrice !== 'undefined' && !isNaN(maxPrice)) { %><input type="hidden" name="maxPrice" value="<%= maxPrice %>"><% } %>
-                
-                <!-- Advanced Search Bar matching mockup -->
-                <div class="flex items-center border border-[#333] rounded-lg h-12 bg-[#141414] p-1.5 focus-within:border-[#00FFFF] transition-colors">
-                    
-                    <!-- Input -->
-                    <input type="text" name="search" id="searchInput" value="<%= search %>" placeholder="Search categories..." class="flex-1 bg-transparent text-sm text-white px-3 focus:outline-none placeholder-gray-500">
-                    
-                    <!-- Integrated Search Button -->
-                    <button type="submit" class="h-full px-4 rounded-md bg-[#28c9f4] hover:bg-[#66FFFF] text-black text-sm font-semibold transition-colors">
-                        Search
-                    </button>
-
-                    <!-- Clear Button (Only shows if search has text) -->
-                    <% if (search) { %>
-                        <a href="/shop?category=<%= category %>&sort=<%= sort %><%= (typeof minPrice !== 'undefined' && !isNaN(minPrice)) ? '&minPrice='+minPrice : '' %><%= (typeof maxPrice !== 'undefined' && !isNaN(maxPrice)) ? '&maxPrice='+maxPrice : '' %>" class="ml-3 mr-2 text-sm font-bold text-[#28c9f4] hover:text-white transition-colors tracking-wide uppercase">
-                            Clear
-                        </a>
-                    <% } %>
-                </div>
-            </form>
-        </div>
-
-        <!-- PRODUCT GRID -->
-        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-12">
-            <% if (products && products.length > 0) { %>
-                <% products.forEach(product => { %>
-                    <a href="/productDetail/<%= product._id %>" class="group cursor-pointer block text-left">
-                        <div class="aspect-[4/5] flex justify-center items-center mb-5 overflow-hidden bg-transparent">
-                            <!-- Show a placeholder if they didn't upload an image for the product yet -->
-                            <img src="<%= product.primaryImage || 'https://placehold.co/400x500/111/444?text=Perfume' %>" alt="<%= product.productName %>" class="h-5/6 object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-[0_10px_30px_rgba(0,0,0,0.6)]">
-                        </div>
-                        <h3 class="text-base font-semibold text-white mb-1 tracking-tight group-hover:text-[#00FFFF] transition-colors"><%= product.productName %></h3>
-                        <p class="text-xs text-gray-500 font-serif-italic mb-3"><%= product.brand %></p>
-                        
-                        <% 
-                           let displayPrice = 0;
-                           if (product.variants && product.variants.length > 0) {
-                               displayPrice = product.variants[0].salePrice > 0 ? product.variants[0].salePrice : product.variants[0].regularPrice;
-                           }
-                        %>
-                        <p class="text-sm font-semibold text-white">₹<%= displayPrice %></p>
-                    </a>
-                <% }) %>
-            <% } else { %>
-                <div class="col-span-full py-20 text-center border border-dashed border-[#333] rounded-lg">
-                    <p class="text-gray-400 text-lg">No products found matching your criteria.</p>
-                    <a href="/shop" class="inline-block mt-4 text-[#00FFFF] hover:underline text-sm font-bold tracking-widest uppercase">Clear Filters</a>
-                </div>
-            <% } %>
-        </div>
-
-        <!-- PAGINATION -->
-        <% if (totalPages > 1) { 
-            let queryParams = `&search=${search}&category=${category}&sort=${sort}`;
-            if (typeof minPrice !== 'undefined' && !isNaN(minPrice)) queryParams += `&minPrice=${minPrice}`;
-            if (typeof maxPrice !== 'undefined' && !isNaN(maxPrice)) queryParams += `&maxPrice=${maxPrice}`;
-        %>
-            <div id="paginationContainer" class="flex justify-center items-center mt-20 gap-2">
-                <!-- Previous Button -->
-                <a href="<%= currentPage > 1 ? '?page=' + (currentPage - 1) + queryParams : '#' %>" 
-                   class="w-8 h-8 flex items-center justify-center border border-[#444] text-gray-400 hover:text-white hover:border-[#00FFFF] transition-colors <%= currentPage === 1 ? 'opacity-50 cursor-not-allowed pointer-events-none' : '' %>">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
-                </a>
-
-                <!-- Page Numbers -->
-                <% for(let i = 1; i <= totalPages; i++) { %>
-                    <a href="?page=<%= i %><%= queryParams %>" 
-                       class="w-8 h-8 flex items-center justify-center border text-xs font-bold transition-colors <%= currentPage === i ? 'bg-[#00FFFF] text-black border-[#00FFFF]' : 'border-[#444] text-white hover:border-[#00FFFF]' %>">
-                        <%= i %>
-                    </a>
-                <% } %>
-
-                <!-- Next Button -->
-                <a href="<%= currentPage < totalPages ? '?page=' + (currentPage + 1) + queryParams : '#' %>" 
-                   class="w-8 h-8 flex items-center justify-center border border-[#444] text-gray-400 hover:text-white hover:border-[#00FFFF] transition-colors <%= currentPage === totalPages ? 'opacity-50 cursor-not-allowed pointer-events-none' : '' %>">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                </a>
-            </div>
-        <% } %>
-    </main>
-</section>
-
-<script>
-function toggleAccordion(id, btn) {
-    const content = document.getElementById(id);
-    const icon = btn.querySelector('svg');
-    if (content.style.display === 'none' || content.style.display === '') {
-        content.style.display = 'block';
-        icon.style.transform = 'rotate(0deg)';
-    } else {
-        content.style.display = 'none';
-        icon.style.transform = 'rotate(-180deg)';
-    }
+@keyframes spGlow {
+  0%,100% { transform: scale(1);    opacity: .7; }
+  50%      { transform: scale(1.25); opacity: 1;  }
+}
+@keyframes spDot {
+  0%,100% { opacity: 1;  transform: scale(1);  }
+  50%      { opacity: .3; transform: scale(.6); }
 }
 
-// AJAX Filtering Logic
+/* Hero pseudo-elements (cannot be done with Tailwind) */
+.sp-hero::before {
+  content: ''; position: absolute; top: -60px; right: -20px;
+  width: 320px; height: 320px;
+  background: radial-gradient(circle, rgba(40,201,244,0.1) 0%, transparent 70%);
+  animation: spGlow 8s ease-in-out infinite;
+}
+.sp-hero::after {
+  content: ''; position: absolute; bottom: -50px; left: 30%;
+  width: 220px; height: 220px;
+  background: radial-gradient(circle, rgba(120,80,255,0.06) 0%, transparent 70%);
+  animation: spGlow 12s ease-in-out infinite reverse;
+}
+
+/* Hero badge dot */
+.sp-hero-badge::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: #28c9f4; animation: spDot 2s ease-in-out infinite;
+  display:inline-block; flex-shrink:0;
+}
+
+/* Card image glow on hover */
+.sp-card-img::after {
+  content: ''; position: absolute; bottom: 10%; left: 50%;
+  transform: translateX(-50%); width: 60%; height: 40%;
+  background: radial-gradient(ellipse, rgba(40,201,244,0.1) 0%, transparent 70%);
+  opacity: 0; transition: opacity .4s; border-radius: 50%; filter: blur(20px);
+}
+.sp-card:hover .sp-card-img::after { opacity: 1; }
+
+/* Category radio checked styles (sibling selector, not possible in Tailwind) */
+.sp-cat-item input:checked ~ .sp-cat-box         { background: #28c9f4; border-color: #28c9f4; }
+.sp-cat-item input:checked ~ .sp-cat-box svg     { opacity: 1; }
+.sp-cat-item input:checked ~ .sp-cat-label       { color: #fff; font-weight: 600; }
+.sp-cat-box svg { opacity: 0; transition: opacity .15s; }
+
+/* Accordion btn open state (JS toggled) */
+.sp-acc-btn.open     { color: #28c9f4; }
+.sp-acc-btn.open svg { transform: rotate(180deg); }
+
+/* Sort selected (JS toggled) */
+.sp-sort-item.is-selected                  { background: rgba(40,201,244,0.06); }
+.sp-sort-item.is-selected .sp-sort-label  { color: #28c9f4; font-weight: 600; }
+.sp-sort-item.is-selected .sp-sort-check  { opacity: 1; }
+</style>
+
+<%# ═══════════════════════════════════════════════════════════
+    SHOP PAGE WRAPPER
+═══════════════════════════════════════════════════════════ %>
+<div class="max-w-[1380px] mx-auto px-7 pt-9 pb-20 text-[#c8cdd8]">
+
+  <%# ═══════ HERO ═══════ %>
+  <div class="sp-hero relative overflow-hidden rounded-2xl
+              bg-gradient-to-br from-[#050d14] via-[#0a1a28] to-[#040e1a]
+              border border-[#28c9f4]/10
+              shadow-[0_8px_40px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(40,201,244,0.06)]
+              p-12 mb-11">
+
+    <%# dot-grid overlay %>
+    <div class="absolute inset-0 pointer-events-none"
+         style="background-image:radial-gradient(circle,rgba(40,201,244,0.04)1px,transparent 1px);background-size:30px 30px;"></div>
+
+    <%# hero inner %>
+    <div class="relative z-10 flex items-center justify-between flex-wrap gap-6">
+
+      <div>
+        <div class="sp-hero-badge inline-flex items-center gap-1.5
+                    text-[10px] font-bold tracking-[0.14em] uppercase
+                    text-[#28c9f4] px-3 py-1
+                    border border-[#28c9f4]/25 rounded-full
+                    bg-[#28c9f4]/[0.07] mb-3">
+          Nafahath Collection
+        </div>
+        <h1 class="text-[36px] font-extrabold m-0 tracking-[-1.5px] leading-none
+                   bg-gradient-to-br from-white to-[#94c8df]
+                   bg-clip-text text-transparent [-webkit-text-fill-color:transparent]">
+          All Products
+        </h1>
+        <p class="text-[13.5px] text-[#374151] mt-2 font-normal">
+          Discover our curated collection of luxury fragrances.
+        </p>
+      </div>
+
+      <%# SEARCH FORM %>
+      <form action="/shop" method="GET" class="flex gap-0 relative z-10" id="searchForm">
+        <% if (category) { %><input type="hidden" name="category" value="<%= category %>"><% } %>
+        <% if (sort) { %><input type="hidden" name="sort" value="<%= sort %>"><% } %>
+        <% if (typeof minPrice !== 'undefined' && !isNaN(minPrice)) { %><input type="hidden" name="minPrice" value="<%= minPrice %>"><% } %>
+        <% if (typeof maxPrice !== 'undefined' && !isNaN(maxPrice)) { %><input type="hidden" name="maxPrice" value="<%= maxPrice %>"><% } %>
+
+        <div class="flex items-center h-12
+                    bg-white/[0.04] border border-white/10
+                    rounded-xl px-[18px] pr-1.5
+                    min-w-[360px] sm:min-w-full
+                    focus-within:border-[#28c9f4]/50
+                    focus-within:shadow-[0_0_0_3px_rgba(40,201,244,0.08)]
+                    transition-[border-color,box-shadow] duration-[250ms]">
+
+          <%# search icon %>
+          <svg class="text-[#374151] shrink-0" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+
+          <input type="text" name="search" id="searchInput" value="<%= search %>"
+                 placeholder="Search fragrances, brands…"
+                 class="flex-1 bg-transparent border-none outline-none
+                        text-[#e2e8f0] text-sm font-[inherit] px-3
+                        placeholder-[#2d3748]">
+
+          <% if (search) { %>
+            <a href="/shop?category=<%= category %>&sort=<%= sort %><%= (typeof minPrice !== 'undefined' && !isNaN(minPrice)) ? '&minPrice='+minPrice : '' %><%= (typeof maxPrice !== 'undefined' && !isNaN(maxPrice)) ? '&maxPrice='+maxPrice : '' %>"
+               class="inline-flex items-center gap-1 text-[#28c9f4] text-xs font-bold
+                      tracking-[0.06em] uppercase no-underline px-3
+                      hover:text-white transition-colors duration-200">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              Clear
+            </a>
+          <% } %>
+
+          <button type="submit"
+                  class="h-9 px-5 rounded-lg
+                         bg-gradient-to-r from-[#28c9f4] to-[#0ea5e9]
+                         text-[#03111a] border-none text-xs font-bold
+                         cursor-pointer font-[inherit] tracking-[0.04em]
+                         hover:from-[#4dd8f8] hover:to-[#38bdf8]
+                         hover:shadow-[0_4px_14px_rgba(40,201,244,0.35)]
+                         transition-all duration-200">
+            Search
+          </button>
+        </div>
+      </form>
+    </div>
+  </div><%# /hero %>
+
+  <%# ═══════ LAYOUT ═══════ %>
+  <div class="flex gap-8 items-start max-[900px]:flex-col">
+
+    <%# ═══════ SIDEBAR ═══════ %>
+    <aside class="w-64 shrink-0 sticky top-6
+                  bg-[#0a0e16]/70 backdrop-blur-xl
+                  border border-white/[0.07] rounded-[18px]
+                  p-7
+                  shadow-[0_4px_28px_rgba(0,0,0,0.4)]
+                  max-[900px]:w-full max-[900px]:static">
+
+      <%# sidebar header %>
+      <div class="flex justify-between items-center
+                  mb-6 pb-[18px] border-b border-white/[0.06]">
+        <div class="flex items-center gap-2
+                    text-[11px] font-extrabold tracking-[0.14em] uppercase text-[#e2e8f0]">
+          <svg class="text-[#28c9f4]" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          Filters &amp; Sort
+        </div>
+        <a href="/shop"
+           class="text-[10px] font-bold tracking-[0.08em] uppercase text-[#374151]
+                  no-underline px-2 py-1 rounded-md
+                  border border-white/[0.07]
+                  hover:text-[#f87171] hover:border-[#f87171]/30 hover:bg-[#f87171]/[0.06]
+                  transition-all duration-200">
+          Reset
+        </a>
+      </div>
+
+      <form id="filterForm" action="/shop" method="GET">
+        <% if (search) { %><input type="hidden" name="search" value="<%= search %>"><% } %>
+
+        <%# ─── CATEGORIES ─── %>
+        <div class="border-b border-white/[0.05] pb-5 mb-5">
+          <button type="button"
+                  class="sp-acc-btn open
+                         flex justify-between items-center w-full
+                         bg-none border-none cursor-pointer
+                         text-[10px] font-extrabold tracking-[0.14em] uppercase
+                         text-[#64748b] p-0 mb-4 font-[inherit]
+                         transition-colors duration-200
+                         hover:text-[#e2e8f0]"
+                  onclick="spToggle('catContent', this)">
+            Categories
+            <svg class="transition-transform duration-[250ms] text-[#374151]"
+                 width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div id="catContent">
+            <label class="sp-cat-item flex items-center gap-2.5 cursor-pointer py-1.5 mb-0.5 transition-all duration-200 group">
+              <input type="radio" name="category" value="" <%= category === '' ? 'checked' : '' %> class="hidden">
+              <div class="sp-cat-box w-4 h-4 shrink-0 border border-[rgba(255,255,255,0.15)] rounded border-[1.5px]
+                          flex items-center justify-center transition-all duration-200 bg-transparent">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <span class="sp-cat-label text-[13px] text-[#64748b] transition-colors duration-200 font-medium
+                           group-hover:text-[#e2e8f0]">All Categories</span>
+            </label>
+            <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+              <% categories.forEach(cat => { %>
+                <label class="sp-cat-item flex items-center gap-2.5 cursor-pointer py-1.5 mb-0.5 transition-all duration-200 group">
+                  <input type="radio" name="category" value="<%= cat.name %>" <%= category.toLowerCase() === cat.name.toLowerCase() ? 'checked' : '' %> class="hidden">
+                  <div class="sp-cat-box w-4 h-4 shrink-0 border-[1.5px] border-[rgba(255,255,255,0.15)] rounded
+                              flex items-center justify-center transition-all duration-200 bg-transparent">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <span class="sp-cat-label text-[13px] text-[#64748b] transition-colors duration-200 font-medium
+                               group-hover:text-[#e2e8f0]"><%= cat.name %></span>
+                </label>
+              <% }) %>
+            <% } else { %>
+              <p class="text-xs text-[#374151] py-1">No categories found</p>
+            <% } %>
+          </div>
+        </div>
+
+        <%# ─── PRICE RANGE ─── %>
+        <div class="border-b border-white/[0.05] pb-5 mb-5">
+          <button type="button"
+                  class="sp-acc-btn open
+                         flex justify-between items-center w-full
+                         bg-none border-none cursor-pointer
+                         text-[10px] font-extrabold tracking-[0.14em] uppercase
+                         text-[#64748b] p-0 mb-4 font-[inherit]
+                         transition-colors duration-200 hover:text-[#e2e8f0]"
+                  onclick="spToggle('priceContent', this)">
+            Price Range
+            <svg class="transition-transform duration-[250ms] text-[#374151]"
+                 width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div id="priceContent">
+            <div class="flex items-center gap-2 mb-3.5">
+              <input type="number" name="minPrice"
+                     value="<%= typeof minPrice !== 'undefined' ? minPrice : '' %>"
+                     placeholder="Min ₹"
+                     class="flex-1 min-w-0 bg-white/[0.03] border border-white/[0.08] text-[#e2e8f0]
+                            px-3 py-2.5 rounded-[9px] text-[13px] outline-none font-[inherit]
+                            transition-[border-color] duration-200 w-0
+                            focus:border-[#28c9f4]/45 placeholder-[#2d3748]">
+              <span class="text-[#374151] text-xs shrink-0">—</span>
+              <input type="number" name="maxPrice"
+                     value="<%= typeof maxPrice !== 'undefined' ? maxPrice : '' %>"
+                     placeholder="Max ₹"
+                     class="flex-1 min-w-0 bg-white/[0.03] border border-white/[0.08] text-[#e2e8f0]
+                            px-3 py-2.5 rounded-[9px] text-[13px] outline-none font-[inherit]
+                            transition-[border-color] duration-200 w-0
+                            focus:border-[#28c9f4]/45 placeholder-[#2d3748]">
+            </div>
+            <button type="submit"
+                    class="w-full py-2.5 rounded-[9px]
+                           bg-[#28c9f4]/[0.08] border border-[#28c9f4]/20
+                           text-[#28c9f4] text-[11px] font-bold tracking-[0.1em] uppercase
+                           cursor-pointer font-[inherit]
+                           hover:bg-[#28c9f4]/[0.15] hover:border-[#28c9f4]/40
+                           transition-all duration-[250ms]">
+              Apply Price
+            </button>
+          </div>
+        </div>
+
+        <%# ─── SORT BY ─── %>
+        <div>
+          <button type="button"
+                  class="sp-acc-btn open
+                         flex justify-between items-center w-full
+                         bg-none border-none cursor-pointer
+                         text-[10px] font-extrabold tracking-[0.14em] uppercase
+                         text-[#64748b] p-0 mb-4 font-[inherit]
+                         transition-colors duration-200 hover:text-[#e2e8f0]"
+                  onclick="spToggle('sortContent', this)">
+            Sort By
+            <svg class="transition-transform duration-[250ms] text-[#374151]"
+                 width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div id="sortContent">
+            <% [
+              ['newest',    'Newest Arrivals'],
+              ['priceAsc',  'Price: Low to High'],
+              ['priceDesc', 'Price: High to Low'],
+              ['aToZ',      'Name: A → Z'],
+              ['zToA',      'Name: Z → A'],
+            ].forEach(([val, label]) => { %>
+              <label class="sp-sort-item <%= sort === val ? 'is-selected' : '' %>
+                            flex items-center justify-between
+                            px-2.5 py-2 rounded-[9px] cursor-pointer
+                            transition-all duration-200 mb-0.5
+                            hover:bg-white/[0.04]">
+                <input type="radio" name="sort" value="<%= val %>" <%= sort === val ? 'checked' : '' %> class="hidden">
+                <span class="sp-sort-label text-[13px] text-[#64748b] font-medium transition-colors duration-200"><%= label %></span>
+                <div class="sp-sort-check
+                            w-4 h-4 rounded-full
+                            bg-[#28c9f4]/15 border-[1.5px] border-[#28c9f4]
+                            flex items-center justify-center
+                            opacity-0 transition-opacity duration-200 shrink-0">
+                  <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#28c9f4" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+              </label>
+            <% }) %>
+          </div>
+        </div>
+
+      </form>
+    </aside><%# /sidebar %>
+
+    <%# ═══════ MAIN ═══════ %>
+    <main class="flex-1 min-w-0">
+
+      <%# Top bar %>
+      <div class="flex items-center justify-between mb-7 flex-wrap gap-3">
+        <div class="text-xs font-semibold text-[#374151]">
+          Showing <span class="text-[#28c9f4]"><%= products ? products.length : 0 %></span> products
+          <% if (totalPages > 1) { %> · Page <span class="text-[#28c9f4]"><%= currentPage %></span> of <span class="text-[#28c9f4]"><%= totalPages %></span><% } %>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <% if (category) { %>
+            <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#28c9f4]
+                         bg-[#28c9f4]/[0.08] border border-[#28c9f4]/20
+                         px-2.5 py-1 rounded-full"><%= category %></span>
+          <% } %>
+          <% if (search) { %>
+            <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#28c9f4]
+                         bg-[#28c9f4]/[0.08] border border-[#28c9f4]/20
+                         px-2.5 py-1 rounded-full">🔍 <%= search %></span>
+          <% } %>
+          <% if (typeof minPrice !== 'undefined' && !isNaN(minPrice) && minPrice) { %>
+            <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#28c9f4]
+                         bg-[#28c9f4]/[0.08] border border-[#28c9f4]/20
+                         px-2.5 py-1 rounded-full">Min ₹<%= minPrice %></span>
+          <% } %>
+          <% if (typeof maxPrice !== 'undefined' && !isNaN(maxPrice) && maxPrice) { %>
+            <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#28c9f4]
+                         bg-[#28c9f4]/[0.08] border border-[#28c9f4]/20
+                         px-2.5 py-1 rounded-full">Max ₹<%= maxPrice %></span>
+          <% } %>
+        </div>
+      </div>
+
+      <%# PRODUCT GRID %>
+      <div id="productGrid"
+           class="grid grid-cols-3 gap-6
+                  lg:grid-cols-2
+                  sm:grid-cols-1
+                  transition-[opacity,transform] duration-300 ease-in-out">
+
+        <% if (products && products.length > 0) { %>
+          <% products.forEach((product, idx) => { %>
+            <%
+              let displayPrice = 0, wasPrice = 0;
+              if (product.variants && product.variants.length > 0) {
+                const v = product.variants[0];
+                displayPrice = v.salePrice > 0 ? v.salePrice : v.regularPrice;
+                if (v.salePrice > 0) wasPrice = v.regularPrice;
+              }
+              const isSale = wasPrice > 0;
+              const isNew  = idx < 3 && !isSale;
+            %>
+            <a href="/productDetail/<%= product._id %>"
+               class="sp-card
+                      relative bg-[#0a0e16]/60 border border-white/[0.06]
+                      rounded-[18px] overflow-hidden block no-underline
+                      transition-all duration-300
+                      hover:-translate-y-1.5 hover:border-[#28c9f4]/[0.22]
+                      hover:shadow-[0_20px_50px_rgba(0,0,0,0.55),0_0_0_1px_rgba(40,201,244,0.06)]">
+
+              <% if (isNew)  { %>
+                <div class="absolute top-3.5 left-3.5 z-[3]
+                            text-[9px] font-extrabold tracking-[0.1em] uppercase
+                            px-2.5 py-1 rounded-full
+                            bg-[#28c9f4]/15 text-[#28c9f4] border border-[#28c9f4]/30">New</div>
+              <% } %>
+              <% if (isSale) { %>
+                <div class="absolute top-3.5 left-3.5 z-[3]
+                            text-[9px] font-extrabold tracking-[0.1em] uppercase
+                            px-2.5 py-1 rounded-full
+                            bg-[#fbbf24]/15 text-[#fbbf24] border border-[#fbbf24]/30">Sale</div>
+              <% } %>
+
+              <%# card image %>
+              <div class="sp-card-img relative overflow-hidden aspect-[4/5]
+                          flex items-center justify-center p-7"
+                   style="background:radial-gradient(circle at 50% 60%,rgba(40,201,244,0.04) 0%,transparent 65%)">
+                <img src="<%= product.primaryImage || (product.galleryImages && product.galleryImages[0]) || 'https://placehold.co/400x500/0a0e16/1e2533?text=Perfume' %>"
+                     alt="<%= product.productName %>" loading="lazy"
+                     class="w-[75%] h-full object-contain relative z-10 bg-transparent
+                            drop-shadow-[0_16px_32px_rgba(0,0,0,0.7)]
+                            transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]
+                            group-hover:scale-110 group-hover:-translate-y-1.5
+                            [.sp-card:hover_&]:scale-110 [.sp-card:hover_&]:-translate-y-1.5">
+
+                <%# quick-view overlay %>
+                <div class="absolute inset-0 z-[5] flex items-end justify-center pb-5
+                            bg-gradient-to-t from-black/60 to-transparent
+                            opacity-0 transition-opacity duration-300
+                            [.sp-card:hover_&]:opacity-100">
+                  <div class="inline-flex items-center gap-1.5
+                              bg-white/[0.12] backdrop-blur-[10px]
+                              border border-white/20 text-white
+                              text-[11px] font-bold tracking-[0.1em] uppercase
+                              px-[18px] py-2.5 rounded-full
+                              translate-y-2.5 transition-transform duration-300
+                              [.sp-card:hover_&]:translate-y-0">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    View Details
+                  </div>
+                </div>
+              </div><%# /card-img %>
+
+              <%# card body %>
+              <div class="px-5 pt-[18px] pb-[22px] border-t border-white/[0.04]">
+                <div class="text-[10px] font-bold tracking-[0.12em] uppercase text-[#374151] mb-1.5">
+                  <%= product.brand %>
+                </div>
+                <div class="text-[15px] font-bold text-[#e2e8f0] tracking-[-0.2px] leading-[1.3] mb-3.5
+                            transition-colors duration-200
+                            [.sp-card:hover_&]:text-[#28c9f4]">
+                  <%= product.productName %>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-baseline gap-1.5">
+                    <span class="text-[18px] font-extrabold text-white tracking-[-0.5px]">₹<%= displayPrice.toLocaleString('en-IN') %></span>
+                    <% if (wasPrice > 0) { %>
+                      <span class="text-xs text-[#374151] line-through">₹<%= wasPrice.toLocaleString('en-IN') %></span>
+                    <% } %>
+                  </div>
+                  <div class="w-9 h-9 rounded-[10px]
+                              bg-[#28c9f4]/[0.08] border border-[#28c9f4]/15
+                              flex items-center justify-center text-[#28c9f4]
+                              transition-all duration-200 shrink-0
+                              [.sp-card:hover_&]:bg-[#28c9f4]/[0.18] [.sp-card:hover_&]:border-[#28c9f4]/40">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                  </div>
+                </div>
+              </div><%# /card-body %>
+
+            </a>
+          <% }) %>
+
+        <% } else { %>
+          <%# EMPTY STATE %>
+          <div class="col-span-full flex flex-col items-center justify-center
+                      py-20 px-10 text-center
+                      border border-dashed border-white/[0.08] rounded-[18px]
+                      bg-[#0a0e16]/50">
+            <div class="w-16 h-16 rounded-2xl
+                        bg-[#28c9f4]/[0.06] border border-[#28c9f4]/15
+                        flex items-center justify-center text-[#28c9f4] mb-5">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            </div>
+            <div class="text-lg font-bold text-[#e2e8f0] mb-2">No products found</div>
+            <div class="text-[13px] text-[#374151] mb-6">Try adjusting your filters or search term.</div>
+            <a href="/shop"
+               class="inline-flex items-center gap-1.5
+                      text-xs font-bold tracking-[0.08em] uppercase
+                      text-[#28c9f4] no-underline px-5 py-2.5
+                      border border-[#28c9f4]/30 rounded-[9px]
+                      bg-[#28c9f4]/[0.06]
+                      hover:bg-[#28c9f4]/[0.12] hover:border-[#28c9f4]/50
+                      transition-all duration-200">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.78"/></svg>
+              Clear All Filters
+            </a>
+          </div>
+        <% } %>
+      </div><%# /productGrid %>
+
+      <%# PAGINATION %>
+      <% if (totalPages > 1) {
+        let queryParams = `&search=${search}&category=${category}&sort=${sort}`;
+        if (typeof minPrice !== 'undefined' && !isNaN(minPrice)) queryParams += `&minPrice=${minPrice}`;
+        if (typeof maxPrice !== 'undefined' && !isNaN(maxPrice)) queryParams += `&maxPrice=${maxPrice}`;
+      %>
+        <div id="paginationContainer"
+             class="flex justify-center items-center gap-1.5 mt-[60px] flex-wrap">
+
+          <a href="<%= currentPage > 1 ? '?page=' + (currentPage - 1) + queryParams : '#' %>"
+             class="w-[38px] h-[38px] flex items-center justify-center
+                    border border-white/10 rounded-[10px]
+                    text-[13px] font-bold text-[#64748b] no-underline
+                    bg-white/[0.02]
+                    hover:border-[#28c9f4]/50 hover:text-[#28c9f4] hover:bg-[#28c9f4]/[0.06]
+                    transition-all duration-200
+                    <%= currentPage === 1 ? 'opacity-30 pointer-events-none' : '' %>">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </a>
+
+          <% for (let i = 1; i <= totalPages; i++) { %>
+            <a href="?page=<%= i %><%= queryParams %>"
+               class="w-[38px] h-[38px] flex items-center justify-center
+                      border rounded-[10px]
+                      text-[13px] font-bold no-underline
+                      transition-all duration-200
+                      <%= currentPage === i
+                        ? 'bg-gradient-to-r from-[#28c9f4] to-[#0ea5e9] border-transparent text-[#03111a] shadow-[0_4px_14px_rgba(40,201,244,0.35)]'
+                        : 'border-white/10 text-[#64748b] bg-white/[0.02] hover:border-[#28c9f4]/50 hover:text-[#28c9f4] hover:bg-[#28c9f4]/[0.06]' %>">
+              <%= i %>
+            </a>
+          <% } %>
+
+          <a href="<%= currentPage < totalPages ? '?page=' + (currentPage + 1) + queryParams : '#' %>"
+             class="w-[38px] h-[38px] flex items-center justify-center
+                    border border-white/10 rounded-[10px]
+                    text-[13px] font-bold text-[#64748b] no-underline
+                    bg-white/[0.02]
+                    hover:border-[#28c9f4]/50 hover:text-[#28c9f4] hover:bg-[#28c9f4]/[0.06]
+                    transition-all duration-200
+                    <%= currentPage === totalPages ? 'opacity-30 pointer-events-none' : '' %>">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+
+        </div>
+      <% } %>
+
+    </main><%# /main %>
+  </div><%# /layout %>
+</div><%# /wrapper %>
+
+<script>
+/* ── Accordion toggle ── */
+function spToggle(id, btn) {
+  const el     = document.getElementById(id);
+  const isOpen = el.style.display !== 'none' && el.style.display !== '';
+  el.style.display = isOpen ? 'none' : '';
+  btn.classList.toggle('open', !isOpen);
+}
+
+/* ── Sort highlight on change ── */
+document.querySelectorAll('.sp-sort-item').forEach(item => {
+  const radio = item.querySelector('input[type="radio"]');
+  if (radio) {
+    radio.addEventListener('change', () => {
+      document.querySelectorAll('.sp-sort-item').forEach(i => i.classList.remove('is-selected'));
+      item.classList.add('is-selected');
+    });
+  }
+});
+
+/* ══════════════════════════════════
+   AJAX FILTERING (logic preserved)
+══════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
-    const filterForm = document.getElementById('filterForm');
-    const productGrid = document.getElementById('productGrid');
-    const paginationContainer = document.getElementById('paginationContainer');
+  const filterForm          = document.getElementById('filterForm');
+  const productGrid         = document.getElementById('productGrid');
+  const paginationContainer = document.getElementById('paginationContainer');
 
-    const fetchFilteredProducts = async (url, pushToHistory = true) => {
-        try {
-            if (productGrid) {
-                productGrid.style.transition = 'all 0.3s ease';
-                productGrid.style.opacity = '0.3';
-                productGrid.style.transform = 'scale(0.98)';
-                // Optional: show a mini spinner if you want here
-            }
-            
-            const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
-            const text = await response.text();
-            
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(text, 'text/html');
-            
-            const newGrid = doc.getElementById('productGrid');
-            const newPagination = doc.getElementById('paginationContainer');
-            
-            if (newGrid && productGrid) {
-                productGrid.innerHTML = newGrid.innerHTML;
-                
-                // Small delay to allow DOM to render before fading back in
-                setTimeout(() => {
-                    productGrid.style.opacity = '1'; 
-                    productGrid.style.transform = 'scale(1)';
-                }, 50);
-            }
-            
-            if (paginationContainer) {
-                paginationContainer.innerHTML = newPagination ? newPagination.innerHTML : '';
-            }
-            
-            if (pushToHistory) {
-                window.history.pushState({}, '', url);
-            }
-            
-        } catch (error) {
-            console.error("Error fetching products:", error);
-            if (productGrid) productGrid.style.opacity = '1';
-        }
-    };
+  const fetchFilteredProducts = async (url, pushToHistory = true) => {
+    try {
+      if (productGrid) {
+        productGrid.style.transition = 'all 0.3s ease';
+        productGrid.style.opacity    = '0.3';
+        productGrid.style.transform  = 'scale(0.98)';
+      }
+      const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+      const text     = await response.text();
+      const parser   = new DOMParser();
+      const doc      = parser.parseFromString(text, 'text/html');
+      const newGrid  = doc.getElementById('productGrid');
+      const newPagination = doc.getElementById('paginationContainer');
 
-    if (filterForm) {
-        // Auto-submit form when ANY radio button (Category or Sort) is clicked
-        filterForm.querySelectorAll('input[type="radio"]').forEach(radio => {
-            radio.addEventListener('change', () => {
-                filterForm.dispatchEvent(new Event('submit', { cancelable: true }));
-            });
-        });
-
-        // Hijack the main filter form submission
-        filterForm.addEventListener('submit', (e) => {
-            e.preventDefault(); 
-            const formData = new FormData(filterForm);
-            const searchParams = new URLSearchParams(formData);
-            const url = `/shop?${searchParams.toString()}`;
-            fetchFilteredProducts(url);
-        });
+      if (newGrid && productGrid) {
+        productGrid.innerHTML = newGrid.innerHTML;
+        setTimeout(() => {
+          productGrid.style.opacity   = '1';
+          productGrid.style.transform = 'scale(1)';
+        }, 50);
+      }
+      if (paginationContainer) {
+        paginationContainer.innerHTML = newPagination ? newPagination.innerHTML : '';
+      }
+      if (pushToHistory) window.history.pushState({}, '', url);
+    } catch (err) {
+      console.error('Error fetching products:', err);
+      if (productGrid) productGrid.style.opacity = '1';
     }
+  };
 
-    // Hijack Pagination Links
-    document.addEventListener('click', (e) => {
-        const link = e.target.closest('a');
-        if (link && link.href && link.href.includes('/shop?page=')) {
-            e.preventDefault(); 
-            fetchFilteredProducts(link.href);
-            document.querySelector('.flex-1').scrollIntoView({ behavior: 'smooth' });
-        }
+  if (filterForm) {
+    filterForm.querySelectorAll('input[type="radio"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        filterForm.dispatchEvent(new Event('submit', { cancelable: true }));
+      });
     });
+    filterForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const url = `/shop?${new URLSearchParams(new FormData(filterForm)).toString()}`;
+      fetchFilteredProducts(url);
+    });
+  }
 
-    // Handle Browser Back/Forward Buttons (SPA behavior)
-    window.addEventListener('popstate', () => {
-        // Fetch the products for the URL we just went back to, but don't push it to history again
-        fetchFilteredProducts(window.location.href, false);
-        
-        // Update the radio buttons to visually match the URL we went back to
-        const currentUrl = new URL(window.location.href);
-        const currentCategory = currentUrl.searchParams.get('category') || '';
-        const currentSort = currentUrl.searchParams.get('sort') || '';
-        
-        const catRadio = document.querySelector(`input[name="category"][value="${currentCategory}"]`);
-        if (catRadio) catRadio.checked = true;
-        
-        const sortRadio = document.querySelector(`input[name="sort"][value="${currentSort}"]`);
-        if (sortRadio) sortRadio.checked = true;
-    });
+  document.addEventListener('click', e => {
+    const link = e.target.closest('a');
+    if (link && link.href && link.href.includes('/shop?page=')) {
+      e.preventDefault();
+      fetchFilteredProducts(link.href);
+      document.querySelector('main').scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+
+  window.addEventListener('popstate', () => {
+    fetchFilteredProducts(window.location.href, false);
+    const params    = new URL(window.location.href).searchParams;
+    const catRadio  = document.querySelector(`input[name="category"][value="${params.get('category') || ''}"]`);
+    const sortRadio = document.querySelector(`input[name="sort"][value="${params.get('sort') || ''}"]`);
+    if (catRadio)  catRadio.checked  = true;
+    if (sortRadio) sortRadio.checked = true;
+  });
 });
 </script>

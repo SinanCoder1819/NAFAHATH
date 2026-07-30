@@ -21,7 +21,7 @@ export const isLogin = async (req, res, next) => {
 
   try {
     const userId = req.session.user.id || req.session.user._id;
-    const user   = await User.findById(userId).select("isBlocked").lean();
+    const user = await User.findById(userId).select("isBlocked").lean();
 
     if (!user) {
       return req.session.destroy(() => {

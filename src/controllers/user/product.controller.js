@@ -4,10 +4,9 @@ import Category from "../../models/Category.model.js";
 
 export const getProductsDetail = async (req, res) => {
     try {
-        // 1. Get the product ID from the URL (e.g. /productDetail/64a2b3...)
         const productId = req.params.id;
         
-        
+          
         const product = await Product.findById(productId).lean();
         
         if (!product || product.isDeleted) {
@@ -16,12 +15,13 @@ export const getProductsDetail = async (req, res) => {
 
         const relatedProducts = await Product.find({
             category: product.category,
-            _id: { $ne: product._id } 
+            _id: { $ne: product._id },
+            isDeleted: false
         })
         .limit(4)
         .lean();
 
-        // 4. Check if the product is in the user's wishlist
+       
         let inWishlist = false;
         const userId = (req.user && req.user._id) || (req.session && req.session.user && (req.session.user._id || req.session.user.id));
         if (userId) {
@@ -50,6 +50,7 @@ export const getShopPage = async (req, res) => {
         const limit = 9; 
         
         let filter = { isDeleted: false };
+
         
         // i. Search logic
         const search = req.query.search ? req.query.search.trim() : "";
@@ -69,6 +70,8 @@ export const getShopPage = async (req, res) => {
         if (brand) {
             filter.brand = brand;
         }
+
+        
 
         const minPrice = parseFloat(req.query.minPrice);
         const maxPrice = parseFloat(req.query.maxPrice);
@@ -115,6 +118,8 @@ export const getShopPage = async (req, res) => {
             .lean();
 
         const categories = await Category.find({ isDeleted: false }).sort({ name: 1 }).lean();
+
+        
 
         // Pass everything to the view
         res.render("user/shop", {

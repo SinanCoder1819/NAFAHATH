@@ -1,7 +1,7 @@
 import express from "express";
 import * as profileController from "../controllers/user/profile.controller.js";
 import * as addressController from "../controllers/user/address.controller.js";
-import { getHomePage, setLocals } from "../controllers/user/home.controller.js";
+import { getHomePage } from "../controllers/user/home.controller.js";
 import { upload } from "../config/cloudinary.js";
 import { isLogin, noCache } from "../middlewares/auth.middleware.js";
 import {
@@ -29,7 +29,7 @@ const handleUpload = (req, res, next) => {
 };
 
 router.use((req, res, next) => {
-  console.log(res.locals);
+  // console.log(res.locals);
   next();
 });
 
@@ -39,54 +39,16 @@ router.get("/profile", isLogin, noCache, profileController.getProfile);
 router.get("/profile/edit", isLogin, noCache, profileController.getEditProfile);
 router.post("/profile/edit", isLogin, profileController.updateProfile);
 
-router.post(
-  "/profile/update-image",
-  isLogin,
-  handleUpload,
-  profileController.uploadProfileImage,
-);
+router.post("/profile/update-image", isLogin, handleUpload, profileController.uploadProfileImage);
 
-router.get(
-  "/profile/change-password",
-  isLogin,
-  noCache,
-  profileController.blockGoogleUser,
-  profileController.getChangePassword,
-);
-router.post(
-  "/profile/change-password",
-  isLogin,
-  profileController.changePassword,
-);
+router.get("/profile/change-password", isLogin, noCache, profileController.blockGoogleUser, profileController.getChangePassword);
+router.post("/profile/change-password", isLogin, profileController.changePassword);
 
-router.get(
-  "/profile/change-email",
-  isLogin,
-  noCache,
-  profileController.blockGoogleUser,
-  profileController.getChangeEmail,
-);
-router.post(
-  "/profile/change-email/send-otp",
-  isLogin,
-  profileController.sendChangeEmailOtp,
-);
-router.get(
-  "/profile/change-email/verify-otp",
-  isLogin,
-  noCache,
-  profileController.getVerifyEmailOtp,
-);
-router.post(
-  "/profile/change-email/verify-otp",
-  isLogin,
-  profileController.verifyChangeEmailOtp,
-);
-router.post(
-  "/profile/change-email/resend-otp",
-  isLogin,
-  profileController.resendChangeEmailOtp,
-);
+router.get("/profile/change-email", isLogin, noCache, profileController.blockGoogleUser, profileController.getChangeEmail);
+router.post("/profile/change-email/send-otp", isLogin, profileController.sendChangeEmailOtp);
+router.get("/profile/change-email/verify-otp", isLogin, noCache, profileController.getVerifyEmailOtp);
+router.post("/profile/change-email/verify-otp", isLogin, profileController.verifyChangeEmailOtp);
+router.post("/profile/change-email/resend-otp", isLogin, profileController.resendChangeEmailOtp);
 
 router.get("/address", isLogin, noCache, addressController.getAddressPage);
 router.post("/address", isLogin, addressController.addAddress);
@@ -98,20 +60,12 @@ router.get("/referrals", isLogin, noCache, profileController.getReferrals);
 router.get("/productDetail/:id", getProductsDetail);
 router.get("/shop", getShopPage);
 
-// Wishlist Routes
-router.get("/wishlist", isLogin, noCache, wishlistController.getWishlist);
-router.post(
-  "/wishlist/add/:productId",
-  isLogin,
-  wishlistController.addToWishlist,
-);
-router.delete(
-  "/wishlist/remove/:productId",
-  isLogin,
-  wishlistController.removeFromWishlist,
-);
 
-// Cart Routes
+router.get("/wishlist", isLogin, noCache, wishlistController.getWishlist);
+router.post("/wishlist/add/:productId", isLogin, wishlistController.addToWishlist);
+router.delete("/wishlist/remove/:productId", isLogin, wishlistController.removeFromWishlist);
+
+
 router.get("/cart", isLogin, noCache, cartController.getCart);
 router.post("/cart/add", isLogin, cartController.addToCart);
 router.put("/cart/update", isLogin, cartController.updateCartQuantity);

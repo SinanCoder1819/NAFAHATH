@@ -1,6 +1,8 @@
 import Cart from "../../models/Cart.model.js";
 import Product from "../../models/Product.model.js";
 import User from "../../models/User.model.js";
+import Wishlist from "../../models/Wishlist.model.js";
+
 
 // Helper function to safely get user ID
 const getUserId = (req) => {
@@ -13,14 +15,14 @@ export const getCart = async (req, res) => {
         const userId = getUserId(req);
 
         let cart = await Cart.findOne({ userId }).populate({
-            path: 'items.productId',
-            match: { isDeleted: false }
+            path: 'items.productId'
         });
+
+        
 
         if (!cart) {
             cart = { items: [], cartTotal: 0 };
         } else {
-            // Filter out items where the product was deleted
             cart.items = cart.items.filter(item => item.productId !== null);
             await cart.save();
         }
@@ -36,20 +38,33 @@ export const getCart = async (req, res) => {
 export const addToCart = async (req, res) => {
     try {
         const userId = getUserId(req);
-        const { productId, variantId, quantity = 1 } = req.body;
+        const { productId, variantId, quantity = 1  } = req.body;
         
-
+        
         const product = await Product.findById(productId);
+        
         if (!product || product.isDeleted) {
             return res.status(404).json({ success: false, message: "Product not available" });
         }
+        
+        const inAnotherUser = await Cart.exists({
+            userId : {$ne: userId},
+            "items.productId" : productId,
+            "items.variantId" : variantId,
+        })
 
-     
-
+        if(inAnotherUser){
+           return res.json({success: false, message: "This product already exists in another user cart"})
+        }
+        
+        
+        
         const variant = product.variants.id(variantId);
         if (!variant) {
             return res.status(404).json({ success: false, message: "Selected variant not found" });
         }
+        
+       
 
         if (variant.stock < quantity) {
             return res.status(400).json({ success: false, message: "Not enough stock available" });
@@ -57,14 +72,22 @@ export const addToCart = async (req, res) => {
 
         const price = variant.salePrice > 0 ? variant.salePrice : variant.regularPrice;
 
+      
+
         let cart = await Cart.findOne({ userId });
         if (!cart) {
             cart = new Cart({ userId, items: [], cartTotal: 0 });
         }
 
+              
+        
+
+        
         const existingItemIndex = cart.items.findIndex(
             (item) => item.productId.toString() === productId && item.variantId.toString() === variantId
         );
+
+        
 
         if (existingItemIndex > -1) {
             const newQty = cart.items[existingItemIndex].quantity + parseInt(quantity);
@@ -88,16 +111,17 @@ export const addToCart = async (req, res) => {
                 totalPrice: parseInt(quantity) * price
             });
         }
+        
 
         await cart.save();
+
+        await Wishlist.findOneAndUpdate(
+            { userId },
+            { $pull: { products: productId } }
+        );
         
-        // Remove from wishlist if it exists
-        await User.findByIdAndUpdate(userId, {
-            $pull: { wishlist: productId }
-        });
 
         res.status(200).json({ success: true, message: "Added to cart successfully!" });
-
     } catch (error) {
         console.error("Error adding to cart:", error);
         res.status(500).json({ success: false, message: "Internal server error" });
