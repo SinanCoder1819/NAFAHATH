@@ -39,6 +39,10 @@ app.use((req, res, next) => {
   return userSessionMiddleware(req, res, next);
 });
 
+
+
+
+
 app.use(passport.initialize());
 
 app.use((req, res, next) => {

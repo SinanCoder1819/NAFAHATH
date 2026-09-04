@@ -5,9 +5,9 @@
         <aside class="w-full lg:w-72 shrink-0">
             <div class="bg-[#0f0f0f] border border-gray-800 rounded-3xl p-8 sticky top-28 shadow-2xl">
                 <div class="mb-10">
-                    <p class="text-[10px] uppercase tracking-[0.3em] text-[#C5A267] font-bold mb-6 opacity-80">Dashboard</p>
+                    <p class="text-[10px] uppercase tracking-[0.3em] text-[#22d3ee] font-bold mb-6 opacity-80">Dashboard</p>
                     <nav class="flex flex-col gap-2">
-                        <a href="/profile" class="group flex items-center gap-4 px-4 py-3 rounded-xl bg-[#C5A267]/10 text-[#C5A267] border border-[#C5A267]/20 transition-all">
+                        <a href="/profile" class="group flex items-center gap-4 px-4 py-3 rounded-xl bg-[#22d3ee]/10 text-[#22d3ee] border border-[#22d3ee]/20 transition-all">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                             <span class="text-sm font-medium">Profile</span>
                         </a>
@@ -43,12 +43,12 @@
         <section class="flex-1 space-y-8">
             
             <div class="relative overflow-hidden bg-[#0f0f0f] border border-gray-800 rounded-3xl p-10 shadow-2xl">
-                <div class="absolute -top-24 -right-24 w-64 h-64 bg-[#C5A267]/10 blur-[80px] rounded-full"></div>
+                <div class="absolute -top-24 -right-24 w-64 h-64 bg-[#22d3ee]/10 blur-[80px] rounded-full"></div>
                 
                 <div class="relative z-10 flex flex-col md:flex-row items-center gap-10">
                     <!-- Profile Image with Upload Trigger -->
                     <div class="relative group cursor-pointer shrink-0" onclick="document.getElementById('profileUpload').click()">
-                        <div class="w-28 h-28 rounded-full border-2 border-[#C5A267]/30 p-1 transition-all group-hover:border-[#C5A267]">
+                        <div class="w-28 h-28 rounded-full border-2 border-[#22d3ee]/30 p-1 transition-all group-hover:border-[#22d3ee]">
                             <div id="avatarContainer" class="w-full h-full rounded-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center overflow-hidden relative">
                                 <% if (user.profileImage) { %>
                                     <img src="<%= user.profileImage %>" id="currentProfilePic" class="w-full h-full object-cover transition-opacity group-hover:opacity-40" alt="Profile">
@@ -77,7 +77,7 @@
                     </div>
 
                     <a href="/profile/edit" class="shrink-0">
-                        <button class="bg-white text-black px-8 py-3 rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-[#C5A267] transition-all transform active:scale-95">
+                        <button class="bg-white text-black px-8 py-3 rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-[#22d3ee] transition-all transform active:scale-95">
                             Edit Profile
                         </button>
                     </a>
@@ -103,8 +103,8 @@
             <!-- Security Section -->
             <div class="bg-[#0f0f0f] border border-gray-800 rounded-3xl p-10 shadow-2xl">
                 <div class="flex items-center gap-4 mb-10">
-                    <div class="w-10 h-10 rounded-lg bg-[#C5A267]/10 flex items-center justify-center border border-[#C5A267]/20">
-                        <svg class="w-5 h-5 text-[#C5A267]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    <div class="w-10 h-10 rounded-lg bg-[#22d3ee]/10 flex items-center justify-center border border-[#22d3ee]/20">
+                        <svg class="w-5 h-5 text-[#22d3ee]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                     </div>
                     <div>
                         <h3 class="text-xl font-medium">Security & Access</h3>
@@ -117,11 +117,11 @@
                 <div class="flex flex-col sm:flex-row gap-4">
                     <% if (!isGoogleUser) { %>
                     <a href="/profile/change-password"
-                            class="flex-1 text-center bg-transparent border border-gray-700 text-white px-6 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:border-[#C5A267] hover:text-[#C5A267] transition-all">
+                            class="flex-1 text-center bg-transparent border border-gray-700 text-white px-6 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:border-[#22d3ee] hover:text-[#22d3ee] transition-all">
                         Change Password
                     </a>
                     <a href="/profile/change-email"
-                            class="flex-1 text-center bg-transparent border border-gray-700 text-white px-6 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:border-[#C5A267] hover:text-[#C5A267] transition-all">
+                            class="flex-1 text-center bg-transparent border border-gray-700 text-white px-6 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:border-[#22d3ee] hover:text-[#22d3ee] transition-all">
                         Update Email
                     </a>
                     <% } else { %>

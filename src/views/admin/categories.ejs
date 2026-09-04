@@ -726,6 +726,15 @@
   transform: translateY(-1px);
 }
 .cat-save-btn:active { transform: translateY(0); }
+.cat-save-btn.--danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.25);
+}
+.cat-save-btn.--danger:hover {
+  background: linear-gradient(135deg, #f87171, #ef4444);
+  box-shadow: 0 6px 24px rgba(239, 68, 68, 0.4);
+}
 .cat-cancel-btn {
   flex: 1;
   background: rgba(255, 255, 255, 0.04);
@@ -899,16 +908,16 @@
 
                 <!-- Status toggle -->
                 <% if (category.isDeleted) { %>
-                  <form method="POST" action="/admin/categories/<%= category._id %>/restore" style="margin:0;">
+                  <form method="POST" action="/admin/categories/<%= category._id %>/restore" style="margin:0;" class="category-toggle-form">
                     <label class="cat-toggle" title="Click to Activate">
-                      <input type="checkbox" onchange="this.form.submit()">
+                      <input type="checkbox" class="category-status-toggle" data-name="<%= category.name %>" data-action="activate">
                       <span class="cat-toggle-track"></span>
                     </label>
                   </form>
                 <% } else { %>
-                  <form method="POST" action="/admin/categories/<%= category._id %>/delete" style="margin:0;">
+                  <form method="POST" action="/admin/categories/<%= category._id %>/delete" style="margin:0;" class="category-toggle-form">
                     <label class="cat-toggle" title="Click to Deactivate">
-                      <input type="checkbox" checked onchange="this.form.submit()">
+                      <input type="checkbox" checked class="category-status-toggle" data-name="<%= category.name %>" data-action="deactivate">
                       <span class="cat-toggle-track"></span>
                     </label>
                   </form>
@@ -1018,6 +1027,22 @@
         <button class="cat-cancel-btn" type="button" onclick="closeCategoryModal()">Cancel</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ CONFIRM MODAL ═══════════════════════════════════ -->
+<div id="confirmModal" class="cat-modal">
+  <div class="cat-modal-box" style="width: 400px;">
+    <div class="flex items-center justify-center" id="confirmModalIconWrap" style="width: 52px; height: 52px; border-radius: 14px; margin-bottom: 20px;">
+      <!-- icon injected by JS -->
+    </div>
+    <h2 class="cat-modal-title" id="confirmModalTitle" style="margin-bottom: 8px;"></h2>
+    <p  class="cat-desc"   id="confirmModalMessage" style="margin-bottom: 24px; max-width: none; color: #cbd5e1;"></p>
+    <div class="cat-modal-divider"></div>
+    <div class="cat-modal-actions">
+      <button id="confirmModalCancelBtn"  class="cat-cancel-btn">Cancel</button>
+      <button id="confirmModalConfirmBtn" class="cat-save-btn"></button>
+    </div>
   </div>
 </div>
 
@@ -1178,5 +1203,81 @@ document.getElementById('categoryForm').addEventListener('submit', async functio
     submitBtn.textContent = originalText;
     submitBtn.disabled = false;
   }
+});
+
+/* ── Status Change Confirmation Modal ── */
+const statusOverlay = document.getElementById('confirmModal');
+const confirmTitleEl = document.getElementById('confirmModalTitle');
+const confirmMsgEl = document.getElementById('confirmModalMessage');
+const confirmConfirmBtn = document.getElementById('confirmModalConfirmBtn');
+const confirmCancelBtn = document.getElementById('confirmModalCancelBtn');
+const confirmIconWrap = document.getElementById('confirmModalIconWrap');
+
+let pendingCategoryAction = null;
+
+const DEACTIVATE_ICON = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+const ACTIVATE_ICON = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>`;
+
+function closeConfirmModal() {
+  statusOverlay.classList.remove('open');
+  setTimeout(() => {
+    statusOverlay.style.display = 'none';
+  }, 300);
+  // Revert check state if we cancelled
+  if (pendingCategoryAction && pendingCategoryAction.chk) {
+    pendingCategoryAction.chk.checked = !pendingCategoryAction.originalCheckedState;
+  }
+  pendingCategoryAction = null;
+}
+
+confirmCancelBtn.addEventListener('click', closeConfirmModal);
+statusOverlay.addEventListener('click', e => { if (e.target === statusOverlay) closeConfirmModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeConfirmModal(); });
+
+document.querySelectorAll('.category-status-toggle').forEach(chk => {
+  chk.addEventListener('change', function(e) {
+    // Revert check state immediately visually, until confirmed
+    const checked = this.checked;
+    this.checked = !checked; 
+
+    const form = this.closest('form');
+    const categoryName = this.dataset.name;
+    const action = this.dataset.action;
+
+    pendingCategoryAction = { chk: this, form, originalCheckedState: !checked, newCheckedState: checked };
+
+    statusOverlay.style.display = 'flex';
+    // Force repaint to trigger animation
+    statusOverlay.offsetHeight;
+    statusOverlay.classList.add('open');
+
+    if (action === 'activate') {
+      confirmIconWrap.className = 'flex items-center justify-center bg-emerald-500/10 border border-emerald-500/20 text-emerald-400';
+      confirmIconWrap.innerHTML = ACTIVATE_ICON;
+      confirmTitleEl.textContent = 'Activate Category';
+      confirmMsgEl.textContent = `Are you sure you want to activate "${categoryName}"? This will make it visible to customers on the shop page.`;
+      confirmConfirmBtn.textContent = 'Yes, Activate';
+      confirmConfirmBtn.className = 'cat-save-btn';
+    } else {
+      confirmIconWrap.className = 'flex items-center justify-center bg-red-500/10 border border-red-500/20 text-red-400';
+      confirmIconWrap.innerHTML = DEACTIVATE_ICON;
+      confirmTitleEl.textContent = 'Deactivate Category';
+      confirmMsgEl.textContent = `Are you sure you want to deactivate "${categoryName}"? This will hide it and its products from the shop page.`;
+      confirmConfirmBtn.textContent = 'Yes, Deactivate';
+      confirmConfirmBtn.className = 'cat-save-btn --danger';
+    }
+  });
+});
+
+confirmConfirmBtn.addEventListener('click', () => {
+  if (!pendingCategoryAction) return;
+  const { chk, form, newCheckedState } = pendingCategoryAction;
+  
+  // Set actual checkbox value and submit
+  chk.checked = newCheckedState;
+  
+  // We clean pendingCategoryAction before submit so the close modal reset check doesn't fire
+  pendingCategoryAction = null;
+  form.submit();
 });
 </script>

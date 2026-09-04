@@ -271,6 +271,10 @@ textarea.ep-input { min-height: 130px; resize: vertical; line-height: 1.65; }
 }
 .ep-remove-btn:hover { background: rgba(248,113,113,0.15); border-color: rgba(248,113,113,0.4); }
 
+#variantsContainer .ep-variant-row:first-of-type .ep-remove-btn {
+  display: none !important;
+}
+
 .ep-add-variant-btn {
   display: inline-flex; align-items: center; gap: 7px;
   background: transparent; color: #28c9f4;
@@ -572,6 +576,7 @@ textarea.ep-input { min-height: 130px; resize: vertical; line-height: 1.65; }
           <% if (typeof product !== 'undefined' && product.variants && product.variants.length > 0) { %>
             <% product.variants.forEach((variant, idx) => { %>
               <div class="ep-variant-row">
+                <input type="hidden" name="variantId[]" value="<%= variant._id %>">
                 <div class="ep-variant-badge">Variant <%= idx + 1 %></div>
 
                 <div class="ep-field">
@@ -610,6 +615,7 @@ textarea.ep-input { min-height: 130px; resize: vertical; line-height: 1.65; }
             <% }) %>
           <% } else { %>
             <div class="ep-variant-row">
+              <input type="hidden" name="variantId[]" value="">
               <div class="ep-variant-badge">Variant 1</div>
               <div class="ep-field">
                 <label>Format / Size</label>

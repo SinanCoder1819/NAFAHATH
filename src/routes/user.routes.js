@@ -10,6 +10,8 @@ import {
 } from "../controllers/user/product.controller.js";
 import * as wishlistController from "../controllers/user/wishlist.controller.js";
 import * as cartController from "../controllers/user/cart.controller.js";
+import * as checkoutController from "../controllers/user/checkout.controller.js";
+import * as orderController from "../controllers/user/order.controller.js";
 
 const router = express.Router();
 
@@ -54,6 +56,7 @@ router.get("/address", isLogin, noCache, addressController.getAddressPage);
 router.post("/address", isLogin, addressController.addAddress);
 router.put("/address/:id", isLogin, addressController.editAddress);
 router.delete("/address/:id", isLogin, addressController.deleteAddress);
+router.patch("/address/:id/set-default", isLogin, addressController.setDefaultAddress);
 
 router.get("/referrals", isLogin, noCache, profileController.getReferrals);
 
@@ -70,5 +73,17 @@ router.get("/cart", isLogin, noCache, cartController.getCart);
 router.post("/cart/add", isLogin, cartController.addToCart);
 router.put("/cart/update", isLogin, cartController.updateCartQuantity);
 router.delete("/cart/remove", isLogin, cartController.removeFromCart);
+router.delete("/cart/delete", isLogin, cartController.removeAll);
+
+router.get("/checkout", isLogin, noCache, checkoutController.getCheckoutPage);
+router.post("/checkout/place-order", isLogin, checkoutController.placeOrder);
+router.get("/checkout/success", isLogin, noCache, checkoutController.getSuccessPage);
+
+router.get("/orders", isLogin, noCache, orderController.getOrders);
+router.get("/orders/:id", isLogin, noCache, orderController.getOrderDetail);
+router.post("/orders/:id/cancel", isLogin, orderController.cancelOrder);
+router.post("/orders/:id/cancel-item", isLogin, orderController.cancelOrderItem);
+router.post("/orders/:id/return", isLogin, orderController.returnOrder);
+router.get("/orders/:id/invoice", isLogin, orderController.downloadInvoice);
 
 export default router;

@@ -1,6 +1,14 @@
 import Product from "../../models/Product.model.js";
 import User from "../../models/User.model.js";
 import Category from "../../models/Category.model.js";
+import Wishlist from "../../models/Wishlist.model.js";
+import Cart from "../../models/Cart.model.js";
+
+const getUserIdFromReq = (req, res) => {
+    return (res && res.locals && res.locals.user && res.locals.user._id) ||
+           (req.user && (req.user._id || req.user.id)) ||
+           (req.session && req.session.user && (req.session.user._id || req.session.user.id));
+};
 
 export const getProductsDetail = async (req, res) => {
     try {
@@ -9,32 +17,61 @@ export const getProductsDetail = async (req, res) => {
           
         const product = await Product.findById(productId).lean();
         
-        if (!product || product.isDeleted) {
+        if (!product) {
             return res.redirect('/shop'); 
         }
 
-        const relatedProducts = await Product.find({
-            category: product.category,
+        
+
+        let relatedProducts = await Product.find({
+            category: { $regex: `^${product.category}$`, $options: "i" },
             _id: { $ne: product._id },
             isDeleted: false
         })
         .limit(4)
         .lean();
 
+        if (relatedProducts.length < 4) {
+            const excludeIds = [product._id, ...relatedProducts.map(p => p._id)];
+            const backfill = await Product.find({
+                _id: { $nin: excludeIds },
+                isDeleted: false
+            })
+            .limit(4 - relatedProducts.length)
+            .lean();
+            relatedProducts = [...relatedProducts, ...backfill];
+        }
+
        
         let inWishlist = false;
-        const userId = (req.user && req.user._id) || (req.session && req.session.user && (req.session.user._id || req.session.user.id));
+        let cartVariantIds = [];
+        const userId = getUserIdFromReq(req, res);
         if (userId) {
-            const userDoc = await User.findById(userId).select('wishlist').lean();
-            if (userDoc && userDoc.wishlist) {
-                inWishlist = userDoc.wishlist.map(id => id.toString()).includes(product._id.toString());
+            // Get wishlist state
+            const wishlistDoc = await Wishlist.findOne({ userId }).lean();
+            if (wishlistDoc && wishlistDoc.products) {
+                const wishListIds = wishlistDoc.products.map(p => {
+                    if (!p) return '';
+                    if (p._id) return p._id.toString();
+                    return p.toString();
+                }).filter(Boolean);
+                inWishlist = wishListIds.includes(product._id.toString());
+            }
+
+            // Get cart state
+            const cartDoc = await Cart.findOne({ userId }).lean();
+            if (cartDoc && cartDoc.items) {
+                cartVariantIds = cartDoc.items
+                    .filter(item => item.productId && item.productId.toString() === productId.toString())
+                    .map(item => item.variantId ? item.variantId.toString() : '');
             }
         }
 
         res.render('user/productDetail', { 
             product: product, 
             relatedProducts: relatedProducts,
-            inWishlist: inWishlist
+            inWishlist: inWishlist,
+            cartVariantIds: cartVariantIds
         });
         
     } catch (error) {
@@ -47,7 +84,7 @@ export const getProductsDetail = async (req, res) => {
 export const getShopPage = async (req, res) => {
     try {
         const page = Math.max(1, parseInt(req.query.page) || 1);
-        const limit = 9; 
+        const limit = 6; 
         
         let filter = { isDeleted: false };
 
@@ -96,10 +133,6 @@ export const getShopPage = async (req, res) => {
         let sortOption = {};
         if (sortQuery === "newest") {
             sortOption = { createdAt: -1 };
-        } else if (sortQuery === "priceAsc") {
-            sortOption = { "variants.0.regularPrice": 1 }; 
-        } else if (sortQuery === "priceDesc") {
-            sortOption = { "variants.0.regularPrice": -1 };
         } else if (sortQuery === "aToZ") {
             sortOption = { productName: 1 };
         } else if (sortQuery === "zToA") {
@@ -111,15 +144,65 @@ export const getShopPage = async (req, res) => {
         const totalPages = Math.max(1, Math.ceil(totalProducts / limit));
         const currentPage = Math.min(page, totalPages);
 
-        const products = await Product.find(filter)
-            .sort(sortOption)
-            .skip((currentPage - 1) * limit)
-            .limit(limit)
-            .lean();
+        let products;
+        if (sortQuery === "priceAsc" || sortQuery === "priceDesc") {
+            const sortDir = sortQuery === "priceAsc" ? 1 : -1;
+            const aggregatePipeline = [
+                { $match: filter },
+                {
+                    $addFields: {
+                        firstVariant: { $arrayElemAt: ["$variants", 0] }
+                    }
+                },
+                {
+                    $addFields: {
+                        effectivePrice: {
+                            $cond: {
+                                if: { 
+                                    $and: [
+                                        { $not: { $eq: ["$firstVariant", null] } },
+                                        { $gt: ["$firstVariant.salePrice", 0] }
+                                    ]
+                                },
+                                then: "$firstVariant.salePrice",
+                                else: { $ifNull: ["$firstVariant.regularPrice", 0] }
+                            }
+                        }
+                    }
+                },
+                { $sort: { effectivePrice: sortDir, productName: 1 } },
+                { $skip: (currentPage - 1) * limit },
+                { $limit: limit }
+            ];
+            products = await Product.aggregate(aggregatePipeline);
+        } else {
+            products = await Product.find(filter)
+                .sort(sortOption)
+                .skip((currentPage - 1) * limit)
+                .limit(limit)
+                .lean();
+        }
 
         const categories = await Category.find({ isDeleted: false }).sort({ name: 1 }).lean();
 
-        
+        let wishlistProductIds = [];
+        let cartProductIds = [];
+        const userId = getUserIdFromReq(req, res);
+        if (userId) {
+            const wishlistDoc = await Wishlist.findOne({ userId }).lean();
+            if (wishlistDoc && wishlistDoc.products) {
+                wishlistProductIds = wishlistDoc.products.map(p => {
+                    if (!p) return '';
+                    if (p._id) return p._id.toString();
+                    return p.toString();
+                }).filter(Boolean);
+            }
+
+            const cartDoc = await Cart.findOne({ userId }).lean();
+            if (cartDoc && cartDoc.items) {
+                cartProductIds = cartDoc.items.map(item => item.productId ? item.productId.toString() : '').filter(Boolean);
+            }
+        }
 
         // Pass everything to the view
         res.render("user/shop", {
@@ -132,7 +215,9 @@ export const getShopPage = async (req, res) => {
             brand: brand,
             minPrice: minPrice,
             maxPrice: maxPrice,
-            sort: sortQuery
+            sort: sortQuery,
+            wishlistProductIds: wishlistProductIds,
+            cartProductIds: cartProductIds
         });
         
     } catch (error) {

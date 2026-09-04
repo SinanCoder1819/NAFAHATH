@@ -1,10 +1,16 @@
 import Product from "../../models/Product.model.js";
 import Wishlist from "../../models/Wishlist.model.js"; 
 
+const getUserId = (req, res) => {
+    return (res && res.locals && res.locals.user && res.locals.user._id) ||
+           (req.user && (req.user._id || req.user.id)) ||
+           (req.session && req.session.user && (req.session.user._id || req.session.user.id));
+};
+
 // Render Wishlist Page
 export const getWishlist = async (req, res) => {
     try {
-        const userId = (req.user && req.user._id) || (req.session && req.session.user && (req.session.user._id || req.session.user.id));
+        const userId = getUserId(req, res);
 
         // Fetch wishlist document instead of user document
         const wishlistDoc = await Wishlist.findOne({ userId })
@@ -26,7 +32,7 @@ export const getWishlist = async (req, res) => {
 // Add to Wishlist API
 export const addToWishlist = async (req, res) => {
     try {
-        const userId = (req.user && req.user._id) || (req.session && req.session.user && (req.session.user._id || req.session.user.id));
+        const userId = getUserId(req, res);
         const productId = req.params.productId;
 
         const product = await Product.findById(productId);
@@ -40,7 +46,13 @@ export const addToWishlist = async (req, res) => {
             wishlistDoc = new Wishlist({ userId, products: [] });
         }
 
-        if (wishlistDoc.products.includes(productId)) {
+        const isAlreadyInWishlist = wishlistDoc.products.some(p => {
+            if (!p) return false;
+            const idStr = p._id ? p._id.toString() : p.toString();
+            return idStr === productId.toString();
+        });
+
+        if (isAlreadyInWishlist) {
             return res.status(200).json({ success: true, message: "Product is already in your wishlist!" });
         }
 
@@ -57,7 +69,7 @@ export const addToWishlist = async (req, res) => {
 // Remove from Wishlist API
 export const removeFromWishlist = async (req, res) => {
     try {
-        const userId = (req.user && req.user._id) || (req.session && req.session.user && (req.session.user._id || req.session.user.id));
+        const userId = getUserId(req, res);
         const productId = req.params.productId;
 
         await Wishlist.findOneAndUpdate(

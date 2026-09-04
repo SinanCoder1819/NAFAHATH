@@ -4,13 +4,14 @@ import { isAdmin } from "../middlewares/admin.middleware.js";
 import { isAdminLogout, noCache } from "../middlewares/auth.middleware.js";
 import { getDashboard } from "../controllers/admin/dashboard.controller.js";
 import { getCustomers, toggleBlockUser } from "../controllers/admin/customers.controller.js";
-import { getCategories, addCategory, updateCategory, softDeleteCategory, restoreCategory } from "../controllers/admin/category.controller.js";
+import { getCategories,  addCategory, updateCategory, softDeleteCategory, restoreCategory } from "../controllers/admin/category.controller.js";
 import { getProducts, getAddProduct, postAddProduct, getEditProduct, postEditProduct, deleteProduct } from "../controllers/admin/products.controller.js";
 import { uploadProduct } from "../config/cloudinary.js";
+import { getOrders, getOrderDetail, updateOrderStatus, updateReturnStatus } from "../controllers/admin/order.controller.js";
+import { getInventory, updateInventoryStock } from "../controllers/admin/inventory.controller.js";
 
 
 const router = express.Router();
-
 
 router.get("/login",  isAdminLogout, noCache, getAdminLogin);
 router.post("/login", postAdminLogin);
@@ -51,9 +52,15 @@ router.post("/products/edit", uploadProduct.fields([
 ]), postEditProduct);
 router.post("/products/delete/:id", deleteProduct);
 
+// Order Management routes
+router.get("/orders", getOrders);
+router.get("/orders/:id", getOrderDetail);
+router.post("/orders/:id/status", updateOrderStatus);
+router.post("/orders/:id/return-status", updateReturnStatus);
 
-
-
+// Inventory/Stock Management routes
+router.get("/inventory", getInventory);
+router.patch("/inventory/update", updateInventoryStock);
 
 export default router;
  

@@ -1,0 +1,893 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  .detail-page {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #ffffff;
+    padding: 28px 32px 48px;
+    min-height: 100vh;
+  }
+
+  /* Back Navigation */
+  .back-nav {
+    margin-bottom: 24px;
+  }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #888;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .back-btn:hover {
+    color: #28c9f4;
+  }
+
+  /* Grid Layout */
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 28px;
+  }
+
+  @media (max-width: 1024px) {
+    .detail-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Cards styling */
+  .detail-card {
+    background: #111111;
+    border: 1px solid #222222;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 28px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+  }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #222;
+    padding-bottom: 12px;
+    color: #fff;
+    letter-spacing: -0.01em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Order details info block */
+  .order-meta-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .order-id-label {
+    font-size: 24px;
+    font-weight: 800;
+    font-family: 'Courier New', monospace;
+    color: #fff;
+  }
+
+  .order-date-label {
+    font-size: 13px;
+    color: #666;
+    margin-top: 4px;
+  }
+
+  /* Table style for items */
+  .items-list {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .items-list th {
+    font-size: 11px;
+    font-weight: 700;
+    color: #555;
+    text-transform: uppercase;
+    text-align: left;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #222;
+  }
+
+  .items-list td {
+    padding: 16px 0;
+    border-bottom: 1px solid #1a1a1a;
+    font-size: 13.5px;
+    color: #aaa;
+    vertical-align: middle;
+  }
+
+  .items-list tr:last-child td {
+    border-bottom: none;
+  }
+
+  .product-cell {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .prod-img-wrap {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background: #181818;
+    border: 1px solid #222;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .prod-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .prod-name {
+    color: #eee;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .prod-variant {
+    font-size: 11px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Totals summary */
+  .order-summary-box {
+    width: 100%;
+    max-width: 320px;
+    margin-left: auto;
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13.5px;
+    color: #888;
+  }
+
+  .summary-row.total {
+    border-top: 1px solid #222;
+    padding-top: 12px;
+    font-size: 16px;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  /* Customer info block */
+  .info-group {
+    margin-bottom: 20px;
+  }
+
+  .info-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .info-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .info-value {
+    font-size: 14px;
+    color: #ddd;
+    line-height: 1.5;
+  }
+
+  /* Status Change Dropdown and form styling */
+  .status-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* Custom Dropdown Styling */
+  .custom-dropdown {
+    position: relative;
+    width: 100%;
+  }
+
+  .custom-dropdown-trigger {
+    width: 100%;
+    background: #161616;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 14px 18px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  }
+
+  .custom-dropdown-trigger:hover {
+    border-color: #28c9f4;
+    background: #1b1b1b;
+  }
+
+  .custom-dropdown-trigger:focus {
+    outline: none;
+    border-color: #28c9f4;
+    box-shadow: 0 0 0 3px rgba(40, 201, 244, 0.15);
+  }
+
+  .custom-dropdown-trigger .chevron {
+    transition: transform 0.2s ease;
+    color: #666;
+  }
+
+  .custom-dropdown.open .custom-dropdown-trigger .chevron {
+    transform: rotate(180deg);
+    color: #28c9f4;
+  }
+
+  .custom-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    background: #121212;
+    border: 1px solid #262626;
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    transform: translateY(-10px);
+    opacity: 0;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+    pointer-events: none;
+  }
+
+  .custom-dropdown.open .custom-dropdown-menu {
+    display: flex;
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .custom-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    font-size: 13.5px;
+    color: #bbb;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-weight: 500;
+  }
+
+  .custom-dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: #fff;
+  }
+
+  .custom-dropdown-item.selected {
+    background: rgba(40, 201, 244, 0.08);
+    color: #28c9f4;
+  }
+
+  .custom-dropdown-item .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .reason-area {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    animation: slideDown 0.25s ease;
+  }
+
+  .reason-input {
+    width: 100%;
+    background: #181818;
+    border: 1px solid #2c2c2c;
+    border-radius: 10px;
+    padding: 12px;
+    color: #fff;
+    font-size: 13.5px;
+    resize: vertical;
+    outline: none;
+  }
+
+  .reason-input:focus {
+    border-color: #28c9f4;
+  }
+
+  .update-btn {
+    background: #28c9f4;
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .update-btn:hover {
+    background: #17b3dd;
+    box-shadow: 0 4px 15px rgba(40,201,244,0.3);
+  }
+
+  /* Status Pills */
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 30px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .status-Pending          { background: rgba(251, 191, 36, 0.08); border: 1px solid rgba(251, 191, 36, 0.2); color: #fbbf24; }
+  .status-Processing       { background: rgba(59, 130, 246, 0.08);  border: 1px solid rgba(59, 130, 246, 0.2);  color: #3b82f6; }
+  .status-Shipped          { background: rgba(168, 85, 247, 0.08);  border: 1px solid rgba(168, 85, 247, 0.2);  color: #a855f7; }
+  .status-Out_for_Delivery,
+  .status-Out-for-Delivery { background: rgba(6, 182, 212, 0.08);   border: 1px solid rgba(6, 182, 212, 0.2);   color: #06b6d4; }
+  .status-Delivered        { background: rgba(34, 197, 94, 0.08);   border: 1px solid rgba(34, 197, 94, 0.2);   color: #22c55e; }
+  .status-Cancelled        { background: rgba(239, 68, 68, 0.08);   border: 1px solid rgba(239, 68, 68, 0.2);   color: #ef4444; }
+  .status-Returned         { background: rgba(100, 116, 139, 0.08); border: 1px solid rgba(100, 116, 139, 0.2); color: #94a3b8; }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* Payment status styling */
+  .pay-status-Paid      { color: #22c55e; font-weight: 600; }
+  .pay-status-Pending   { color: #fbbf24; font-weight: 600; }
+  .pay-status-Failed    { color: #ef4444; font-weight: 600; }
+  .pay-status-Refunded  { color: #94a3b8; font-weight: 600; }
+
+  /* Toast Alerts */
+  .toast-alert {
+    padding: 14px 20px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .toast-success {
+    background: rgba(34, 197, 94, 0.08);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+  }
+
+  .toast-error {
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<div class="detail-page">
+
+  <div class="back-nav">
+    <a href="/admin/orders" class="back-btn">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+      </svg>
+      Back to Order Registry
+    </a>
+  </div>
+
+  <% if (success) { %>
+    <div id="toastSuccess" class="toast-alert toast-success">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span><%= success %></span>
+    </div>
+  <% } %>
+
+  <% if (error) { %>
+    <div id="toastError" class="toast-alert toast-error">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+      <span><%= error %></span>
+    </div>
+  <% } %>
+
+  <div class="detail-grid">
+    
+    <!-- Left Column: Order details & Products list -->
+    <div class="left-col">
+      
+      <!-- Metadata card -->
+      <div class="detail-card" style="padding-bottom: 24px;">
+        <div class="order-meta-info">
+          <div>
+            <div class="order-id-label">Order #<%= order.orderId %></div>
+            <div class="order-date-label">
+              Placed on <%= new Date(order.createdAt).toLocaleString("en-US", { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+            </div>
+          </div>
+          <div>
+            <% const pClass = order.status.replace(/ /g, "_"); %>
+            <span class="status-pill status-<%= pClass %>">
+              <span class="status-dot"></span>
+              <%= order.status %>
+            </span>
+          </div>
+        </div>
+
+        <% if (order.status === "Cancelled" && order.cancellationReason) { %>
+          <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 12px; padding: 14px 18px; margin-top: 16px; font-size: 13.5px; color: #f87171;">
+            <strong>Cancellation Reason:</strong> <%= order.cancellationReason %>
+          </div>
+        <% } %>
+
+        <% if (order.status === "Returned" && order.returnReason) { %>
+          <div style="background: rgba(100, 116, 139, 0.05); border: 1px solid rgba(100, 116, 139, 0.15); border-radius: 12px; padding: 14px 18px; margin-top: 16px; font-size: 13.5px; color: #94a3b8;">
+            <strong>Return Reason:</strong> <%= order.returnReason %>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Items List card -->
+      <div class="detail-card">
+        <h2 class="card-title">Order Items (<%= order.items.reduce((acc, i) => acc + i.quantity, 0) %> items)</h2>
+        
+        <table class="items-list">
+          <thead>
+            <tr>
+              <th style="width: 50%;">Product Details</th>
+              <th style="width: 15%;">Price</th>
+              <th style="width: 15%;">Quantity</th>
+              <th style="width: 20%; text-align: right;">Total Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% order.items.forEach(item => { %>
+              <tr>
+                <td>
+                  <div class="product-cell">
+                    <div class="prod-img-wrap">
+                      <% if (item.primaryImage) { %>
+                        <img src="<%= item.primaryImage %>" alt="<%= item.productName %>">
+                      <% } else { %>
+                        <span style="font-size: 18px;">📦</span>
+                      <% } %>
+                    </div>
+                    <div>
+                      <div class="prod-name"><%= item.productName %></div>
+                      <div class="prod-variant">
+                        Brand: <%= item.brand %> • Size: <%= item.size %> 
+                        <% if (item.status === "Cancelled" || item.status === "Returned") { %>
+                          • <span style="color: #f87171; font-weight: 700; text-transform: uppercase;"><%= item.status %></span>
+                        <% } %>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td>₹<%= item.price.toLocaleString("en-IN") %></td>
+                <td><%= item.quantity %></td>
+                <td style="text-align: right; color: #fff; font-weight: 600;">₹<%= item.totalPrice.toLocaleString("en-IN") %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+
+        <!-- Totals summary box -->
+        <div class="order-summary-box">
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span>₹<%= order.subtotal.toLocaleString("en-IN") %></span>
+          </div>
+          <% if (order.discount > 0) { %>
+            <div class="summary-row" style="color: #22c55e;">
+              <span>Discount</span>
+              <span>-₹<%= order.discount.toLocaleString("en-IN") %></span>
+            </div>
+          <% } %>
+          <div class="summary-row">
+            <span>Shipping</span>
+            <span>₹<%= order.shipping.toLocaleString("en-IN") %></span>
+          </div>
+          <% if (order.taxes > 0) { %>
+            <div class="summary-row">
+              <span>Taxes</span>
+              <span>₹<%= order.taxes.toLocaleString("en-IN") %></span>
+            </div>
+          <% } %>
+          <div class="summary-row total">
+            <span>Grand Total</span>
+            <span>₹<%= order.finalTotal.toLocaleString("en-IN") %></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Customer Info, Shipping Address & Change Status -->
+    <div class="right-col">
+      
+      <!-- Change Status Card -->
+      <div class="detail-card">
+        <h2 class="card-title">
+          <% if (["Returned", "Return Requested"].includes(order.status)) { %>
+            Manage Return Progress
+          <% } else { %>
+            Update Status
+          <% } %>
+        </h2>
+        
+        <% if (["Returned", "Return Requested"].includes(order.status)) { %>
+          <form action="/admin/orders/<%= order._id %>/return-status" method="POST" class="status-form">
+            <div>
+              <label class="info-label" style="display: block; margin-bottom: 8px;">Current Return Stage</label>
+              
+              <% const currentRStatus = order.returnStatus || "Return Requested"; %>
+              <input type="hidden" name="returnStatus" id="returnStatusInput" value="<%= currentRStatus %>">
+              
+              <!-- Custom dropdown menu for Return Status -->
+              <div class="custom-dropdown" id="returnStatusDropdown">
+                <button type="button" class="custom-dropdown-trigger" onclick="toggleReturnDropdown()">
+                  <span id="selectedReturnText" style="display: flex; align-items: center; gap: 8px;">
+                    <% 
+                      let stageDot = "#28c9f4";
+                      if (currentRStatus === "Refund Completed") stageDot = "#22c55e";
+                      else if (currentRStatus === "Refund Initiated") stageDot = "#a855f7";
+                      else if (currentRStatus === "Under Review") stageDot = "#3b82f6";
+                      else if (currentRStatus === "Picked Up") stageDot = "#06b6d4";
+                      else if (currentRStatus === "Pick Up Scheduled") stageDot = "#fbbf24";
+                    %>
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: <%= stageDot %>;"></span>
+                    <%= currentRStatus %>
+                  </span>
+                  <svg class="chevron" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+                
+                <div class="custom-dropdown-menu">
+                  <% 
+                    const returnOptionsList = [
+                      { value: "Return Requested", color: "#28c9f4", label: "1. Return Requested" },
+                      { value: "Pick Up Scheduled", color: "#fbbf24", label: "2. Pick Up Scheduled" },
+                      { value: "Picked Up", color: "#06b6d4", label: "3. Picked Up" },
+                      { value: "Under Review", color: "#3b82f6", label: "4. Under Review" },
+                      { value: "Refund Initiated", color: "#a855f7", label: "5. Refund Initiated" },
+                      { value: "Refund Completed", color: "#22c55e", label: "6. Refund Completed" }
+                    ];
+                  %>
+                  <% returnOptionsList.forEach(opt => { %>
+                    <div class="custom-dropdown-item <%= currentRStatus === opt.value ? 'selected' : '' %>" 
+                         data-value="<%= opt.value %>" 
+                         data-color="<%= opt.color %>"
+                         onclick="selectReturnOption(this)">
+                      <span class="dot" style="background: <%= opt.color %>;"></span>
+                      <%= opt.label %>
+                    </div>
+                  <% }) %>
+                </div>
+              </div>
+            </div>
+
+            <div style="background: rgba(40, 201, 244, 0.05); border: 1px solid rgba(40, 201, 244, 0.15); border-radius: 12px; padding: 14px; font-size: 12.5px; color: #888; line-height: 1.5;">
+              <strong style="color: #28c9f4;">Admin Note:</strong> Updating this stage will reflect live on the customer's 6-step Return Timeline page.
+            </div>
+
+            <button type="submit" class="update-btn">Update Return Stage</button>
+          </form>
+        <% } else if (order.status === "Cancelled") { %>
+          <p style="font-size: 13.5px; color: #666; line-height: 1.5; text-align: center;">
+            This order status is in a final state (<strong>Cancelled</strong>) and cannot be updated further.
+          </p>
+        <% } else { %>
+          <form action="/admin/orders/<%= order._id %>/status" method="POST" class="status-form">
+            <div>
+              <label class="info-label" style="display: block; margin-bottom: 8px;">Order Status</label>
+              
+              <!-- Hidden input to submit status -->
+              <input type="hidden" name="status" id="statusInput" value="<%= order.status %>">
+              
+              <!-- Custom dropdown menu -->
+              <div class="custom-dropdown" id="statusDropdown">
+                <button type="button" class="custom-dropdown-trigger" onclick="toggleDropdown()">
+                  <span id="selectedOptionText" style="display: flex; align-items: center; gap: 8px;">
+                    <% 
+                      let dotColor = "#888";
+                      if (order.status === "Pending") dotColor = "#fbbf24";
+                      else if (order.status === "Processing") dotColor = "#3b82f6";
+                      else if (order.status === "Shipped") dotColor = "#a855f7";
+                      else if (order.status === "Out for Delivery") dotColor = "#06b6d4";
+                      else if (order.status === "Delivered") dotColor = "#22c55e";
+                      else if (order.status === "Cancelled") dotColor = "#ef4444";
+                      else if (order.status === "Returned") dotColor = "#94a3b8";
+                    %>
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: <%= dotColor %>;"></span>
+                    <%= order.status %>
+                  </span>
+                  <svg class="chevron" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+                
+                <div class="custom-dropdown-menu">
+                  <% 
+                    const optionsList = [
+                      { value: "Pending", color: "#fbbf24" },
+                      { value: "Processing", color: "#3b82f6" },
+                      { value: "Shipped", color: "#a855f7" },
+                      { value: "Out for Delivery", color: "#06b6d4" },
+                      { value: "Delivered", color: "#22c55e" },
+                      { value: "Cancelled", color: "#ef4444" },
+                      { value: "Returned", color: "#94a3b8" }
+                    ];
+                  %>
+                  <% optionsList.forEach(opt => { %>
+                    <div class="custom-dropdown-item <%= order.status === opt.value ? 'selected' : '' %>" 
+                         data-value="<%= opt.value %>" 
+                         data-color="<%= opt.color %>"
+                         onclick="selectOption(this)">
+                      <span class="dot" style="background: <%= opt.color %>;"></span>
+                      <%= opt.value %>
+                    </div>
+                  <% }) %>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cancellation Reason Block -->
+            <div id="cancelReasonBlock" class="reason-area">
+              <label class="info-label">Cancellation Reason</label>
+              <textarea name="cancellationReason" placeholder="Enter reason for cancelling this order..." class="reason-input" rows="3"></textarea>
+            </div>
+
+            <!-- Return Reason Block -->
+            <div id="returnReasonBlock" class="reason-area">
+              <label class="info-label">Return Reason</label>
+              <textarea name="returnReason" placeholder="Enter reason for returning this order..." class="reason-input" rows="3"></textarea>
+            </div>
+
+            <button type="submit" class="update-btn">Save Changes</button>
+          </form>
+        <% } %>
+      </div>
+
+      <!-- Customer Details Card -->
+      <div class="detail-card">
+        <h2 class="card-title">Customer Details</h2>
+        
+        <div class="info-group">
+          <div class="info-label">Name</div>
+          <div class="info-value"><%= order.shippingAddress.fullName %></div>
+        </div>
+
+        <div class="info-group">
+          <div class="info-label">Email</div>
+          <div class="info-value"><%= order.userId ? order.userId.email : 'Guest Customer' %></div>
+        </div>
+
+        <% if (order.shippingAddress.phone) { %>
+          <div class="info-group">
+            <div class="info-label">Phone</div>
+            <div class="info-value"><%= order.shippingAddress.phone %></div>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Shipping Address Card -->
+      <div class="detail-card">
+        <h2 class="card-title">Shipping Address</h2>
+        
+        <div class="info-value" style="font-size: 14px; line-height: 1.6;">
+          <strong><%= order.shippingAddress.fullName %></strong><br>
+          <%= order.shippingAddress.addressLine %><br>
+          <%= order.shippingAddress.city %>, <%= order.shippingAddress.state %><br>
+          PIN: <%= order.shippingAddress.postalCode %><br>
+          Phone: <%= order.shippingAddress.phone %>
+        </div>
+      </div>
+
+      <!-- Payment details card -->
+      <div class="detail-card">
+        <h2 class="card-title">Payment Info</h2>
+        
+        <div class="info-group">
+          <div class="info-label">Payment Method</div>
+          <div class="info-value"><%= order.paymentMethod %></div>
+        </div>
+
+        <div class="info-group">
+          <div class="info-label">Payment Status</div>
+          <div class="info-value">
+            <% if (order.paymentStatus === "Refunded") { %>
+              <span class="pay-status-Refunded">● Refunded</span>
+            <% } else if (order.status === "Delivered" || order.paymentStatus === "Paid") { %>
+              <span class="pay-status-Paid">● Paid</span>
+            <% } else { %>
+              <span class="pay-status-Pending">● Pending</span>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  function toggleReasons(val) {
+    const cancelBlock = document.getElementById('cancelReasonBlock');
+    const returnBlock = document.getElementById('returnReasonBlock');
+    
+    if (cancelBlock) cancelBlock.style.display = (val === 'Cancelled') ? 'flex' : 'none';
+    if (returnBlock) returnBlock.style.display = (val === 'Returned') ? 'flex' : 'none';
+  }
+
+  function toggleDropdown() {
+    const dropdown = document.getElementById('statusDropdown');
+    if (dropdown) dropdown.classList.toggle('open');
+  }
+
+  function toggleReturnDropdown() {
+    const dropdown = document.getElementById('returnStatusDropdown');
+    if (dropdown) dropdown.classList.toggle('open');
+  }
+
+  function selectOption(element) {
+    const value = element.getAttribute('data-value');
+    const color = element.getAttribute('data-color');
+    
+    // Update hidden input
+    const input = document.getElementById('statusInput');
+    if (input) input.value = value;
+    
+    // Update trigger text & dot
+    const selectedText = document.getElementById('selectedOptionText');
+    if (selectedText) {
+      selectedText.innerHTML = `
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: ${color};"></span>
+        ${value}
+      `;
+    }
+    
+    // Update active class
+    const items = document.querySelectorAll('#statusDropdown .custom-dropdown-item');
+    items.forEach(item => item.classList.remove('selected'));
+    element.classList.add('selected');
+    
+    // Toggle reason fields
+    toggleReasons(value);
+    
+    // Close dropdown
+    const dropdown = document.getElementById('statusDropdown');
+    if (dropdown) dropdown.classList.remove('open');
+  }
+
+  function selectReturnOption(element) {
+    const value = element.getAttribute('data-value');
+    const color = element.getAttribute('data-color');
+    
+    const input = document.getElementById('returnStatusInput');
+    if (input) input.value = value;
+    
+    const selectedText = document.getElementById('selectedReturnText');
+    if (selectedText) {
+      selectedText.innerHTML = `
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: ${color};"></span>
+        ${value}
+      `;
+    }
+    
+    const items = document.querySelectorAll('#returnStatusDropdown .custom-dropdown-item');
+    items.forEach(item => item.classList.remove('selected'));
+    element.classList.add('selected');
+    
+    const dropdown = document.getElementById('returnStatusDropdown');
+    if (dropdown) dropdown.classList.remove('open');
+  }
+
+  // Close dropdowns if clicking outside
+  document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('statusDropdown');
+    if (dropdown && !dropdown.contains(event.target)) {
+      dropdown.classList.remove('open');
+    }
+    const returnDropdown = document.getElementById('returnStatusDropdown');
+    if (returnDropdown && !returnDropdown.contains(event.target)) {
+      returnDropdown.classList.remove('open');
+    }
+  });
+
+  // Run on page load: pre-populate reason displays & handle toast auto-hide + URL cleanup
+  document.addEventListener('DOMContentLoaded', function() {
+    const statusInput = document.getElementById('statusInput');
+    if (statusInput) {
+      toggleReasons(statusInput.value);
+    }
+
+    // Auto-hide toast alerts after 3.5 seconds
+    const successToast = document.getElementById('toastSuccess');
+    const errorToast = document.getElementById('toastError');
+
+    const autoHide = (el) => {
+      if (el) {
+        setTimeout(() => {
+          el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(-10px)';
+          setTimeout(() => {
+            el.style.display = 'none';
+          }, 500);
+        }, 3500);
+      }
+    };
+
+    autoHide(successToast);
+    autoHide(errorToast);
+
+    // Clean up ?success= or ?error= from URL without reloading page
+    if (window.history.replaceState && (window.location.search.includes('success=') || window.location.search.includes('error='))) {
+      const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+      window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+    }
+  });
+</script>

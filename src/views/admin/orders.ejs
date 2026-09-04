@@ -1,0 +1,594 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  .orders-page {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #ffffff;
+    padding: 28px 32px 48px;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .orders-header {
+    position: relative;
+    margin-bottom: 32px;
+    padding: 36px 40px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #0d1b2a 0%, #0f2337 40%, #0b1e35 70%, #091828 100%);
+    border: 1px solid rgba(40, 201, 244, 0.1);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(40, 201, 244, 0.06);
+    overflow: hidden;
+  }
+
+  .orders-header::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -40px;
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, rgba(40, 201, 244, 0.1) 0%, transparent 70%);
+  }
+
+  .orders-header-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .orders-title-sec {
+    flex: 1;
+    min-width: 260px;
+  }
+
+  .orders-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #28c9f4;
+    margin-bottom: 10px;
+    padding: 4px 10px;
+    border: 1px solid rgba(40, 201, 244, 0.25);
+    border-radius: 20px;
+    background: rgba(40, 201, 244, 0.06);
+  }
+
+  .orders-title {
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin: 0;
+    background: linear-gradient(135deg, #ffffff 0%, #a0d8ef 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── CONTROLS ROW ── */
+  .orders-controls {
+    background: #111111;
+    border: 1px solid #222222;
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+
+  .controls-left {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    flex: 1;
+    min-width: 280px;
+  }
+
+  .search-form {
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .search-input {
+    width: 100%;
+    background: #161616;
+    border: 1px solid #2c2c2c;
+    border-radius: 10px;
+    padding: 11px 16px 11px 40px;
+    font-size: 13.5px;
+    color: #fff;
+    transition: all 0.2s ease;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: #28c9f4;
+    box-shadow: 0 0 0 3px rgba(40, 201, 244, 0.15);
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #555;
+    pointer-events: none;
+  }
+
+  .filter-select-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .filter-label {
+    font-size: 12px;
+    color: #666;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .styled-select {
+    background: #161616;
+    border: 1px solid #2c2c2c;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 13.5px;
+    color: #fff;
+    outline: none;
+    cursor: pointer;
+    min-width: 150px;
+    transition: all 0.2s ease;
+  }
+
+  .styled-select:focus {
+    border-color: #28c9f4;
+  }
+
+  /* ── FILTER BUTTONS ROW ── */
+  .status-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .status-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 20px;
+    background: #141414;
+    border: 1px solid #222;
+    color: #888;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .status-btn:hover {
+    background: #1c1c1c;
+    color: #fff;
+  }
+
+  .status-btn.active {
+    background: rgba(40, 201, 244, 0.1);
+    border-color: rgba(40, 201, 244, 0.4);
+    color: #28c9f4;
+  }
+
+  /* ── TABLE ── */
+  .table-container {
+    background: #111111;
+    border: 1px solid #222222;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  .orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  .orders-table th {
+    background: #151515;
+    padding: 18px 24px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid #222;
+  }
+
+  .orders-table td {
+    padding: 18px 24px;
+    font-size: 13.5px;
+    color: #aaa;
+    border-bottom: 1px solid #1a1a1a;
+    vertical-align: middle;
+  }
+
+  .orders-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .orders-table tr:hover {
+    background: rgba(255,255,255,0.01);
+  }
+
+  .order-id-link {
+    color: #fff;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .order-id-link:hover {
+    color: #28c9f4;
+  }
+
+  .customer-name {
+    color: #eee;
+    font-weight: 500;
+    margin-bottom: 3px;
+  }
+
+  .customer-email {
+    font-size: 11px;
+    color: #555;
+  }
+
+  /* Status Pills */
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 30px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .status-Pending          { background: rgba(251, 191, 36, 0.08); border: 1px solid rgba(251, 191, 36, 0.2); color: #fbbf24; }
+  .status-Processing       { background: rgba(59, 130, 246, 0.08);  border: 1px solid rgba(59, 130, 246, 0.2);  color: #3b82f6; }
+  .status-Shipped          { background: rgba(168, 85, 247, 0.08);  border: 1px solid rgba(168, 85, 247, 0.2);  color: #a855f7; }
+  .status-Out_for_Delivery,
+  .status-Out-for-Delivery { background: rgba(6, 182, 212, 0.08);   border: 1px solid rgba(6, 182, 212, 0.2);   color: #06b6d4; }
+  .status-Delivered        { background: rgba(34, 197, 94, 0.08);   border: 1px solid rgba(34, 197, 94, 0.2);   color: #22c55e; }
+  .status-Cancelled        { background: rgba(239, 68, 68, 0.08);   border: 1px solid rgba(239, 68, 68, 0.2);   color: #ef4444; }
+  .status-Returned         { background: rgba(100, 116, 139, 0.08); border: 1px solid rgba(100, 116, 139, 0.2); color: #94a3b8; }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* Actions */
+  .view-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .view-btn:hover {
+    background: #252525;
+    border-color: #28c9f4;
+    color: #28c9f4;
+    box-shadow: 0 0 10px rgba(40, 201, 244, 0.1);
+  }
+
+  /* ── PAGINATION ── */
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 36px;
+    gap: 8px;
+  }
+
+  .pg-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #111;
+    border: 1px solid #222;
+    color: #888;
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 600;
+    transition: all 0.15s ease;
+  }
+
+  .pg-btn:hover:not(.disabled) {
+    background: #1c1c1c;
+    border-color: #333;
+    color: #fff;
+  }
+
+  .pg-btn.current {
+    background: rgba(40, 201, 244, 0.1);
+    border-color: #28c9f4;
+    color: #28c9f4;
+  }
+
+  .pg-btn.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .pg-dots {
+    color: #444;
+    font-size: 14px;
+  }
+
+  .empty-state {
+    padding: 60px 40px;
+    text-align: center;
+    color: #666;
+  }
+
+  .empty-icon {
+    font-size: 40px;
+    color: #333;
+    margin-bottom: 16px;
+  }
+
+  /* Toast Alerts */
+  .toast-alert {
+    padding: 14px 20px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .toast-success {
+    background: rgba(34, 197, 94, 0.08);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+  }
+
+  .toast-error {
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<div class="orders-page">
+  
+  <% if (success) { %>
+    <div class="toast-alert toast-success">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <%= success %>
+    </div>
+  <% } %>
+
+  <% if (error) { %>
+    <div class="toast-alert toast-error">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+      <%= error %>
+    </div>
+  <% } %>
+
+  <!-- Hero Header -->
+  <div class="orders-header">
+    <div class="orders-header-inner">
+      <div class="orders-title-sec">
+        <div class="orders-eyebrow">Registry</div>
+        <h1 class="orders-title">Order Management</h1>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Filters Bar -->
+  <div class="status-filters">
+    <% const statuses = ["", "Pending", "Processing", "Shipped", "Out for Delivery", "Delivered", "Cancelled", "Returned"]; %>
+    <% statuses.forEach(st => { %>
+      <a href="?status=<%= st %><%= search ? '&search=' + encodeURIComponent(search) : '' %><%= sortBy ? '&sortBy=' + encodeURIComponent(sortBy) : '' %>" 
+         class="status-btn <%= statusFilter === st ? 'active' : '' %>">
+        <%= st === "" ? "All Orders" : st %>
+      </a>
+    <% }) %>
+  </div>
+
+  <!-- Search, Filter & Sort Controls -->
+  <div class="orders-controls">
+    <form action="" method="GET" class="search-form">
+      <!-- Carry forward other filters in form submit -->
+      <% if (statusFilter) { %>
+        <input type="hidden" name="status" value="<%= statusFilter %>">
+      <% } %>
+      <% if (sortBy) { %>
+        <input type="hidden" name="sortBy" value="<%= sortBy %>">
+      <% } %>
+      <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+      <input type="text" name="search" placeholder="Search by ID, customer, phone..." class="search-input" value="<%= search %>">
+    </form>
+
+    <div class="filter-select-wrap">
+      <label class="filter-label">Sort By</label>
+      <select onchange="window.location.href = this.value" class="styled-select">
+        <% 
+          const baseLink = `?status=${encodeURIComponent(statusFilter)}&search=${encodeURIComponent(search)}`;
+        %>
+        <option value="<%= baseLink %>&sortBy=createdAt_desc" <%= sortBy === 'createdAt_desc' ? 'selected' : '' %>>Newest First</option>
+        <option value="<%= baseLink %>&sortBy=createdAt_asc" <%= sortBy === 'createdAt_asc' ? 'selected' : '' %>>Oldest First</option>
+        <option value="<%= baseLink %>&sortBy=total_desc" <%= sortBy === 'total_desc' ? 'selected' : '' %>>Total: High to Low</option>
+        <option value="<%= baseLink %>&sortBy=total_asc" <%= sortBy === 'total_asc' ? 'selected' : '' %>>Total: Low to High</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Table Container -->
+  <div class="table-container">
+    <% if (orders && orders.length > 0) { %>
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th style="width: 15%;">OrderID</th>
+            <th style="width: 15%;">Date</th>
+            <th style="width: 25%;">User Details</th>
+            <th style="width: 15%;">Total</th>
+            <th style="width: 15%;">Status</th>
+            <th style="width: 15%; text-align: right;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% orders.forEach(order => { %>
+            <tr>
+              <td>
+                <a href="/admin/orders/<%= order._id %>" class="order-id-link">
+                  #<%= order.orderId %>
+                </a>
+              </td>
+              <td>
+                <%= new Date(order.createdAt).toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric' }) %>
+                <div style="font-size: 11px; color: #555; margin-top: 2px;">
+                  <%= new Date(order.createdAt).toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit' }) %>
+                </div>
+              </td>
+              <td>
+                <div class="customer-name"><%= order.shippingAddress.fullName %></div>
+                <div class="customer-email">
+                  <%= order.userId ? order.userId.email : 'Guest' %>
+                  <% if (order.shippingAddress.phone) { %>
+                    • <%= order.shippingAddress.phone %>
+                  <% } %>
+                </div>
+              </td>
+              <td>
+                <strong style="color: #fff; font-weight: 600;">₹<%= order.finalTotal.toLocaleString("en-IN") %></strong>
+                <div style="font-size: 11px; color: #555; margin-top: 2px;"><%= order.paymentMethod %></div>
+              </td>
+              <td>
+                <% 
+                  const stClass = order.status.replace(/ /g, "_");
+                %>
+                <span class="status-pill status-<%= stClass %>">
+                  <span class="status-dot"></span>
+                  <%= order.status %>
+                </span>
+              </td>
+              <td style="text-align: right;">
+                <a href="/admin/orders/<%= order._id %>" class="view-btn">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  Details
+                </a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <div class="empty-state">
+        <div class="empty-icon">📂</div>
+        <h3>No Orders Found</h3>
+        <p style="font-size: 13px; margin-top: 6px;">Try adjusting your filters, search queries, or checking back later.</p>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Pagination -->
+  <% if (totalPages > 1) { %>
+    <div class="pagination-container">
+      <% const pageLink = (p) => `?page=${p}&status=${encodeURIComponent(statusFilter)}&search=${encodeURIComponent(search)}&sortBy=${encodeURIComponent(sortBy)}`; %>
+      
+      <!-- Prev Button -->
+      <% if (currentPage > 1) { %>
+        <a href="<%= pageLink(currentPage - 1) %>" class="pg-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </a>
+      <% } else { %>
+        <span class="pg-btn disabled">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </span>
+      <% } %>
+
+      <!-- Pages -->
+      <% for (let i = 1; i <= totalPages; i++) { %>
+        <% if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) { %>
+          <a href="<%= pageLink(i) %>" class="pg-btn <%= i === currentPage ? 'current' : '' %>">
+            <%= i %>
+          </a>
+        <% } else if (i === currentPage - 2 || i === currentPage + 2) { %>
+          <span class="pg-dots">…</span>
+        <% } %>
+      <% } %>
+
+      <!-- Next Button -->
+      <% if (currentPage < totalPages) { %>
+        <a href="<%= pageLink(currentPage + 1) %>" class="pg-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </a>
+      <% } else { %>
+        <span class="pg-btn disabled">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </span>
+      <% } %>
+    </div>
+  <% } %>
+
+</div>

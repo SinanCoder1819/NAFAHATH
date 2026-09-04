@@ -63,7 +63,7 @@ export const isLogout = async (req, res, next) => {
     if (!user || user.isBlocked) {
       return req.session.destroy(() => {
         res.clearCookie("user.sid");
-        return res.redirect('/login');
+        return res.redirect('/auth/login');
       });
     }
 

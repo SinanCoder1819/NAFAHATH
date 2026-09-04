@@ -1,0 +1,784 @@
+<main class="min-h-screen bg-[#060606] text-white py-12 px-4 md:px-8 lg:px-12 font-['Inter',sans-serif]">
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="w-full lg:w-72 shrink-0">
+            <div class="bg-[#0f0f0f] border border-gray-800 rounded-3xl p-8 sticky top-28 shadow-2xl">
+                <div class="mb-10">
+                    <p class="text-[10px] uppercase tracking-[0.3em] text-[#22d3ee] font-bold mb-6 opacity-80">Dashboard</p>
+                    <nav class="flex flex-col gap-2">
+                        <!-- Profile (Inactive) -->
+                        <a href="/profile" class="group flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all border border-transparent">
+                            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            <span class="text-sm font-medium">Profile</span>
+                        </a>
+                        
+                        <!-- My Orders (Active) -->
+                        <a href="/orders" class="group flex items-center gap-4 px-4 py-3 rounded-xl bg-[#22d3ee]/10 text-[#22d3ee] border border-[#22d3ee]/20 transition-all">
+                            <svg class="w-5 h-5 opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                            <span class="text-sm font-medium">My Orders</span>
+                        </a>
+
+                        <!-- Wallet (Inactive) -->
+                        <a href="/wallet" class="group flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all border border-transparent">
+                            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                            <span class="text-sm font-medium">Wallet</span>
+                        </a>
+
+                        <!-- Addresses (Inactive) -->
+                        <a href="/address" class="group flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all border border-transparent">
+                            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+                            <span class="text-sm font-medium">Addresses</span>
+                        </a>
+
+                        <!-- Refer & Earn (Inactive) -->
+                        <a href="/referrals" class="group flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all border border-transparent">
+                            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12z"/></svg>
+                            <span class="text-sm font-medium">Refer & Earn</span>
+                        </a>
+                    </nav>
+                </div>
+
+                <div class="pt-6 border-t border-gray-800">
+                    <form action="/auth/logout" method="post">
+                        <button class="flex items-center gap-4 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-all group w-full text-left">
+                            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Orders List Section -->
+        <section class="flex-1 space-y-8">
+            
+            <div class="relative overflow-hidden bg-[#0f0f0f] border border-gray-800 rounded-3xl p-6 md:p-10 shadow-2xl">
+                <div class="absolute -top-24 -right-24 w-64 h-64 bg-[#22d3ee]/10 blur-[80px] rounded-full"></div>
+                
+                <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                    <div>
+                        <h2 class="text-3xl md:text-4xl font-serif text-white mb-2 italic">Olfactory Chronicles</h2>
+                        <p class="text-gray-400 text-sm tracking-wide">Manage your orders, cancellations, returns, and refunds seamlessly.</p>
+                    </div>
+                </div>
+
+                <!-- Status Filter Tabs & Search Bar -->
+                <div class="space-y-6 mb-8">
+                    <!-- Tabs -->
+                    <div class="flex items-center gap-2 overflow-x-auto pb-2 border-b border-gray-800/80 custom-scrollbar">
+                        <% const tabs = [
+                            { id: "All", label: "All Orders" },
+                            { id: "Pending", label: "Pending" },
+                            { id: "Shipped", label: "Shipped" },
+                            { id: "Delivered", label: "Delivered" },
+                            { id: "Cancelled", label: "Cancelled" },
+                            { id: "Returned", label: "Returned" }
+                        ]; %>
+                        <% tabs.forEach(t => { %>
+                            <a href="/orders?tab=<%= t.id %><%= search ? '&search=' + encodeURIComponent(search) : '' %>" 
+                               class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all duration-300
+                                      <%= (typeof currentTab !== 'undefined' ? currentTab : 'All') === t.id 
+                                          ? 'bg-[#22d3ee]/15 text-[#22d3ee] border border-[#22d3ee]/40 shadow-[0_0_15px_rgba(34,211,238,0.15)]' 
+                                          : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent' %>">
+                                <%= t.label %>
+                            </a>
+                        <% }); %>
+                    </div>
+
+                    <!-- Search Input -->
+                    <div class="max-w-xl">
+                        <form action="/orders" method="GET" class="relative flex gap-2">
+                            <input type="hidden" name="tab" value="<%= typeof currentTab !== 'undefined' ? currentTab : 'All' %>">
+                            <div class="relative flex-grow">
+                                <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                </span>
+                                <input 
+                                    type="text" 
+                                    name="search" 
+                                    value="<%= search %>" 
+                                    placeholder="Search by Order ID, fragrance name, or status..." 
+                                    class="w-full bg-[#161616] border border-gray-800 hover:border-gray-700 focus:border-[#22d3ee] text-slate-100 text-sm rounded-2xl pl-11 pr-4 py-3.5 focus:outline-none transition-all"
+                                />
+                            </div>
+                            <button type="submit" class="bg-[#22d3ee] text-[#03111a] hover:bg-cyan-400 px-6 py-3.5 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all transform active:scale-95">
+                                Search
+                            </button>
+                            <% if (search) { %>
+                                <a href="/orders?tab=<%= typeof currentTab !== 'undefined' ? currentTab : 'All' %>" class="border border-gray-800 hover:border-gray-700 text-gray-400 hover:text-white px-4 py-3.5 rounded-2xl text-xs font-bold uppercase tracking-wider flex items-center justify-center transition-all">
+                                    Clear
+                                </a>
+                            <% } %>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Orders Registry Container -->
+                <div class="space-y-6">
+                    <% if (orders && orders.length > 0) { %>
+                        <% orders.forEach(order => { %>
+                            <div class="border border-gray-800/80 bg-[#121212]/40 hover:bg-[#121212]/70 hover:border-gray-700/60 rounded-3xl p-6 md:p-8 transition-all duration-300 shadow-lg">
+                                
+                                <!-- Card Header -->
+                                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-gray-800/60 mb-5">
+                                    <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+                                        <span class="text-sm font-extrabold tracking-widest text-[#22d3ee] font-mono uppercase">Order ID: #<%= order.orderId %></span>
+                                        <span class="text-xs text-gray-400 font-medium">Placed on <%= new Date(order.createdAt).toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric' }) %></span>
+                                    </div>
+                                    
+                                    <!-- Status Badge -->
+                                    <div>
+                                        <% 
+                                            let badgeStyle = "";
+                                            if (order.status === "Pending") badgeStyle = "border-yellow-500/30 text-yellow-400 bg-yellow-500/10";
+                                            else if (order.status === "Processing") badgeStyle = "border-blue-500/30 text-blue-400 bg-blue-500/10";
+                                            else if (order.status === "Shipped") badgeStyle = "border-purple-500/30 text-purple-400 bg-purple-500/10";
+                                            else if (order.status === "Out for Delivery") badgeStyle = "border-cyan-500/30 text-cyan-400 bg-cyan-500/10";
+                                            else if (order.status === "Delivered") badgeStyle = "border-emerald-500/30 text-emerald-400 bg-emerald-500/10";
+                                            else if (order.status === "Cancelled") badgeStyle = "border-red-500/30 text-red-400 bg-red-500/10";
+                                            else if (["Returned", "Return Requested"].includes(order.status)) badgeStyle = "border-teal-500/30 text-teal-300 bg-teal-500/10";
+                                        %>
+                                        <span class="px-3.5 py-1.5 rounded-xl border text-[11px] font-extrabold uppercase tracking-widest <%= badgeStyle %>">
+                                            <%= order.status %>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Card Body (Product previews) -->
+                                <div class="space-y-4 mb-6">
+                                    <% order.items.forEach(item => { %>
+                                        <div class="flex items-center gap-4 p-3 rounded-2xl bg-[#090909]/60 border border-gray-800/40">
+                                            <div class="w-16 h-16 rounded-xl border border-gray-800 bg-[#040404] overflow-hidden shrink-0">
+                                                <img src="<%= item.primaryImage || 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=300&q=80' %>" alt="<%= item.productName %>" class="w-full h-full object-cover">
+                                            </div>
+                                            <div class="flex-grow min-w-0">
+                                                <h4 class="text-sm font-semibold text-white truncate"><%= item.productName %></h4>
+                                                <p class="text-xs text-gray-400 truncate"><%= item.brand %> • Size: <%= item.size %> • Qty: <%= item.quantity %></p>
+                                                <% if (item.status === 'Cancelled') { %>
+                                                    <span class="inline-block mt-1 text-[10px] text-red-400 font-medium">Cancelled</span>
+                                                <% } else if (item.status === 'Returned') { %>
+                                                    <span class="inline-block mt-1 text-[10px] text-teal-400 font-medium">Returned</span>
+                                                <% } %>
+                                            </div>
+                                            <div class="text-right shrink-0">
+                                                <span class="text-sm font-bold text-[#22d3ee]">₹<%= (item.price * item.quantity).toLocaleString() %></span>
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                </div>
+
+                                <!-- Card Actions & Total Footer -->
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-gray-800/50">
+                                    <div>
+                                        <span class="text-[10px] text-gray-500 uppercase tracking-widest font-semibold block">Total Amount</span>
+                                        <span class="text-xl font-extrabold text-white font-serif">₹<%= order.finalTotal.toLocaleString() %></span>
+                                    </div>
+                                    
+                                    <div class="flex flex-wrap items-center gap-2.5">
+                                        <!-- Action: Cancel Order (Before Delivery: Pending or Processing) -->
+                                        <% if (["Pending", "Processing"].includes(order.status)) { %>
+                                            <button 
+                                                onclick="startCancelWizard('<%= order._id %>', '<%= order.orderId %>', <%= order.finalTotal %>)"
+                                                class="px-5 py-2.5 rounded-xl border border-red-500/40 hover:border-red-500 bg-red-500/10 hover:bg-red-600 text-red-400 hover:text-white text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-sm">
+                                                Cancel Order
+                                            </button>
+                                        <% } %>
+
+                                        <!-- Action: Return Order (After Delivery: Delivered) -->
+                                        <% if (order.status === "Delivered") { %>
+                                            <button 
+                                                onclick="startReturnWizard('<%= order._id %>', '<%= order.orderId %>', <%= order.finalTotal %>)"
+                                                class="px-5 py-2.5 rounded-xl border border-[#22d3ee]/40 hover:border-[#22d3ee] bg-[#22d3ee]/10 hover:bg-[#22d3ee] text-[#22d3ee] hover:text-[#03111a] text-xs font-extrabold uppercase tracking-wider transition-all cursor-pointer shadow-sm">
+                                                Return / Replace
+                                            </button>
+                                        <% } %>
+
+                                        <!-- Action: View Return Status (Returned or Return Requested) -->
+                                        <% if (["Returned", "Return Requested"].includes(order.status)) { %>
+                                            <a href="/orders/<%= order._id %>#return-timeline" class="px-5 py-2.5 rounded-xl border border-teal-500/40 hover:border-teal-400 bg-teal-500/10 hover:bg-teal-500/20 text-teal-300 text-xs font-bold uppercase tracking-wider transition-all text-center">
+                                                View Return Status
+                                            </a>
+                                        <% } %>
+
+                                        <!-- Details Button -->
+                                        <a href="/orders/<%= order._id %>" class="px-5 py-2.5 rounded-xl border border-gray-800 hover:border-gray-600 bg-white/[0.03] hover:bg-white/[0.08] text-xs font-bold uppercase tracking-wider text-slate-200 hover:text-white transition-all text-center">
+                                            View Details
+                                        </a>
+
+                                        <!-- Invoice Button -->
+                                        <a href="/orders/<%= order._id %>/invoice" class="px-4 py-2.5 rounded-xl border border-gray-800 hover:border-[#22d3ee]/40 bg-white/[0.02] hover:bg-[#22d3ee]/10 text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-[#22d3ee] transition-all flex items-center gap-1.5 text-center">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <!-- Empty State -->
+                        <div class="py-16 text-center border border-dashed border-gray-800 rounded-3xl bg-[#090909]/40">
+                            <div class="w-16 h-16 bg-[#22d3ee]/10 border border-[#22d3ee]/25 rounded-full flex items-center justify-center text-[#22d3ee] mx-auto mb-4">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                            </div>
+                            <h3 class="text-lg font-serif text-white italic mb-1">No Orders Found</h3>
+                            <p class="text-xs text-gray-500 max-w-sm mx-auto mb-6">No order matches your current filter tab or search criteria.</p>
+                            <a href="/shop" class="inline-block bg-[#22d3ee] text-[#03111a] hover:bg-cyan-400 px-8 py-3.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all">
+                                Shop Now
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+
+            </div>
+
+            <!-- ── BOTTOM INFORMATION CARDS (Policy & Help as per diagram) ── -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+                <!-- Card 1: Important Notes -->
+                <div class="bg-[#0f0f0f] border border-gray-800/80 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        </div>
+                        <h4 class="text-sm font-bold text-white uppercase tracking-wider">Important Notes</h4>
+                    </div>
+                    <ul class="space-y-2.5 text-xs text-gray-400 list-disc list-inside">
+                        <li>Cancellation is allowed only before the order is shipped.</li>
+                        <li>Return is allowed only after delivery as per return policy.</li>
+                    </ul>
+                </div>
+
+                <!-- Card 2: Refund Timeline -->
+                <div class="bg-[#0f0f0f] border border-gray-800/80 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-9 h-9 rounded-xl bg-[#22d3ee]/10 border border-[#22d3ee]/20 flex items-center justify-center text-[#22d3ee]">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <h4 class="text-sm font-bold text-white uppercase tracking-wider">Refund Timeline</h4>
+                    </div>
+                    <ul class="space-y-2.5 text-xs text-gray-400 list-disc list-inside">
+                        <li><strong class="text-gray-200">Prepaid Orders:</strong> Refund within 3-5 business days.</li>
+                        <li><strong class="text-gray-200">COD Orders:</strong> Refund within 5-7 business days.</li>
+                    </ul>
+                </div>
+
+                <!-- Card 3: Need Help? -->
+                <div class="bg-[#0f0f0f] border border-gray-800/80 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <h4 class="text-sm font-bold text-white uppercase tracking-wider">Need Help?</h4>
+                    </div>
+                    <ul class="space-y-2.5 text-xs text-gray-400">
+                        <li class="flex items-center gap-2">
+                            <svg class="w-3.5 h-3.5 text-[#22d3ee]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101"/></svg>
+                            Visit <a href="#" class="text-[#22d3ee] underline font-semibold">Help Center</a>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <svg class="w-3.5 h-3.5 text-[#22d3ee]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                            Support: <span class="text-gray-200 font-semibold">1800-123-4567</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+</main>
+
+<!-- ════════════════════════════════════════════════════════════════════════════ -->
+<!--  CANCEL ORDER MULTI-STEP WIZARD MODAL (Exact Structure from Image)          -->
+<!-- ════════════════════════════════════════════════════════════════════════════ -->
+<div id="cancelWizardModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 hidden backdrop-blur-md transition-all duration-300">
+    <div class="bg-[#0f1117] border border-red-500/20 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-[0_20px_60px_rgba(0,0,0,0.9)] relative text-white">
+        <!-- Close Button -->
+        <button onclick="closeCancelWizard()" class="absolute top-5 right-5 text-gray-500 hover:text-white transition cursor-pointer bg-transparent border-none">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+
+        <!-- Header Banner & Stepper -->
+        <div class="mb-6 pb-4 border-b border-gray-800/80">
+            <div class="flex items-center gap-2 text-xs text-red-400 font-bold uppercase tracking-wider mb-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                Cancel Order (Before Delivery)
+            </div>
+
+            <!-- Stepper Progress Dots -->
+            <div class="flex items-center justify-between mt-3 text-[10px] text-gray-400 font-semibold">
+                <span id="cancelStepIndicator2" class="step-badge">2. Cancel Order</span>
+                <span class="text-gray-700">➔</span>
+                <span id="cancelStepIndicator3" class="step-badge">3. Confirm</span>
+                <span class="text-gray-700">➔</span>
+                <span id="cancelStepIndicator4" class="step-badge">4. Successful</span>
+            </div>
+        </div>
+
+        <input type="hidden" id="cancelWizardOrderId" value="">
+
+        <!-- ── STEP 2 VIEW: SELECT REASON ── -->
+        <div id="cancelStep2View">
+            <h3 class="text-lg font-bold text-white mb-1">Why do you want to cancel this order?</h3>
+            <p class="text-xs text-gray-400 mb-4">Please select a reason for cancelling Order #<span id="cancelWizardDisplayId1"></span></p>
+
+            <div class="space-y-2 mb-5">
+                <label class="cancel-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-gray-800 bg-[#161618] hover:border-red-500/40 cursor-pointer transition-all">
+                    <input type="radio" name="cancelReasonRadio" value="Ordered by mistake" onchange="highlightCancelReason(this)" class="accent-red-500 w-4 h-4 cursor-pointer" checked>
+                    <span class="text-xs font-semibold text-gray-200">Ordered by mistake</span>
+                </label>
+                <label class="cancel-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-gray-800 bg-[#161618] hover:border-red-500/40 cursor-pointer transition-all">
+                    <input type="radio" name="cancelReasonRadio" value="Price is too high" onchange="highlightCancelReason(this)" class="accent-red-500 w-4 h-4 cursor-pointer">
+                    <span class="text-xs font-semibold text-gray-200">Price is too high</span>
+                </label>
+                <label class="cancel-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-gray-800 bg-[#161618] hover:border-red-500/40 cursor-pointer transition-all">
+                    <input type="radio" name="cancelReasonRadio" value="Delivery is too slow" onchange="highlightCancelReason(this)" class="accent-red-500 w-4 h-4 cursor-pointer">
+                    <span class="text-xs font-semibold text-gray-200">Delivery is too slow</span>
+                </label>
+                <label class="cancel-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-gray-800 bg-[#161618] hover:border-red-500/40 cursor-pointer transition-all">
+                    <input type="radio" name="cancelReasonRadio" value="Change in requirements" onchange="highlightCancelReason(this)" class="accent-red-500 w-4 h-4 cursor-pointer">
+                    <span class="text-xs font-semibold text-gray-200">Change in requirements</span>
+                </label>
+                <label class="cancel-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-gray-800 bg-[#161618] hover:border-red-500/40 cursor-pointer transition-all">
+                    <input type="radio" name="cancelReasonRadio" value="Other reason" onchange="highlightCancelReason(this)" class="accent-red-500 w-4 h-4 cursor-pointer">
+                    <span class="text-xs font-semibold text-gray-200">Other reason</span>
+                </label>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1.5">Comments (optional)</label>
+                <textarea id="cancelCommentsInput" placeholder="Additional details..." class="w-full bg-[#161618] border border-gray-800 focus:border-red-500 text-slate-100 text-xs rounded-xl p-3 focus:outline-none transition-all h-20 resize-none"></textarea>
+            </div>
+
+            <button onclick="goToCancelStep3()" class="w-full py-3.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-red-600/20">
+                Cancel Order
+            </button>
+        </div>
+
+        <!-- ── STEP 3 VIEW: CONFIRM CANCELLATION ── -->
+        <div id="cancelStep3View" class="hidden text-center py-4">
+            <div class="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-500 mx-auto mb-4">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            </div>
+            <h3 class="text-xl font-extrabold text-white mb-2">Are you sure you want to cancel Order #<span id="cancelWizardDisplayId2"></span>?</h3>
+            <p class="text-xs text-gray-400 mb-8">This action cannot be undone.</p>
+
+            <div class="space-y-3">
+                <button id="cancelConfirmBtn" onclick="submitCancelWizard()" class="w-full py-3.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-red-600/20">
+                    Yes, Cancel Order
+                </button>
+                <button onclick="goToCancelStep2()" class="w-full py-3 rounded-2xl border border-gray-800 hover:bg-white/5 text-gray-300 hover:text-white font-bold text-xs uppercase tracking-wider transition-all cursor-pointer bg-transparent">
+                    No, Go Back
+                </button>
+            </div>
+        </div>
+
+        <!-- ── STEP 4 VIEW: CANCELLATION SUCCESSFUL ── -->
+        <div id="cancelStep4View" class="hidden text-center py-6">
+            <div class="w-20 h-20 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mx-auto mb-5">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <h3 class="text-xl font-extrabold text-white mb-2">Your order has been cancelled successfully.</h3>
+            <p class="text-xs text-gray-400 mb-8">Refund will be initiated soon.</p>
+
+            <div class="space-y-3">
+                <button id="cancelViewDetailsBtn" onclick="location.reload()" class="w-full py-3.5 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-purple-600/20">
+                    View Refund Status
+                </button>
+                <button onclick="location.reload()" class="w-full py-3 rounded-2xl border border-gray-800 hover:bg-white/5 text-gray-300 hover:text-white font-bold text-xs uppercase tracking-wider transition-all cursor-pointer bg-transparent">
+                    Back to Orders
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════════ -->
+<!--  RETURN ORDER MULTI-STEP WIZARD MODAL (Exact Structure from Image)           -->
+<!-- ════════════════════════════════════════════════════════════════════════════ -->
+<div id="returnWizardModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 hidden backdrop-blur-md transition-all duration-300">
+    <div class="bg-[#0f131a] border border-[#22d3ee]/20 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-[0_20px_60px_rgba(0,0,0,0.9)] relative text-white">
+        <!-- Close Button -->
+        <button onclick="closeReturnWizard()" class="absolute top-5 right-5 text-gray-500 hover:text-white transition cursor-pointer bg-transparent border-none">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+
+        <!-- Header Banner & Stepper -->
+        <div class="mb-6 pb-4 border-b border-gray-800/80">
+            <div class="flex items-center gap-2 text-xs text-[#22d3ee] font-bold uppercase tracking-wider mb-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                Return Order (After Delivery)
+            </div>
+
+            <!-- Stepper Progress Dots -->
+            <div class="flex items-center justify-between mt-3 text-[9px] sm:text-[10px] text-gray-400 font-semibold overflow-x-auto pb-1 custom-scrollbar">
+                <span id="returnStepIndicator2" class="step-badge">2. Reason</span>
+                <span class="text-gray-700">➔</span>
+                <span id="returnStepIndicator3" class="step-badge">3. Details</span>
+                <span class="text-gray-700">➔</span>
+                <span id="returnStepIndicator4" class="step-badge">4. Pick-up</span>
+                <span class="text-gray-700">➔</span>
+                <span id="returnStepIndicator5" class="step-badge">5. Requested</span>
+            </div>
+        </div>
+
+        <input type="hidden" id="returnWizardOrderId" value="">
+
+        <!-- ── STEP 2 VIEW: SELECT REASON ── -->
+        <div id="returnStep2View">
+            <h3 class="text-lg font-bold text-white mb-1">Why do you want to return this product?</h3>
+            <p class="text-xs text-gray-400 mb-4">Select the primary reason for returning Order #<span id="returnWizardDisplayId1"></span></p>
+
+            <div class="space-y-2 mb-6">
+                <label class="return-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-gray-800 bg-[#161820] hover:border-[#22d3ee]/40 cursor-pointer transition-all">
+                    <input type="radio" name="returnReasonRadio" value="Product is defective" onchange="highlightReturnReason(this)" class="accent-[#22d3ee] w-4 h-4 cursor-pointer" checked>
+                    <span class="text-xs font-semibold text-gray-200">Product is defective</span>
+                </label>
+                <label class="return-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-gray-800 bg-[#161820] hover:border-[#22d3ee]/40 cursor-pointer transition-all">
+                    <input type="radio" name="returnReasonRadio" value="Received wrong item" onchange="highlightReturnReason(this)" class="accent-[#22d3ee] w-4 h-4 cursor-pointer">
+                    <span class="text-xs font-semibold text-gray-200">Received wrong item</span>
+                </label>
+                <label class="return-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-gray-800 bg-[#161820] hover:border-[#22d3ee]/40 cursor-pointer transition-all">
+                    <input type="radio" name="returnReasonRadio" value="Product not as described" onchange="highlightReturnReason(this)" class="accent-[#22d3ee] w-4 h-4 cursor-pointer">
+                    <span class="text-xs font-semibold text-gray-200">Product not as described</span>
+                </label>
+                <label class="return-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-gray-800 bg-[#161820] hover:border-[#22d3ee]/40 cursor-pointer transition-all">
+                    <input type="radio" name="returnReasonRadio" value="No longer needed" onchange="highlightReturnReason(this)" class="accent-[#22d3ee] w-4 h-4 cursor-pointer">
+                    <span class="text-xs font-semibold text-gray-200">No longer needed</span>
+                </label>
+                <label class="return-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-gray-800 bg-[#161820] hover:border-[#22d3ee]/40 cursor-pointer transition-all">
+                    <input type="radio" name="returnReasonRadio" value="Other reason" onchange="highlightReturnReason(this)" class="accent-[#22d3ee] w-4 h-4 cursor-pointer">
+                    <span class="text-xs font-semibold text-gray-200">Other reason</span>
+                </label>
+            </div>
+
+            <button onclick="goToReturnStep3()" class="w-full py-3.5 rounded-2xl bg-[#00b4d8] hover:bg-[#22d3ee] text-[#03111a] font-extrabold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-[#00b4d8]/20">
+                Continue
+            </button>
+        </div>
+
+        <!-- ── STEP 3 VIEW: ADD DETAILS ── -->
+        <div id="returnStep3View" class="hidden">
+            <h3 class="text-lg font-bold text-white mb-1">Add Details</h3>
+            <p class="text-xs text-gray-400 mb-5">Provide optional comments and photo proof for quick processing.</p>
+
+            <div class="mb-5">
+                <label class="block text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1.5">Comments (optional)</label>
+                <textarea id="returnCommentsInput" placeholder="Describe any issue with the fragrance or packaging..." class="w-full bg-[#161820] border border-gray-800 focus:border-[#22d3ee] text-slate-100 text-xs rounded-2xl p-3.5 focus:outline-none transition-all h-24 resize-none"></textarea>
+            </div>
+
+            <!-- Upload Photo Dropzone Box -->
+            <div class="mb-6">
+                <label class="block text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1.5">Upload Photo (optional)</label>
+                <div onclick="document.getElementById('returnPhotoFileInput').click()" class="border-2 border-dashed border-gray-800 hover:border-[#22d3ee]/50 bg-[#161820]/60 rounded-2xl p-6 text-center cursor-pointer transition-all group flex flex-col items-center justify-center min-h-[110px]">
+                    <input type="file" id="returnPhotoFileInput" accept="image/*" class="hidden" onchange="handlePhotoUploadPreview(this)">
+                    <div id="uploadPlaceholder">
+                        <div class="w-10 h-10 rounded-full bg-white/5 group-hover:bg-[#22d3ee]/10 flex items-center justify-center text-gray-400 group-hover:text-[#22d3ee] mx-auto mb-2 transition-all">
+                            <span class="text-xl font-bold">+</span>
+                        </div>
+                        <span class="text-xs font-semibold text-gray-400 group-hover:text-gray-200 transition-all">Add Photo</span>
+                    </div>
+                    <div id="uploadPreviewBox" class="hidden flex items-center gap-3">
+                        <img id="uploadPreviewImg" src="" class="w-14 h-14 rounded-xl object-cover border border-gray-700">
+                        <span class="text-xs text-emerald-400 font-semibold">Photo Attached ✓</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button onclick="goToReturnStep2()" class="w-1/3 py-3.5 rounded-2xl border border-gray-800 hover:bg-white/5 text-gray-300 font-bold text-xs uppercase tracking-wider transition-all cursor-pointer bg-transparent">
+                    Back
+                </button>
+                <button onclick="goToReturnStep4()" class="w-2/3 py-3.5 rounded-2xl bg-[#00b4d8] hover:bg-[#22d3ee] text-[#03111a] font-extrabold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-[#00b4d8]/20">
+                    Continue
+                </button>
+            </div>
+        </div>
+
+        <!-- ── STEP 4 VIEW: PICK-UP METHOD & DATE ── -->
+        <div id="returnStep4View" class="hidden">
+            <h3 class="text-lg font-bold text-white mb-1">Pick-up Method</h3>
+            <p class="text-xs text-gray-400 mb-5">How do you want to return this product?</p>
+
+            <div class="space-y-2.5 mb-5">
+                <label class="pickup-option flex items-center gap-3 p-3.5 rounded-2xl border border-[#22d3ee]/40 bg-[#22d3ee]/10 cursor-pointer transition-all">
+                    <input type="radio" name="pickupMethodRadio" value="Pick up from my address" checked class="accent-[#22d3ee] w-4 h-4 cursor-pointer">
+                    <span class="text-xs font-semibold text-gray-100">Pick up from my address</span>
+                </label>
+                <label class="pickup-option flex items-center gap-3 p-3.5 rounded-2xl border border-gray-800 bg-[#161820] hover:border-[#22d3ee]/40 cursor-pointer transition-all">
+                    <input type="radio" name="pickupMethodRadio" value="Drop at nearby center" class="accent-[#22d3ee] w-4 h-4 cursor-pointer">
+                    <span class="text-xs font-semibold text-gray-200">Drop at nearby center</span>
+                </label>
+            </div>
+
+            <!-- Date Selector -->
+            <div class="mb-6">
+                <label class="block text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1.5">Preferred Pick-up Date</label>
+                <input type="date" id="returnPickupDateInput" class="w-full bg-[#161820] border border-gray-800 focus:border-[#22d3ee] text-slate-100 text-xs rounded-2xl p-3.5 focus:outline-none transition-all">
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button onclick="goToReturnStep3()" class="w-1/3 py-3.5 rounded-2xl border border-gray-800 hover:bg-white/5 text-gray-300 font-bold text-xs uppercase tracking-wider transition-all cursor-pointer bg-transparent">
+                    Back
+                </button>
+                <button id="returnSubmitBtn" onclick="submitReturnWizard()" class="w-2/3 py-3.5 rounded-2xl bg-[#00b4d8] hover:bg-[#22d3ee] text-[#03111a] font-extrabold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-[#00b4d8]/20">
+                    Submit Request
+                </button>
+            </div>
+        </div>
+
+        <!-- ── STEP 5 VIEW: RETURN REQUESTED SUCCESS ── -->
+        <div id="returnStep5View" class="hidden text-center py-6">
+            <div class="w-20 h-20 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mx-auto mb-5">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <h3 class="text-xl font-extrabold text-white mb-2">We have received your return request.</h3>
+            <p class="text-xs text-gray-400 mb-8">We will pick up the item on <span id="returnSuccessPickupDateDisplay" class="text-[#22d3ee] font-bold"></span>.</p>
+
+            <div class="space-y-3">
+                <button id="returnViewStatusBtn" onclick="navigateToReturnStatus()" class="w-full py-3.5 rounded-2xl bg-[#00b4d8] hover:bg-[#22d3ee] text-[#03111a] font-extrabold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-[#00b4d8]/20">
+                    View Return Status
+                </button>
+                <button onclick="location.reload()" class="w-full py-3 rounded-2xl border border-gray-800 hover:bg-white/5 text-gray-300 hover:text-white font-bold text-xs uppercase tracking-wider transition-all cursor-pointer bg-transparent">
+                    Back to Orders
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════════ -->
+<!--  CLIENT SIDE LOGIC FOR CANCEL & RETURN MULTI-STEP WIZARDS                    -->
+<!-- ════════════════════════════════════════════════════════════════════════════ -->
+<script>
+    // Set default pickup date in picker to +3 days from now
+    document.addEventListener("DOMContentLoaded", function() {
+        const d = new Date();
+        d.setDate(d.getDate() + 3);
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        const dateStr = `${yyyy}-${mm}-${dd}`;
+        const input = document.getElementById("returnPickupDateInput");
+        if (input) input.value = dateStr;
+    });
+
+    // ───────────────────────────────────────────────────────────────────────────
+    // CANCEL ORDER WIZARD LOGIC
+    // ───────────────────────────────────────────────────────────────────────────
+    let currentCancelDbId = "";
+
+    function startCancelWizard(dbId, orderId, totalAmount) {
+        currentCancelDbId = dbId;
+        document.getElementById('cancelWizardOrderId').value = dbId;
+        document.getElementById('cancelWizardDisplayId1').textContent = orderId;
+        document.getElementById('cancelWizardDisplayId2').textContent = orderId;
+        document.getElementById('cancelCommentsInput').value = '';
+        
+        showCancelStep(2);
+        document.getElementById('cancelWizardModal').classList.remove('hidden');
+    }
+
+    function closeCancelWizard() {
+        document.getElementById('cancelWizardModal').classList.add('hidden');
+    }
+
+    function showCancelStep(step) {
+        document.getElementById('cancelStep2View').classList.add('hidden');
+        document.getElementById('cancelStep3View').classList.add('hidden');
+        document.getElementById('cancelStep4View').classList.add('hidden');
+
+        document.getElementById('cancelStepIndicator2').className = 'step-badge text-gray-500';
+        document.getElementById('cancelStepIndicator3').className = 'step-badge text-gray-500';
+        document.getElementById('cancelStepIndicator4').className = 'step-badge text-gray-500';
+
+        if (step === 2) {
+            document.getElementById('cancelStep2View').classList.remove('hidden');
+            document.getElementById('cancelStepIndicator2').className = 'step-badge text-red-400 font-extrabold underline';
+        } else if (step === 3) {
+            document.getElementById('cancelStep3View').classList.remove('hidden');
+            document.getElementById('cancelStepIndicator3').className = 'step-badge text-red-400 font-extrabold underline';
+        } else if (step === 4) {
+            document.getElementById('cancelStep4View').classList.remove('hidden');
+            document.getElementById('cancelStepIndicator4').className = 'step-badge text-emerald-400 font-extrabold underline';
+        }
+    }
+
+    function highlightCancelReason(radio) {
+        document.querySelectorAll('.cancel-reason-option').forEach(el => {
+            el.className = 'cancel-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-gray-800 bg-[#161618] hover:border-red-500/40 cursor-pointer transition-all';
+        });
+        if (radio && radio.checked) {
+            radio.closest('label').className = 'cancel-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-red-500 bg-red-500/10 cursor-pointer transition-all';
+        }
+    }
+
+    function goToCancelStep3() {
+        showCancelStep(3);
+    }
+
+    function goToCancelStep2() {
+        showCancelStep(2);
+    }
+
+    async function submitCancelWizard() {
+        const btn = document.getElementById('cancelConfirmBtn');
+        const dbId = document.getElementById('cancelWizardOrderId').value;
+        const selectedReason = document.querySelector('input[name="cancelReasonRadio"]:checked')?.value || 'Ordered by mistake';
+        const comments = document.getElementById('cancelCommentsInput').value.trim();
+
+        btn.disabled = true;
+        btn.textContent = 'Processing...';
+
+        try {
+            const res = await fetch(`/orders/${dbId}/cancel`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reason: selectedReason, comments })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                showCancelStep(4);
+            } else {
+                alert(data.message || 'Failed to cancel order.');
+                btn.disabled = false;
+                btn.textContent = 'Yes, Cancel Order';
+            }
+        } catch (err) {
+            alert('Network error. Please try again.');
+            btn.disabled = false;
+            btn.textContent = 'Yes, Cancel Order';
+        }
+    }
+
+    // ───────────────────────────────────────────────────────────────────────────
+    // RETURN ORDER WIZARD LOGIC
+    // ───────────────────────────────────────────────────────────────────────────
+    let currentReturnDbId = "";
+
+    function startReturnWizard(dbId, orderId, totalAmount) {
+        currentReturnDbId = dbId;
+        document.getElementById('returnWizardOrderId').value = dbId;
+        document.getElementById('returnWizardDisplayId1').textContent = orderId;
+        document.getElementById('returnCommentsInput').value = '';
+        document.getElementById('uploadPlaceholder').classList.remove('hidden');
+        document.getElementById('uploadPreviewBox').classList.add('hidden');
+        
+        showReturnStep(2);
+        document.getElementById('returnWizardModal').classList.remove('hidden');
+    }
+
+    function closeReturnWizard() {
+        document.getElementById('returnWizardModal').classList.add('hidden');
+    }
+
+    function showReturnStep(step) {
+        document.getElementById('returnStep2View').classList.add('hidden');
+        document.getElementById('returnStep3View').classList.add('hidden');
+        document.getElementById('returnStep4View').classList.add('hidden');
+        document.getElementById('returnStep5View').classList.add('hidden');
+
+        document.getElementById('returnStepIndicator2').className = 'step-badge text-gray-500';
+        document.getElementById('returnStepIndicator3').className = 'step-badge text-gray-500';
+        document.getElementById('returnStepIndicator4').className = 'step-badge text-gray-500';
+        document.getElementById('returnStepIndicator5').className = 'step-badge text-gray-500';
+
+        if (step === 2) {
+            document.getElementById('returnStep2View').classList.remove('hidden');
+            document.getElementById('returnStepIndicator2').className = 'step-badge text-[#22d3ee] font-extrabold underline';
+        } else if (step === 3) {
+            document.getElementById('returnStep3View').classList.remove('hidden');
+            document.getElementById('returnStepIndicator3').className = 'step-badge text-[#22d3ee] font-extrabold underline';
+        } else if (step === 4) {
+            document.getElementById('returnStep4View').classList.remove('hidden');
+            document.getElementById('returnStepIndicator4').className = 'step-badge text-[#22d3ee] font-extrabold underline';
+        } else if (step === 5) {
+            document.getElementById('returnStep5View').classList.remove('hidden');
+            document.getElementById('returnStepIndicator5').className = 'step-badge text-emerald-400 font-extrabold underline';
+        }
+    }
+
+    function highlightReturnReason(radio) {
+        document.querySelectorAll('.return-reason-option').forEach(el => {
+            el.className = 'return-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-gray-800 bg-[#161820] hover:border-[#22d3ee]/40 cursor-pointer transition-all';
+        });
+        if (radio && radio.checked) {
+            radio.closest('label').className = 'return-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-[#22d3ee] bg-[#22d3ee]/10 cursor-pointer transition-all';
+        }
+    }
+
+    function handlePhotoUploadPreview(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('uploadPreviewImg').src = e.target.result;
+                document.getElementById('uploadPlaceholder').classList.add('hidden');
+                document.getElementById('uploadPreviewBox').classList.remove('hidden');
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function goToReturnStep3() {
+        showReturnStep(3);
+    }
+    function goToReturnStep2() {
+        showReturnStep(2);
+    }
+    function goToReturnStep4() {
+        showReturnStep(4);
+    }
+
+    async function submitReturnWizard() {
+        const btn = document.getElementById('returnSubmitBtn');
+        const dbId = document.getElementById('returnWizardOrderId').value;
+        const selectedReason = document.querySelector('input[name="returnReasonRadio"]:checked')?.value || 'Product is defective';
+        const comments = document.getElementById('returnCommentsInput').value.trim();
+        const pickupMethod = document.querySelector('input[name="pickupMethodRadio"]:checked')?.value || 'Pick up from my address';
+        const pickupDate = document.getElementById('returnPickupDateInput').value;
+
+        btn.disabled = true;
+        btn.textContent = 'Submitting...';
+
+        try {
+            const res = await fetch(`/orders/${dbId}/return`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    reason: selectedReason,
+                    comments,
+                    pickupMethod,
+                    pickupDate
+                })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                document.getElementById('returnSuccessPickupDateDisplay').textContent = data.pickupDate || pickupDate;
+                showReturnStep(5);
+            } else {
+                alert(data.message || 'Failed to submit return request.');
+                btn.disabled = false;
+                btn.textContent = 'Submit Request';
+            }
+        } catch (err) {
+            alert('Network error. Please try again.');
+            btn.disabled = false;
+            btn.textContent = 'Submit Request';
+        }
+    }
+
+    function navigateToReturnStatus() {
+        const dbId = document.getElementById('returnWizardOrderId').value;
+        window.location.href = `/orders/${dbId}#return-timeline`;
+    }
+
+    // Backdrop click close
+    document.getElementById('cancelWizardModal').addEventListener('click', function(e) {
+        if (e.target === this) closeCancelWizard();
+    });
+    document.getElementById('returnWizardModal').addEventListener('click', function(e) {
+        if (e.target === this) closeReturnWizard();
+    });
+</script>

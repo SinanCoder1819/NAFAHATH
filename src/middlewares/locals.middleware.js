@@ -13,6 +13,7 @@ export const setLocalsMiddleware = async (req, res, next) => {
             res.locals.admin = null;
             res.locals.cartCount = 0;
             res.locals.wishlistCount = 0;
+            res.locals.wishlistProductIds = [];
 
             if (req.session?.user) {
                 const userId = req.session.user.id || req.session.user._id;
@@ -42,6 +43,9 @@ export const setLocalsMiddleware = async (req, res, next) => {
 
                     res.locals.cartCount = userCart && userCart.items ? userCart.items.length : 0;
                     res.locals.wishlistCount = userWishlist && userWishlist.products ? userWishlist.products.length : 0;
+                    res.locals.wishlistProductIds = (userWishlist && userWishlist.products)
+                        ? userWishlist.products.map(p => (p && p._id ? p._id.toString() : p ? p.toString() : '')).filter(Boolean)
+                        : [];
                 }
             } else {
                 res.locals.user = null;
@@ -51,6 +55,7 @@ export const setLocalsMiddleware = async (req, res, next) => {
         console.error("Locals middleware error:", err);
         res.locals.user  = null;
         res.locals.admin = null;
+        res.locals.wishlistProductIds = [];
     }
     next();
 };

@@ -1,0 +1,795 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  .inv-page {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #ffffff;
+    padding: 28px 32px 48px;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .inv-header {
+    position: relative;
+    margin-bottom: 32px;
+    padding: 36px 40px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #1f122e 0%, #150f24 40%, #130b1c 70%, #0d0615 100%);
+    border: 1px solid rgba(168, 85, 247, 0.1);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(168, 85, 247, 0.06);
+    overflow: hidden;
+  }
+
+  .inv-header::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -40px;
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+  }
+
+  .inv-header-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .inv-title-sec {
+    flex: 1;
+    min-width: 260px;
+  }
+
+  .inv-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #c084fc;
+    margin-bottom: 10px;
+    padding: 4px 10px;
+    border: 1px solid rgba(168, 85, 247, 0.25);
+    border-radius: 20px;
+    background: rgba(168, 85, 247, 0.06);
+  }
+
+  .inv-title {
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin: 0;
+    background: linear-gradient(135deg, #ffffff 0%, #d8b4fe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── CONTROLS ROW ── */
+  .inv-controls {
+    background: #111111;
+    border: 1px solid #222222;
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+
+  .search-form {
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .search-input {
+    width: 100%;
+    background: #161616;
+    border: 1px solid #2c2c2c;
+    border-radius: 10px;
+    padding: 11px 16px 11px 40px;
+    font-size: 13.5px;
+    color: #fff;
+    transition: all 0.2s ease;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: #c084fc;
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #555;
+    pointer-events: none;
+  }
+
+  /* ── STOCK FILTERS ── */
+  .stock-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .stock-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 20px;
+    background: #141414;
+    border: 1px solid #222;
+    color: #888;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .stock-btn:hover {
+    background: #1c1c1c;
+    color: #fff;
+  }
+
+  .stock-btn.active {
+    background: rgba(168, 85, 247, 0.1);
+    border-color: rgba(168, 85, 247, 0.4);
+    color: #c084fc;
+  }
+
+  /* ── INVENTORY GRID / BOARDS ── */
+  .product-row {
+    background: #111111;
+    border: 1px solid #222222;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: 80px 2fr 3fr;
+    align-items: start;
+    gap: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    transition: border-color 0.2s ease;
+  }
+
+  .product-row:hover {
+    border-color: rgba(168, 85, 247, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    .product-row {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+
+  .prod-img-box {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    background: #181818;
+    border: 1px solid #222;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .prod-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .prod-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .prod-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .prod-meta {
+    font-size: 12px;
+    color: #666;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .prod-brand {
+    color: #c084fc;
+    font-weight: 600;
+  }
+
+  /* Variants list table */
+  .variants-table-wrap {
+    background: #161616;
+    border: 1px solid #222;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .variants-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .variants-table th {
+    background: #1c1c1c;
+    padding: 10px 16px;
+    color: #555;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    text-align: left;
+    border-bottom: 1px solid #222;
+  }
+
+  .variants-table td {
+    padding: 12px 16px;
+    color: #aaa;
+    border-bottom: 1px solid #202020;
+    vertical-align: middle;
+  }
+
+  .variants-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .variant-size-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    background: #222;
+    color: #fff;
+    font-weight: 700;
+    border-radius: 6px;
+    font-family: monospace;
+  }
+
+  /* Stock Inline Editor UI */
+  .stock-editor-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .stock-display-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+  }
+
+  .stock-display-wrap:hover {
+    background: rgba(255,255,255,0.03);
+  }
+
+  .stock-badge {
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .stock-ok   { color: #22c55e; }
+  .stock-low  { color: #fbbf24; }
+  .stock-out  { color: #ef4444; }
+
+  .edit-pencil-icon {
+    opacity: 0;
+    color: #666;
+    transition: opacity 0.15s ease;
+  }
+
+  .stock-display-wrap:hover .edit-pencil-icon {
+    opacity: 1;
+  }
+
+  /* Inline input field */
+  .stock-input-field {
+    width: 65px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 5px 8px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    outline: none;
+  }
+
+  .stock-input-field:focus {
+    border-color: #c084fc;
+  }
+
+  .btn-save-stock {
+    background: #c084fc;
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .btn-save-stock:hover {
+    background: #a855f7;
+  }
+
+  .btn-cancel-stock {
+    background: #222;
+    color: #888;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .btn-cancel-stock:hover {
+    background: #2a2a2a;
+    color: #fff;
+  }
+
+  /* Highlight effect after save */
+  @keyframes highlightGreen {
+    0% { background-color: rgba(34, 197, 94, 0.2); }
+    100% { background-color: transparent; }
+  }
+
+  .highlight-success {
+    animation: highlightGreen 1s ease;
+  }
+
+  /* ── PAGINATION ── */
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 36px;
+    gap: 8px;
+  }
+
+  .pg-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #111;
+    border: 1px solid #222;
+    color: #888;
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 600;
+    transition: all 0.15s ease;
+  }
+
+  .pg-btn:hover:not(.disabled) {
+    background: #1c1c1c;
+    border-color: #333;
+    color: #fff;
+  }
+
+  .pg-btn.current {
+    background: rgba(168, 85, 247, 0.1);
+    border-color: #c084fc;
+    color: #c084fc;
+  }
+
+  .pg-btn.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .pg-dots {
+    color: #444;
+    font-size: 14px;
+  }
+
+  /* Toast Alerts Floating Container */
+  .toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 1000;
+  }
+
+  .toast-popup {
+    background: #181818;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 14px 20px;
+    font-size: 13.5px;
+    color: #fff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 250px;
+    animation: slideIn 0.3s cubic-bezier(0.1, 0.8, 0.3, 1), fadeOut 0.5s ease 3.5s forwards;
+  }
+
+  .toast-popup.success {
+    border-color: rgba(34, 197, 94, 0.4);
+    color: #22c55e;
+  }
+
+  .toast-popup.error {
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #ef4444;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; transform: translateY(10px); }
+  }
+
+  .empty-state {
+    padding: 60px 40px;
+    text-align: center;
+    color: #666;
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 16px;
+  }
+
+  .empty-icon {
+    font-size: 40px;
+    color: #333;
+    margin-bottom: 16px;
+  }
+</style>
+
+<div class="inv-page">
+
+  <!-- Hero Header -->
+  <div class="inv-header">
+    <div class="inv-header-inner">
+      <div class="inv-title-sec">
+        <div class="inv-eyebrow">Control Panel</div>
+        <h1 class="inv-title">Inventory & Stock</h1>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stock Filters Bar -->
+  <div class="stock-filters">
+    <a href="?stockStatus=<%= search ? '&search=' + encodeURIComponent(search) : '' %>" 
+       class="stock-btn <%= stockStatus === '' ? 'active' : '' %>">
+      All Products
+    </a>
+    <a href="?stockStatus=out<%= search ? '&search=' + encodeURIComponent(search) : '' %>" 
+       class="stock-btn <%= stockStatus === 'out' ? 'active' : '' %>">
+      Out of Stock
+    </a>
+    <a href="?stockStatus=low<%= search ? '&search=' + encodeURIComponent(search) : '' %>" 
+       class="stock-btn <%= stockStatus === 'low' ? 'active' : '' %>">
+      Low Stock (< 10)
+    </a>
+    <a href="?stockStatus=ok<%= search ? '&search=' + encodeURIComponent(search) : '' %>" 
+       class="stock-btn <%= stockStatus === 'ok' ? 'active' : '' %>">
+      Healthy Stock
+    </a>
+  </div>
+
+  <!-- Search form -->
+  <div class="inv-controls">
+    <form action="" method="GET" class="search-form">
+      <% if (stockStatus) { %>
+        <input type="hidden" name="stockStatus" value="<%= stockStatus %>">
+      <% } %>
+      <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+      <input type="text" name="search" placeholder="Search by name, brand, category..." class="search-input" value="<%= search %>">
+    </form>
+  </div>
+
+  <!-- Products List -->
+  <% if (products && products.length > 0) { %>
+    <% products.forEach(product => { %>
+      <div class="product-row" id="product_<%= product._id %>">
+        
+        <!-- Image -->
+        <div class="prod-img-box">
+          <% if (product.primaryImage) { %>
+            <img src="<%= product.primaryImage %>" alt="<%= product.productName %>">
+          <% } else { %>
+            <span style="font-size: 24px;">🏷️</span>
+          <% } %>
+        </div>
+
+        <!-- Info -->
+        <div class="prod-details">
+          <div class="prod-title"><%= product.productName %></div>
+          <div class="prod-meta">
+            <span>Brand: <strong class="prod-brand"><%= product.brand %></strong></span>
+            <span>Category: <strong style="color: #eee;"><%= product.category %></strong></span>
+          </div>
+        </div>
+
+        <!-- Variants Stock Table -->
+        <div class="variants-table-wrap">
+          <table class="variants-table">
+            <thead>
+              <tr>
+                <th style="width: 25%;">Size</th>
+                <th style="width: 35%;">Price</th>
+                <th style="width: 40%;">Stock Level (Click value to Edit)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (product.variants && product.variants.length > 0) { %>
+                <% product.variants.forEach(variant => { %>
+                  <tr>
+                    <td>
+                      <span class="variant-size-badge"><%= variant.size %></span>
+                    </td>
+                    <td>
+                      <div style="font-weight: 500; color: #fff;">₹<%= variant.salePrice > 0 ? variant.salePrice : variant.regularPrice %></div>
+                      <% if (variant.salePrice > 0) { %>
+                        <div style="font-size: 11px; text-decoration: line-through; color: #555; margin-top: 1px;">Reg: ₹<%= variant.regularPrice %></div>
+                      <% } %>
+                    </td>
+                    <td>
+                      <!-- Editable Stock Element -->
+                      <div class="stock-editor-container" 
+                           id="editor_<%= product._id %>_<%= variant._id %>">
+                        
+                        <!-- Value mode -->
+                        <div class="stock-display-wrap" 
+                             id="display_<%= product._id %>_<%= variant._id %>"
+                             onclick="enterEditMode('<%= product._id %>', '<%= variant._id %>')">
+                          <% 
+                            let badgeClass = "stock-ok";
+                            if (variant.stock === 0) badgeClass = "stock-out";
+                            else if (variant.stock < 10) badgeClass = "stock-low";
+                          %>
+                          <span class="stock-badge <%= badgeClass %>" id="badge_<%= product._id %>_<%= variant._id %>">
+                            <%= variant.stock %>
+                          </span>
+                          
+                          <!-- Pencil Icon -->
+                          <svg class="edit-pencil-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </div>
+
+                        <!-- Edit mode form (Hidden initially) -->
+                        <div id="form_<%= product._id %>_<%= variant._id %>" style="display: none; align-items: center; gap: 8px;">
+                          <input type="number" 
+                                 id="input_<%= product._id %>_<%= variant._id %>" 
+                                 value="<%= variant.stock %>" 
+                                 min="0" 
+                                 class="stock-input-field"
+                                 onkeydown="handleInputKeys(event, '<%= product._id %>', '<%= variant._id %>')">
+                          
+                          <button type="button" 
+                                  class="btn-save-stock" 
+                                  onclick="saveStockUpdate('<%= product._id %>', '<%= variant._id %>')">
+                            Save
+                          </button>
+                          
+                          <button type="button" 
+                                  class="btn-cancel-stock" 
+                                  onclick="exitEditMode('<%= product._id %>', '<%= variant._id %>')">
+                            Cancel
+                          </button>
+                        </div>
+
+                      </div>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="3" style="text-align: center; color: #666; font-style: italic; padding: 12px;">No variants added</td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    <% }) %>
+  <% } else { %>
+    <div class="empty-state">
+      <div class="empty-icon">📦</div>
+      <h3>No Products Found</h3>
+      <p style="font-size: 13px; margin-top: 6px;">Try adjusting your filters, search queries, or checking back later.</p>
+    </div>
+  <% } %>
+
+  <!-- Pagination -->
+  <% if (totalPages > 1) { %>
+    <div class="pagination-container">
+      <% const pageLink = (p) => `?page=${p}&stockStatus=${encodeURIComponent(stockStatus)}&search=${encodeURIComponent(search)}`; %>
+      
+      <!-- Prev Button -->
+      <% if (currentPage > 1) { %>
+        <a href="<%= pageLink(currentPage - 1) %>" class="pg-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </a>
+      <% } else { %>
+        <span class="pg-btn disabled">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </span>
+      <% } %>
+
+      <!-- Pages -->
+      <% for (let i = 1; i <= totalPages; i++) { %>
+        <% if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) { %>
+          <a href="<%= pageLink(i) %>" class="pg-btn <%= i === currentPage ? 'current' : '' %>">
+            <%= i %>
+          </a>
+        <% } else if (i === currentPage - 2 || i === currentPage + 2) { %>
+          <span class="pg-dots">…</span>
+        <% } %>
+      <% } %>
+
+      <!-- Next Button -->
+      <% if (currentPage < totalPages) { %>
+        <a href="<%= pageLink(currentPage + 1) %>" class="pg-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </a>
+      <% } else { %>
+        <span class="pg-btn disabled">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </span>
+      <% } %>
+    </div>
+  <% } %>
+
+</div>
+
+<!-- Floating Toasts Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+  // Enter edit mode: hides current display, shows input field, sets focus
+  function enterEditMode(productId, variantId) {
+    document.getElementById(`display_${productId}_${variantId}`).style.display = 'none';
+    document.getElementById(`form_${productId}_${variantId}`).style.display = 'flex';
+    
+    const inp = document.getElementById(`input_${productId}_${variantId}`);
+    inp.focus();
+    inp.select();
+  }
+
+  // Exit edit mode: restores display mode
+  function exitEditMode(productId, variantId) {
+    document.getElementById(`display_${productId}_${variantId}`).style.display = 'flex';
+    document.getElementById(`form_${productId}_${variantId}`).style.display = 'none';
+  }
+
+  // Handle enter key to save and escape key to cancel
+  function handleInputKeys(event, productId, variantId) {
+    if (event.key === 'Enter') {
+      saveStockUpdate(productId, variantId);
+    } else if (event.key === 'Escape') {
+      exitEditMode(productId, variantId);
+    }
+  }
+
+  // Save stock update via AJAX PATCH call
+  async function saveStockUpdate(productId, variantId) {
+    const inputVal = document.getElementById(`input_${productId}_${variantId}`).value;
+    const stockNum = parseInt(inputVal);
+
+    if (isNaN(stockNum) || stockNum < 0) {
+      showToast("Stock quantity must be 0 or greater", "error");
+      return;
+    }
+
+    try {
+      const response = await fetch('/admin/inventory/update', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          productId,
+          variantId,
+          stock: stockNum
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Update the badge text
+        const badge = document.getElementById(`badge_${productId}_${variantId}`);
+        badge.innerText = data.newStock;
+        
+        // Update badge stock levels colors
+        badge.className = "stock-badge"; // reset
+        if (data.newStock === 0) {
+          badge.classList.add("stock-out");
+        } else if (data.newStock < 10) {
+          badge.classList.add("stock-low");
+        } else {
+          badge.classList.add("stock-ok");
+        }
+
+        // Apply a visual flash success transition to the container
+        const displayWrap = document.getElementById(`display_${productId}_${variantId}`);
+        displayWrap.classList.add("highlight-success");
+        setTimeout(() => {
+          displayWrap.classList.remove("highlight-success");
+        }, 1000);
+
+        exitEditMode(productId, variantId);
+        showToast("Stock updated successfully!", "success");
+      } else {
+        showToast(data.message || "Failed to update stock", "error");
+      }
+    } catch (error) {
+      console.error("Error updating stock:", error);
+      showToast("Server error. Failed to update stock.", "error");
+    }
+  }
+
+  // Floating Toast helper function
+  function showToast(message, type = "success") {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast-popup ${type}`;
+    
+    const icon = type === 'success' ? '✓' : '⚠';
+    toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+    
+    container.appendChild(toast);
+    
+    // Auto-remove toast from DOM after animations complete (4 seconds total)
+    setTimeout(() => {
+      toast.remove();
+    }, 4000);
+  }
+</script>

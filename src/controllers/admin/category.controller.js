@@ -1,18 +1,15 @@
+
 import Category from "../../models/Category.model.js";
 
 const PAGE_SIZE = 5;
 
 export const getCategories = async (req,res) => {
   try {
-    const page = Math.max(1, parseInt(req.query.page) || 1)
+    const page = parseInt(req.query.page) || 1
     const search = (req.query.search || "").trim()
-    
 
     const filter = {}
 
-
-    
-   
     
     if(search){
 
@@ -24,16 +21,32 @@ export const getCategories = async (req,res) => {
       ];
     }
 
+    
     const totalCategories = await Category.countDocuments(filter)
     const totalPages = Math.max(1, Math.ceil(totalCategories / PAGE_SIZE))
     const currentPage = Math.min(page, totalPages)
 
+
+    if (page < 1) {
+      return res.redirect(`/admin/categories?page=1`);
+    }
+
+
+     if (page > totalPages ) {
+      return res.redirect(`/admin/categories?page=${totalPages}`);
+    }
+
+    
+    
+
+    
     const categories = await Category.find(filter)
     .sort({createdAt: -1})
     .skip((currentPage - 1) * PAGE_SIZE)
     .limit(PAGE_SIZE)
-    .lean()
 
+
+   
 
 
     res.render("admin/categories", {
@@ -55,22 +68,30 @@ export const getCategories = async (req,res) => {
   }
 }
 
+
+
 export const addCategory = async (req, res) => {
   try {
     const name = (req.body.name || "").trim();
     const description = (req.body.description || "").trim();
 
-    const isActive = req.body.isActive === "true" || req.body.isActive === "on";
-    
     
 
+    const isActive = req.body.isActive === "true" || req.body.isActive === "on";
+    
+    console.log(isActive)
+
     if (!name || name.length < 3 || name.length > 50) {
-      return res.redirect("/admin/categories?error=Category name must be between 3 and 50 characters.");
+     return res.redirect("/admin/categories?error=Category name must be between 3 and 50 characters");
     }
+
     const nameRegex = /^[A-Za-z0-9\s\-&]+$/;
+
     if (!nameRegex.test(name)) {
       return res.redirect("/admin/categories?error=Category name can only contain letters, numbers, spaces, -, and &.");
     }
+
+
     if (!description || description.length < 10) {
       return res.redirect("/admin/categories?error=Description must be at least 10 characters long.");
     }
@@ -78,6 +99,8 @@ export const addCategory = async (req, res) => {
     const existingCategory = await Category.findOne({
       name: { $regex: `^${escapeRegex(name)}$`, $options: "i" },
     });
+
+    
 
     if (existingCategory) {
       return res.redirect("/admin/categories?error=Category already exists");
@@ -87,7 +110,7 @@ export const addCategory = async (req, res) => {
     await Category.create({
       name,
       description,
-      isDeleted: !isActive,
+      isDeleted: !isActive,     
     });
 
     res.redirect("/admin/categories?success=Category added successfully");
@@ -105,12 +128,14 @@ export const updateCategory = async (req, res) => {
     const description = (req.body.description || "").trim();
     
     
+    
     const isActive = req.body.isActive === "true" || req.body.isActive === "on";
 
     if (!name || name.length < 3 || name.length > 50) {
       return res.redirect("/admin/categories?error=Category name must be between 3 and 50 characters.");
     }
     const nameRegex = /^[A-Za-z0-9\s\-&]+$/;
+
     if (!nameRegex.test(name)) {
       return res.redirect("/admin/categories?error=Category name can only contain letters, numbers, spaces, -, and &.");
     }
@@ -135,8 +160,6 @@ export const updateCategory = async (req, res) => {
 
     category.name = name;
     category.description = description;
-    
-    
     category.isDeleted = !isActive;
 
     await category.save();
@@ -144,6 +167,7 @@ export const updateCategory = async (req, res) => {
     res.redirect("/admin/categories?success=Category updated successfully");
   } catch (err) {
     console.error("updateCategory error:", err);
+    
     res.redirect("/admin/categories?error=Failed to update category");
   }
 };

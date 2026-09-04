@@ -5,9 +5,9 @@
         <aside class="w-full lg:w-72 shrink-0">
             <div class="bg-[#0f0f0f] border border-gray-800 rounded-3xl p-8 sticky top-28 shadow-2xl">
                 <div class="mb-10">
-                    <p class="text-[10px] uppercase tracking-[0.3em] text-[#C5A267] font-bold mb-6 opacity-80">Dashboard</p>
+                    <p class="text-[10px] uppercase tracking-[0.3em] text-[#22d3ee] font-bold mb-6 opacity-80">Dashboard</p>
                     <nav class="flex flex-col gap-2">
-                        <a href="/profile" class="group flex items-center gap-4 px-4 py-3 rounded-xl bg-[#C5A267]/10 text-[#C5A267] border border-[#C5A267]/20 transition-all">
+                        <a href="/profile" class="group flex items-center gap-4 px-4 py-3 rounded-xl bg-[#22d3ee]/10 text-[#22d3ee] border border-[#22d3ee]/20 transition-all">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                             <span class="text-sm font-medium">Profile</span>
                         </a>
@@ -48,7 +48,7 @@
                 <!-- Avatar Upload (separate AJAX upload, same as profile page) -->
                 <div class="flex flex-col items-center mb-10 group">
                     <div class="relative cursor-pointer" onclick="document.getElementById('profileImageInput').click()">
-                        <div class="w-32 h-32 rounded-full border-2 border-[#C5A267]/30 p-1 transition-all group-hover:border-[#C5A267]">
+                        <div class="w-32 h-32 rounded-full border-2 border-[#22d3ee]/30 p-1 transition-all group-hover:border-[#22d3ee]">
                             <div id="avatarContainer" class="w-full h-full rounded-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center overflow-hidden relative">
                                 <% if (user.profileImage) { %>
                                     <img src="<%= user.profileImage %>" id="avatarPreview" alt="Profile"
@@ -80,16 +80,16 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="space-y-2">
-                            <label class="text-[9px] uppercase tracking-[0.3em] text-[#C5A267] font-bold ml-1">Full Name</label>
+                            <label class="text-[9px] uppercase tracking-[0.3em] text-[#22d3ee] font-bold ml-1">Full Name</label>
                             <input type="text" name="name" id="nameInput" value="<%= user.name || '' %>"
-                                class="w-full bg-transparent border-b border-gray-700 py-3 px-1 focus:border-[#C5A267] outline-none transition-all text-sm tracking-wide text-white">
+                                class="w-full bg-transparent border-b border-gray-700 py-3 px-1 focus:border-[#22d3ee] outline-none transition-all text-sm tracking-wide text-white">
                             <p id="nameError" class="hidden text-red-400 text-[11px] ml-1"></p>
                         </div>
 
                         <div class="space-y-2">
-                            <label class="text-[9px] uppercase tracking-[0.3em] text-[#C5A267] font-bold ml-1">Phone Number</label>
+                            <label class="text-[9px] uppercase tracking-[0.3em] text-[#22d3ee] font-bold ml-1">Phone Number</label>
                             <input type="tel" name="phone" id="phoneInput" value="<%= user.phone || '' %>"
-                                class="w-full bg-transparent border-b border-gray-700 py-3 px-1 focus:border-[#C5A267] outline-none transition-all text-sm tracking-wide text-white">
+                                class="w-full bg-transparent border-b border-gray-700 py-3 px-1 focus:border-[#22d3ee] outline-none transition-all text-sm tracking-wide text-white">
                             <p id="phoneError" class="hidden text-red-400 text-[11px] ml-1"></p>
                         </div>
                     </div>
@@ -99,7 +99,7 @@
                             Cancel
                         </a>
                         <button type="submit" id="saveBtn"
-                            class="w-full md:w-64 bg-white text-black py-4 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-[#C5A267] transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed">
+                            class="w-full md:w-64 bg-white text-black py-4 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-[#22d3ee] transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed">
                             Update Profile
                         </button>
                     </div>

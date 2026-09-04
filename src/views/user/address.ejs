@@ -1,83 +1,119 @@
 <main class="min-h-screen bg-[#060606] text-white py-12 px-4 md:px-8 lg:px-12">
     <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
+        
+        <!-- SIDEBAR -->
         <aside class="w-full lg:w-72 shrink-0">
-            <div class="bg-[#0f0f0f] border border-gray-800 rounded-3xl p-8 sticky top-28 shadow-2xl">
+            <div class="bg-[#0a0e16]/60 backdrop-blur-xl border border-white/[0.06] rounded-3xl p-8 sticky top-28 shadow-2xl">
                 <div class="mb-10">
-                    <p class="text-[10px] uppercase tracking-[0.3em] text-[#C5A267] font-bold mb-6 opacity-80">Dashboard</p>
+                    <p class="text-[10px] uppercase tracking-[0.3em] text-[#22d3ee] font-bold mb-6 opacity-80">Dashboard</p>
                     <nav class="flex flex-col gap-2">
                         <a href="/profile" class="group flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all border border-transparent">
-                            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                             <span class="text-sm font-medium">Profile</span>
                         </a>
                         <a href="/orders" class="group flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all border border-transparent">
-                            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                             <span class="text-sm font-medium">My Orders</span>
                         </a>
                         <a href="/wallet" class="group flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all border border-transparent">
-                            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                             <span class="text-sm font-medium">Wallet</span>
                         </a>
-                        <a href="/address" class="group flex items-center gap-4 px-4 py-3 rounded-xl bg-[#C5A267]/10 text-[#C5A267] border border-[#C5A267]/20 transition-all">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+                        <a href="/address" class="group flex items-center gap-4 px-4 py-3 rounded-xl bg-[#22d3ee]/10 text-[#22d3ee] border border-[#22d3ee]/20 transition-all">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
                             <span class="text-sm font-medium">Addresses</span>
                         </a>
                         <a href="/referrals" class="group flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5 hover:text-white transition-all border border-transparent">
-                            <svg class="w-5 h-5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12z"/></svg>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12z"/></svg>
                             <span class="text-sm font-medium">Refer and Earn</span>
                         </a>
                     </nav>
                 </div>
-                <div class="pt-6 border-t border-gray-800">
-                    <a href="/auth/logout" class="flex items-center gap-4 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-all group">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                        <span class="text-sm font-medium">Logout</span>
-                    </a>
+                <div class="pt-6 border-t border-white/[0.06]">
+                    <form action="/auth/logout" method="POST" class="m-0">
+                        <button type="submit" class="w-full bg-transparent border-0 cursor-pointer text-left font-[inherit] flex items-center gap-4 px-4 py-3 text-red-400/80 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all group">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                            <span class="text-sm font-medium">Logout</span>
+                        </button>
+                    </form>
                 </div>
             </div>
         </aside>
+
+        <!-- MAIN SECTION -->
         <section class="flex-1">
-            <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center justify-between mb-8 flex-wrap gap-4">
                 <div>
-                    <h1 class="text-3xl font-bold text-white">Address</h1>
-                    <div class="w-12 h-0.5 bg-[#00FFFF] mt-2"></div>
+                    <h1 class="text-3xl font-extrabold text-white tracking-tight">Addresses</h1>
+                    <p class="text-xs text-gray-500 font-medium mt-1.5">Manage your shipping coordinates and preferences</p>
                 </div>
-                <button onclick="openAddModal()" class="bg-[#00FFFF] text-black px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_20px_rgba(0,255,255,0.2)]">
+                <button onclick="openAddModal()" 
+                    class="bg-gradient-to-r from-[#28c9f4] to-[#0ea5e9] text-[#03111a] px-6 py-3.5 rounded-xl font-extrabold text-xs uppercase tracking-widest hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(40,201,244,0.45)] transition-all cursor-pointer border-none shadow-[0_4px_16px_rgba(40,201,244,0.2)]">
                     + Add Address
                 </button>
             </div>
-            <div id="addressList" class="space-y-4">
+
+            <!-- ADDRESS LIST -->
+            <div id="addressList" class="space-y-5">
                 <% if (addresses.length === 0) { %>
-                    <div class="bg-[#0f0f0f] border border-gray-800 rounded-2xl p-12 text-center">
-                        <svg class="w-12 h-12 text-gray-700 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                        <p class="text-gray-500 text-sm">No addresses saved yet.</p>
-                        <button onclick="openAddModal()" class="mt-4 text-[#00FFFF] text-xs uppercase tracking-widest hover:underline">Add your first address</button>
+                    <div class="bg-[#0a0e16]/40 border border-white/[0.06] rounded-3xl p-16 text-center">
+                        <div class="w-16 h-16 rounded-[20px] bg-[rgba(40,201,244,0.04)] border border-[rgba(40,201,244,0.1)] flex items-center justify-center text-[#28c9f4] mx-auto mb-6">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        </div>
+                        <p class="text-gray-400 text-[15px] font-bold">No addresses saved yet</p>
+                        <p class="text-xs text-gray-600 mt-1 max-w-xs mx-auto">Please add a default delivery address to speed up checkout.</p>
+                        <button onclick="openAddModal()" class="mt-5 text-[#28c9f4] text-xs font-bold uppercase tracking-widest hover:underline cursor-pointer bg-transparent border-none">Add your first address</button>
                     </div>
                 <% } else { %>
                     <% addresses.forEach(addr => { %>
-                        <div class="address-card bg-[#0f0f0f] border border-gray-800 rounded-2xl p-6 relative" data-id="<%= addr._id %>">
+                        <div class="address-card bg-[#0a0e16]/40 border rounded-2xl p-6 sm:p-7 relative transition-all duration-300 <%= addr.isDefault ? 'border-[#28c9f4]/40 shadow-[0_8px_30px_rgba(40,201,244,0.06)]' : 'border-white/[0.06] hover:border-white/[0.12]' %>" data-id="<%= addr._id %>">
+                            
                             <% if (addr.isDefault) { %>
-                                <span class="absolute top-4 right-4 bg-[#00FFFF]/10 text-[#00FFFF] text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-[#00FFFF]/20">Default</span>
+                                <span class="absolute top-6 right-6 bg-[#28c9f4]/10 text-[#28c9f4] text-[9px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full border border-[#28c9f4]/35">Default</span>
                             <% } %>
-                            <p class="font-bold text-white text-base mb-1"><%= addr.fullName %></p>
-                            <p class="text-gray-400 text-sm"><%= addr.addressLine %></p>
-                            <p class="text-gray-400 text-sm"><%= addr.city %>, <%= addr.state %> - <%= addr.postalCode %></p>
-                            <p class="text-gray-400 text-sm">Phone: <%= addr.phone %></p>
-                            <div class="flex items-center gap-6 mt-4">
-                                <button onclick="openEditModal('<%= addr._id %>', '<%= addr.fullName.replace(/'/g, `\\'`) %>', '<%= addr.addressLine.replace(/'/g, `\\'`) %>', '<%= addr.city %>', '<%= addr.state %>', '<%= addr.postalCode %>', '<%= addr.phone %>', <%= addr.isDefault %>)"
-                                    class="text-[10px] font-bold uppercase tracking-widest text-gray-300 hover:text-[#C5A267] transition-colors underline underline-offset-2">
+                            
+                            <!-- Recipient Details -->
+                            <div class="flex items-center gap-2 mb-3">
+                                <svg class="w-4 h-4 text-[#28c9f4]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                <p class="font-extrabold text-white text-base leading-none"><%= addr.fullName %></p>
+                            </div>
+
+                            <!-- Address lines -->
+                            <div class="space-y-1.5 text-gray-300 text-[13.5px] leading-relaxed">
+                                <p class="font-medium text-gray-200"><%= addr.addressLine %></p>
+                                <p class="text-gray-400"><%= addr.city %>, <%= addr.state %> - <span class="font-bold text-gray-300"><%= addr.postalCode %></span></p>
+                                <p class="flex items-center gap-1.5 text-gray-400 pt-1">
+                                    <svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                                    Phone: <span class="font-semibold text-gray-300"><%= addr.phone %></span>
+                                </p>
+                            </div>
+
+                            <!-- Action Buttons Grid -->
+                            <div class="flex flex-wrap items-center gap-3 mt-6 pt-5 border-t border-white/[0.04]">
+                                <!-- Edit Button -->
+                                <button id="edit-btn-<%= addr._id %>" onclick="openEditModal('<%= addr._id %>', '<%= addr.fullName.replace(/'/g, `\\'`) %>', '<%= addr.addressLine.replace(/'/g, `\\'`) %>', '<%= addr.city %>', '<%= addr.state %>', '<%= addr.postalCode %>', '<%= addr.phone %>', <%= addr.isDefault %>)"
+                                    class="bg-white/[0.03] border border-white/10 hover:bg-[#28c9f4]/10 hover:border-[#28c9f4]/30 text-gray-300 hover:text-white px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                                     Edit Address
                                 </button>
+                                
+                                <!-- Delete Button -->
                                 <button onclick="deleteAddress('<%= addr._id %>')"
-                                    class="text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-red-400 transition-colors underline underline-offset-2">
+                                    class="bg-red-500/5 border border-red-500/10 hover:bg-red-500/15 hover:border-red-500/30 text-red-400 hover:text-red-300 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                     Delete
                                 </button>
+                                
+                                <!-- Set as Default Button -->
                                 <% if (!addr.isDefault) { %>
                                     <button onclick="setDefault('<%= addr._id %>')"
-                                        class="text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-[#00FFFF] transition-colors">
+                                        class="bg-[#22d3ee]/5 border border-[#22d3ee]/15 hover:bg-[#22d3ee]/15 hover:border-[#22d3ee]/30 text-[#22d3ee] hover:text-[#67e8f9] px-4.5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer ml-auto">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                                         Set as Default
                                     </button>
                                 <% } %>
                             </div>
+
                         </div>
                     <% }) %>
                 <% } %>
@@ -86,77 +122,79 @@
     </div>
 </main>
 
-<!-- Add/Edit Address Modal -->
-<div id="addressModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
-    <div class="bg-[#0f0f0f] border border-gray-800 rounded-[2rem] p-8 w-full max-w-lg shadow-2xl relative">
-        <button onclick="closeModal()" class="absolute top-5 right-5 text-gray-500 hover:text-white transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+<!-- Add/Edit Address Modal (Frosted Glass Overlay) -->
+<div id="addressModal" class="fixed inset-0 z-[150] hidden flex items-center justify-center bg-black/80 backdrop-blur-md px-4">
+    <div class="bg-[#070b12]/95 border border-white/[0.08] rounded-[2rem] p-8 w-full max-w-lg shadow-[0_24px_70px_rgba(0,0,0,0.7)] relative">
+        <button onclick="closeModal()" class="absolute top-5 right-5 text-gray-500 hover:text-white transition cursor-pointer bg-transparent border-none">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
-        <h2 id="modalTitle" class="text-2xl font-bold text-white mb-6 uppercase tracking-widest text-center">Add Address</h2>
+        <h2 id="modalTitle" class="text-xl font-bold text-white mb-6 uppercase tracking-widest text-center">Add Address</h2>
         <div id="modalMessage" class="hidden mb-4 p-3 rounded-xl text-xs font-medium border text-center"></div>
         <form id="addressForm" class="space-y-4" novalidate>
             <input type="hidden" id="editAddressId">
             <div>
-                <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Full Name</label>
+                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Full Name</label>
                 <input type="text" id="f_fullName" placeholder="Full Name"
-                    class="w-full bg-black/40 border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-sm text-white placeholder:text-gray-600">
+                    class="w-full bg-white/[0.02] border border-white/[0.08] rounded-xl px-4 py-3.5 outline-none focus:border-[#28c9f4] focus:shadow-[0_0_12px_rgba(40,201,244,0.15)] text-sm text-[#e2e8f0] transition-all placeholder:text-gray-700">
                 <p id="e_fullName" class="hidden text-red-400 text-[11px] mt-1 ml-1"></p>
             </div>
             <div>
-                <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Address Line</label>
+                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Address Line</label>
                 <input type="text" id="f_addressLine" placeholder="Address Line"
-                    class="w-full bg-black/40 border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-sm text-white placeholder:text-gray-600">
+                    class="w-full bg-white/[0.02] border border-white/[0.08] rounded-xl px-4 py-3.5 outline-none focus:border-[#28c9f4] focus:shadow-[0_0_12px_rgba(40,201,244,0.15)] text-sm text-[#e2e8f0] transition-all placeholder:text-gray-700">
                 <p id="e_addressLine" class="hidden text-red-400 text-[11px] mt-1 ml-1"></p>
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-widest mb-1.5 ml-1">City</label>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">City</label>
                     <input type="text" id="f_city" placeholder="City"
-                        class="w-full bg-black/40 border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-sm text-white placeholder:text-gray-600">
+                        class="w-full bg-white/[0.02] border border-white/[0.08] rounded-xl px-4 py-3.5 outline-none focus:border-[#28c9f4] focus:shadow-[0_0_12px_rgba(40,201,244,0.15)] text-sm text-[#e2e8f0] transition-all placeholder:text-gray-700">
                     <p id="e_city" class="hidden text-red-400 text-[11px] mt-1 ml-1"></p>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Postal Code</label>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Postal Code</label>
                     <input type="text" id="f_postalCode" placeholder="Postal Code" maxlength="6"
-                        class="w-full bg-black/40 border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-sm text-white placeholder:text-gray-600">
+                        class="w-full bg-white/[0.02] border border-white/[0.08] rounded-xl px-4 py-3.5 outline-none focus:border-[#28c9f4] focus:shadow-[0_0_12px_rgba(40,201,244,0.15)] text-sm text-[#e2e8f0] transition-all placeholder:text-gray-700">
                     <p id="e_postalCode" class="hidden text-red-400 text-[11px] mt-1 ml-1"></p>
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-widest mb-1.5 ml-1">State</label>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">State</label>
                     <input type="text" id="f_state" placeholder="State"
-                        class="w-full bg-black/40 border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-sm text-white placeholder:text-gray-600">
+                        class="w-full bg-white/[0.02] border border-white/[0.08] rounded-xl px-4 py-3.5 outline-none focus:border-[#28c9f4] focus:shadow-[0_0_12px_rgba(40,201,244,0.15)] text-sm text-[#e2e8f0] transition-all placeholder:text-gray-700">
                     <p id="e_state" class="hidden text-red-400 text-[11px] mt-1 ml-1"></p>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Phone Number</label>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Phone Number</label>
                     <input type="tel" id="f_phone" placeholder="Phone Number" maxlength="10"
-                        class="w-full bg-black/40 border border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-[#00FFFF] transition-all text-sm text-white placeholder:text-gray-600">
+                        class="w-full bg-white/[0.02] border border-white/[0.08] rounded-xl px-4 py-3.5 outline-none focus:border-[#28c9f4] focus:shadow-[0_0_12px_rgba(40,201,244,0.15)] text-sm text-[#e2e8f0] transition-all placeholder:text-gray-700">
                     <p id="e_phone" class="hidden text-red-400 text-[11px] mt-1 ml-1"></p>
                 </div>
             </div>
-            <label class="flex items-center gap-3 cursor-pointer mt-2">
-                <input type="checkbox" id="f_isDefault" class="w-4 h-4 accent-[#00FFFF] rounded">
-                <span class="text-xs text-gray-400">Set as default shipping address</span>
+            <label class="flex items-center gap-3 cursor-pointer mt-3 select-none">
+                <input type="checkbox" id="f_isDefault" class="w-4 h-4 accent-[#28c9f4] rounded bg-transparent border-white/10">
+                <span class="text-xs text-gray-400 font-medium">Set as default shipping address</span>
             </label>
             <button type="submit" id="modalSaveBtn"
-                class="w-full bg-[#00FFFF] text-black py-4 rounded-2xl font-bold uppercase tracking-widest text-sm hover:scale-[1.01] active:scale-95 transition-all shadow-[0_0_20px_rgba(0,255,255,0.2)] mt-2 disabled:opacity-60 disabled:cursor-not-allowed">
+                class="w-full bg-gradient-to-r from-[#28c9f4] to-[#0ea5e9] text-[#03111a] py-4 rounded-2xl font-extrabold uppercase tracking-widest text-sm hover:scale-[1.01] active:scale-95 transition-all shadow-[0_8px_28px_rgba(40,201,244,0.35)] mt-3 cursor-pointer border-none disabled:opacity-60 disabled:cursor-not-allowed">
                 Save
             </button>
         </form>
     </div>
 </div>
 
-<!-- Delete Confirm Modal -->
-<div id="deleteModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
-    <div class="bg-[#0f0f0f] border border-gray-800 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl text-center">
-        <svg class="w-12 h-12 text-red-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+<!-- Delete Confirm Modal (Frosted Glass warning overlay) -->
+<div id="deleteModal" class="fixed inset-0 z-[150] hidden flex items-center justify-center bg-black/80 backdrop-blur-md px-4">
+    <div class="bg-[#070b12]/95 border border-white/[0.08] rounded-[2rem] p-8 w-full max-w-sm shadow-[0_24px_70px_rgba(0,0,0,0.7)] text-center">
+        <div class="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/25 flex items-center justify-center text-red-400 mx-auto mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        </div>
         <h3 class="text-lg font-bold text-white mb-2">Remove Address?</h3>
-        <p class="text-gray-400 text-sm mb-6">This address will be permanently removed.</p>
+        <p class="text-gray-400 text-sm mb-6">This address will be permanently deleted from your saved list.</p>
         <div class="flex gap-3">
-            <button onclick="closeDeleteModal()" class="flex-1 border border-gray-700 text-white py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-white/5 transition-all">Cancel</button>
-            <button id="confirmDeleteBtn" class="flex-1 bg-red-500 text-white py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-red-600 transition-all">Remove</button>
+            <button onclick="closeDeleteModal()" class="flex-1 border border-white/10 hover:bg-white/5 text-white py-3.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all cursor-pointer bg-transparent">Cancel</button>
+            <button id="confirmDeleteBtn" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-3.5 rounded-xl text-xs font-bold uppercase tracking-widest border-none transition-all cursor-pointer">Remove</button>
         </div>
     </div>
 </div>
@@ -189,6 +227,7 @@
         document.getElementById('addressModal').classList.remove('hidden');
     }
 
+    // Close modals
     function closeModal() {
         document.getElementById('addressModal').classList.add('hidden');
     }
@@ -276,9 +315,9 @@
         const el = document.getElementById('modalMessage');
         el.textContent = text;
         el.className = 'mb-4 p-3 rounded-xl text-xs font-medium border text-center block';
-        el.classList.add(type === 'error' ? 'bg-red-900/50' : 'bg-green-900/50');
+        el.classList.add(type === 'error' ? 'bg-red-950/20' : 'bg-green-950/20');
         el.classList.add(type === 'error' ? 'text-red-200' : 'text-green-200');
-        el.classList.add(type === 'error' ? 'border-red-800' : 'border-green-800');
+        el.classList.add(type === 'error' ? 'border-red-900/30' : 'border-green-900/30');
     }
     function hideModalMsg() {
         document.getElementById('modalMessage').className = 'hidden';
@@ -365,7 +404,16 @@
 
             if (response.ok) {
                 showModalMsg(result.message || 'Saved!', 'success');
-                setTimeout(() => { closeModal(); location.reload(); }, 800);
+                setTimeout(() => { 
+                    closeModal(); 
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirectUrl = urlParams.get('redirect');
+                    if (redirectUrl) {
+                        window.location.href = redirectUrl;
+                    } else {
+                        window.location.href = '/address';
+                    }
+                }, 800);
             } else {
                 showModalMsg(result.message || 'Failed to save address.', 'error');
                 saveBtn.disabled = false;
@@ -397,7 +445,13 @@
 
             if (response.ok) {
                 closeDeleteModal();
-                location.reload();
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirectUrl = urlParams.get('redirect');
+                if (redirectUrl) {
+                    window.location.href = redirectUrl;
+                } else {
+                    location.reload();
+                }
             } else {
                 alert(result.message || 'Failed to remove address.');
                 btn.disabled = false;
@@ -414,9 +468,32 @@
     async function setDefault(id) {
         try {
             const response = await fetch(`/address/${id}/set-default`, { method: 'PATCH' });
-            if (response.ok) location.reload();
+            if (response.ok) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirectUrl = urlParams.get('redirect');
+                if (redirectUrl) {
+                    window.location.href = redirectUrl;
+                } else {
+                    location.reload();
+                }
+            }
         } catch(err) {
             alert('Network error.');
         }
     }
+
+    // --- Auto-open Modal based on query parameters (e.g. from Cart page) ---
+    window.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const editId = urlParams.get('edit');
+        const addParam = urlParams.get('add');
+        if (editId) {
+            const editBtn = document.getElementById(`edit-btn-${editId}`);
+            if (editBtn) {
+                editBtn.click();
+            }
+        } else if (addParam === 'true') {
+            openAddModal();
+        }
+    });
 </script>
