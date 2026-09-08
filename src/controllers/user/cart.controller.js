@@ -255,7 +255,7 @@ export const removeAll = async (req,res) => {
 
         
 
-        res.redirect("/cart")
+        res.redirect("/wishlist")
 
     } catch (error) {
         console.log(error)

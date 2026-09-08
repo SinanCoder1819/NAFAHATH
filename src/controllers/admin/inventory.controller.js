@@ -34,6 +34,8 @@ export const getInventory = async (req, res) => {
       filter.variants = { $elemMatch: { stock: { $gte: 10 } } };
     }
 
+    
+
     const totalProducts = await Product.countDocuments(filter);
     const totalPages = Math.max(1, Math.ceil(totalProducts / PAGE_SIZE));
     const currentPage = Math.min(page, totalPages);

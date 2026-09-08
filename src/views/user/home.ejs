@@ -4,152 +4,322 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Cinzel:wght@500;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: white; }
-        .font-serif-italic { font-family: 'Playfair Display', serif; font-style: italic; }
-        .neon-btn { background-color: #00FFFF; color: black; transition: all 0.3s ease; }
-        .neon-btn:hover { box-shadow: 0 0 20px rgba(0, 255, 255, 0.6); transform: translateY(-2px); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #04070e; color: white; }
+        .font-serif-brand { font-family: 'Playfair Display', serif; }
+        .font-serif-italic { font-family: 'Cormorant Garamond', serif; font-style: italic; }
+        .font-luxury-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff 10%, #67e8f9 50%, #ffffff 90%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0, 255, 255, 0.15);
+        }
+        .font-sub-luxury {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.35em;
+            color: #C5A267;
+        }
+
+        /* 3D & Floating Hero Animation */
+        @keyframes heroFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-16px) rotate(1.5deg); }
+        }
+        @keyframes auraPulse {
+            0%, 100% { opacity: 0.45; transform: scale(1); filter: blur(40px); }
+            50% { opacity: 0.85; transform: scale(1.15); filter: blur(55px); }
+        }
+        .hero-card-wrapper {
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+        .hero-glow-aura {
+            position: absolute;
+            inset: -25px;
+            background: radial-gradient(circle, rgba(40, 201, 244, 0.3) 0%, rgba(197, 162, 103, 0.2) 45%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: auraPulse 5s ease-in-out infinite;
+        }
+        .hero-floating-img {
+            animation: heroFloat 6s ease-in-out infinite;
+            transition: transform 0.15s ease-out, box-shadow 0.3s ease;
+            border-radius: 24px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(40, 201, 244, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+        .hero-card-wrapper:hover .hero-floating-img {
+            animation-play-state: paused;
+            box-shadow: 0 35px 80px rgba(0, 0, 0, 0.9), 0 0 50px rgba(40, 201, 244, 0.45);
+        }
+        .hero-action-badge {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            z-index: 20;
+            background: rgba(8, 12, 20, 0.88);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(197, 162, 103, 0.4);
+            color: #C5A267;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .hero-card-wrapper:hover .hero-action-badge {
+            background: linear-gradient(135deg, #C5A267, #f0d08a);
+            color: #04080e;
+            transform: scale(1.08) translateY(-2px);
+            box-shadow: 0 0 28px rgba(197, 162, 103, 0.6);
+        }
     </style>
 </head>
-<body>
+<body class="bg-[#04070e] text-white">
 
-  
-
-    <section class="max-w-7xl mx-auto px-8 py-12 md:py-24 flex flex-col md:flex-row items-center">
+    <!-- HERO SECTION -->
+    <section class="max-w-[1400px] mx-auto px-7 py-12 md:py-20 flex flex-col md:flex-row items-center">
         <div class="md:w-1/2 space-y-8 text-center md:text-left">
-            <h2 class="text-6xl md:text-8xl font-serif-italic leading-tight">The<br>Essence<br>of You.</h2>
-            <div class="w-16 h-[1px] bg-gray-500 mx-auto md:mx-0"></div>
-            <p class="text-[10px] tracking-[0.3em] text-gray-400 uppercase">Crafted Fragrances for Timeless Elegance</p>
-            <a href="/shop" class="inline-flex items-center space-x-4 text-xs tracking-widest hover:text-cyan-400 transition">
-                <span>Explore the Collection</span>
-                <span class="text-xl">→</span>
+            <h1 class="text-6xl md:text-8xl font-luxury-title leading-tight">The<br>Essence<br>of You.</h1>
+            <div class="w-24 h-[2px] bg-gradient-to-r from-[#C5A267] via-[#28c9f4] to-transparent mx-auto md:mx-0"></div>
+            <p class="text-xs font-sub-luxury tracking-[0.35em] uppercase">Crafted Fragrances for Timeless Elegance</p>
+        </div>
+        <div class="md:w-1/2 mt-12 md:mt-0 flex justify-center relative">
+            <a href="/shop" id="heroImageCard" class="hero-card-wrapper relative block group cursor-pointer w-full max-w-md no-underline">
+                <div class="hero-glow-aura"></div>
+                <img id="heroPerfumeImg" src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=800" alt="Hero Perfume" class="hero-floating-img w-full max-w-md object-contain">
+                <div class="hero-action-badge">
+                    <span>Explore Collection</span>
+                    <span class="text-sm font-bold transition-transform group-hover:translate-x-1">→</span>
+                </div>
             </a>
         </div>
-        <div class="md:w-1/2 mt-12 md:mt-0 flex justify-center">
-            <img src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=800" alt="Hero Perfume" class="w-full max-w-md object-contain drop-shadow-2xl">
+    </section>
+
+    <!-- BROWSE CATEGORIES SECTION -->
+    <section class="max-w-[1400px] mx-auto px-7 py-16">
+        <div class="text-center max-w-2xl mx-auto mb-14">
+            <span class="text-[11px] font-bold tracking-[0.35em] uppercase text-[#C5A267]">Curated Collections</span>
+            <h2 class="text-3xl md:text-5xl font-serif-brand font-bold text-white mt-2 mb-4">Browse Categories</h2>
+            <div class="w-20 h-[2px] bg-gradient-to-r from-transparent via-[#C5A267] to-transparent mx-auto"></div>
+        </div>
+
+        <% 
+            const categoryImagesMap = {
+                'men': 'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&q=80&w=800',
+                'women': 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=800',
+                'unisex': 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=800',
+                'uni sex': 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=800'
+            };
+            const fallbackCatImages = [
+                'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=800',
+                'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&q=80&w=800',
+                'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=800'
+            ];
+
+            let activeCats = (typeof categories !== 'undefined' && categories.length > 0) ? categories : [
+                { name: 'Men' }, { name: 'Uni Sex' }, { name: 'Women' }
+            ];
+
+            let catGridCols = 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto';
+            if (activeCats.length === 1) catGridCols = 'grid-cols-1 max-w-md mx-auto';
+            else if (activeCats.length === 2) catGridCols = 'grid-cols-1 sm:grid-cols-2 max-w-3xl mx-auto';
+            else if (activeCats.length === 3) catGridCols = 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto';
+            else if (activeCats.length >= 4) catGridCols = 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4';
+        %>
+
+        <div class="grid <%= catGridCols %> gap-8">
+            <% activeCats.forEach((cat, idx) => { %>
+                <% 
+                    const nameKey = (cat.name || '').toLowerCase().trim();
+                    const catImg = categoryImagesMap[nameKey] || fallbackCatImages[idx % fallbackCatImages.length];
+                %>
+                <a href="/shop?category=<%= encodeURIComponent(cat.name) %>" class="group relative block h-[400px] rounded-2xl overflow-hidden border border-white/10 bg-[#080d1a] hover:border-[#C5A267]/60 hover:shadow-[0_15px_45px_rgba(197,162,103,0.25)] transition-all duration-500 no-underline">
+                    <!-- Background Image -->
+                    <img src="<%= catImg %>" alt="<%= cat.name %>" class="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-out">
+                    
+                    <!-- Gradient Overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#04070e] via-[#04070e]/40 to-transparent opacity-85 group-hover:opacity-70 transition-opacity duration-500"></div>
+
+                    <!-- Top Badge -->
+                    <div class="absolute top-4 left-4 z-10">
+                        <span class="px-3.5 py-1.5 bg-black/65 backdrop-blur-md rounded-full border border-white/15 text-[10px] font-bold tracking-[0.25em] text-[#C5A267] uppercase shadow-lg">
+                            Collection
+                        </span>
+                    </div>
+
+                    <!-- Floating Glass Banner -->
+                    <div class="absolute bottom-4 left-4 right-4 z-10 p-5 bg-[#080d18]/85 backdrop-blur-md rounded-xl border border-white/10 flex items-center justify-between group-hover:border-[#C5A267]/50 group-hover:bg-[#080d18]/95 transition-all duration-300 transform group-hover:-translate-y-1 shadow-2xl">
+                        <div>
+                            <h3 class="text-xl md:text-2xl font-bold font-serif-brand text-white group-hover:text-[#C5A267] transition-colors duration-300 capitalize m-0">
+                                <%= cat.name %>
+                            </h3>
+                            <p class="text-[11px] text-gray-400 tracking-widest uppercase mt-1 m-0 font-medium">Explore Fragrances</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-[#C5A267]/15 border border-[#C5A267]/30 text-[#C5A267] flex items-center justify-center group-hover:bg-[#C5A267] group-hover:text-black transition-all duration-300 shrink-0">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+            <% }) %>
         </div>
     </section>
 
-    <section class="max-w-7xl mx-auto px-8 py-16">
-        <div class="flex items-center space-x-4 mb-12">
-            <div class="h-[1px] bg-gray-800 flex-grow"></div>
-            <h3 class="text-xs tracking-[0.4em] uppercase font-semibold">Browse Categories</h3>
-            <div class="h-[1px] bg-gray-800 flex-grow"></div>
+    <!-- BEST SELLERS SECTION -->
+    <section class="max-w-[1400px] mx-auto px-7 py-16">
+        <div class="text-center max-w-2xl mx-auto mb-14">
+            <span class="text-[11px] font-bold tracking-[0.35em] uppercase text-[#28c9f4]">Top Picks</span>
+            <h2 class="text-3xl md:text-5xl font-serif-brand font-bold text-white mt-2 mb-4">Best Sellers</h2>
+            <div class="w-20 h-[2px] bg-gradient-to-r from-transparent via-[#28c9f4] to-transparent mx-auto"></div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="relative group cursor-pointer flex flex-col items-center">
-                <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=500" alt="Women" class="w-64 h-80 object-contain transition group-hover:scale-105">
-                <span class="absolute left-10 bottom-10 text-4xl font-serif-italic text-indigo-500">Women</span>
-            </div>
-            <div class="relative group cursor-pointer flex flex-col items-center">
-                <img src="https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&q=80&w=500" alt="Men" class="w-64 h-80 object-contain transition group-hover:scale-105">
-                <span class="absolute left-10 bottom-10 text-4xl font-serif-italic text-blue-600">Men</span>
-            </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
+            <% if (typeof bestSellers !== 'undefined' && bestSellers.length > 0) { %>
+                <% bestSellers.forEach(p => { %>
+                    <% 
+                       const img = p.primaryImage || (p.galleryImages && p.galleryImages.length > 0 ? p.galleryImages[0] : 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=400');
+                       let priceDisplay = 'N/A';
+                       let oldPriceDisplay = null;
+                       let discountPercent = 0;
+                       if (p.variants && p.variants.length > 0) {
+                           const v = p.variants[0];
+                           if (v.salePrice > 0 && v.salePrice < v.regularPrice) {
+                               priceDisplay = '₹' + v.salePrice.toLocaleString('en-IN');
+                               oldPriceDisplay = '₹' + v.regularPrice.toLocaleString('en-IN');
+                               discountPercent = Math.round(((v.regularPrice - v.salePrice) / v.regularPrice) * 100);
+                           } else {
+                               priceDisplay = '₹' + (v.regularPrice || 0).toLocaleString('en-IN');
+                           }
+                       }
+                    %>
+                    <a href="/productDetail/<%= p._id %>" class="group block no-underline">
+                        <div class="relative bg-gradient-to-b from-[#0e1626] to-[#060a12] p-6 rounded-2xl flex justify-center items-center h-80 overflow-hidden border border-white/10 group-hover:border-[#28c9f4]/50 group-hover:shadow-[0_12px_35px_rgba(40,201,244,0.2)] transition-all duration-500">
+                            <% if (discountPercent > 0) { %>
+                                <span class="absolute top-3 left-3 z-10 px-2.5 py-1 bg-[#28c9f4] text-[#03111a] text-[10px] font-extrabold tracking-wider rounded-lg uppercase shadow-md">
+                                    <%= discountPercent %>% OFF
+                                </span>
+                            <% } %>
+                            <img src="<%= img %>" alt="<%= p.productName %>" class="object-contain max-h-full max-w-full drop-shadow-[0_12px_24px_rgba(0,0,0,0.8)] group-hover:scale-110 transition-transform duration-700 ease-out">
+                            <div class="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-[#060a12] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex justify-center">
+                                <span class="px-4 py-2 bg-[#28c9f4] text-[#04080e] text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                                    View Details
+                                </span>
+                            </div>
+                        </div>
+                        <div class="space-y-1 mt-3 px-1">
+                            <p class="text-[11px] font-bold tracking-[0.2em] uppercase text-[#C5A267] m-0"><%= p.brand || p.category || 'Nafahath Luxury' %></p>
+                            <h4 class="text-base font-semibold text-slate-100 group-hover:text-[#28c9f4] transition-colors duration-300 line-clamp-1 m-0"><%= p.productName %></h4>
+                            <div class="flex items-center space-x-2.5 pt-1">
+                                <span class="text-base font-bold text-[#28c9f4]"><%= priceDisplay %></span>
+                                <% if (oldPriceDisplay) { %>
+                                    <span class="text-xs text-gray-400 line-through"><%= oldPriceDisplay %></span>
+                                <% } %>
+                            </div>
+                        </div>
+                    </a>
+                <% }) %>
+            <% } else { %>
+                <p class="text-sm text-gray-400 col-span-4 text-center">No products available.</p>
+            <% } %>
         </div>
     </section>
 
-    <section class="max-w-7xl mx-auto px-8 py-16">
-        <div class="flex items-center space-x-4 mb-12">
-            <div class="h-[1px] bg-gray-800 flex-grow"></div>
-            <h3 class="text-xs tracking-[0.4em] uppercase font-semibold">Best Sellers</h3>
-            <div class="h-[1px] bg-gray-800 flex-grow"></div>
+    <!-- NEW ARRIVALS SECTION -->
+    <section class="max-w-[1400px] mx-auto px-7 py-16 mb-12">
+        <div class="text-center max-w-2xl mx-auto mb-14">
+            <span class="text-[11px] font-bold tracking-[0.35em] uppercase text-[#C5A267]">Just Landed</span>
+            <h2 class="text-3xl md:text-5xl font-serif-brand font-bold text-white mt-2 mb-4">New Arrivals</h2>
+            <div class="w-20 h-[2px] bg-gradient-to-r from-transparent via-[#C5A267] to-transparent mx-auto"></div>
         </div>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="space-y-4">
-                <div class="bg-[#111] p-4 rounded-sm flex justify-center h-64">
-                    <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=300" class="object-contain hover:scale-105 transition duration-500">
-                </div>
-                <div class="space-y-1">
-                    <h4 class="text-xs font-semibold">Golden Oud</h4>
-                    <p class="text-[10px] text-gray-500">Royal Attar House</p>
-                    <p class="text-xs mt-2">₹4,999</p>
-                </div>
-            </div>
-            <div class="space-y-4">
-                <div class="bg-[#111] p-4 rounded-sm flex justify-center h-64">
-                    <img src="https://images.unsplash.com/photo-1557170334-a9632e77c6e4?auto=format&fit=crop&q=80&w=300" class="object-contain hover:scale-105 transition">
-                </div>
-                <div class="space-y-1">
-                    <h4 class="text-xs font-semibold">Midnight Oudh</h4>
-                    <p class="text-[10px] text-gray-500">Noir Essence</p>
-                    <p class="text-xs mt-2">₹4,299</p>
-                </div>
-            </div>
-            <div class="space-y-4">
-                <div class="bg-[#111] p-4 rounded-sm flex justify-center h-64">
-                    <img src="https://images.unsplash.com/photo-1585232351009-aa87416fca90?auto=format&fit=crop&q=80&w=300" class="object-contain hover:scale-105 transition">
-                </div>
-                <div class="space-y-1">
-                    <h4 class="text-xs font-semibold">Urban Spice</h4>
-                    <p class="text-[10px] text-gray-500">MetroNotes</p>
-                    <p class="text-xs mt-2">₹2,999</p>
-                </div>
-            </div>
-            <div class="space-y-4">
-                <div class="bg-[#111] p-4 rounded-sm flex justify-center h-64">
-                    <img src="https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=300" class="object-contain hover:scale-105 transition">
-                </div>
-                <div class="space-y-1">
-                    <h4 class="text-xs font-semibold">Silver Musk</h4>
-                    <p class="text-[10px] text-gray-500">Zenith Aromatics</p>
-                    <p class="text-xs mt-2">₹2,450</p>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <section class="max-w-7xl mx-auto px-8 py-16">
-        <div class="flex items-center space-x-4 mb-12">
-            <div class="h-[1px] bg-gray-800 flex-grow"></div>
-            <h3 class="text-xs tracking-[0.4em] uppercase font-semibold">New Arrivals</h3>
-            <div class="h-[1px] bg-gray-800 flex-grow"></div>
-        </div>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="space-y-4">
-                <div class="bg-[#111] p-4 rounded-sm flex justify-center h-64">
-                    <img src="https://images.unsplash.com/photo-1519669011783-4eaa95fa1b7d?auto=format&fit=crop&q=80&w=300" class="object-contain hover:scale-105 transition">
-                </div>
-                <div class="space-y-1">
-                    <h4 class="text-xs font-semibold">Midnight Ember</h4>
-                    <p class="text-[10px] text-gray-500">Obsidian Scents</p>
-                    <p class="text-xs mt-2">₹3,250</p>
-                </div>
-            </div>
-            <div class="space-y-4">
-                <div class="bg-[#111] p-4 rounded-sm flex justify-center h-64">
-                    <img src="https://images.unsplash.com/photo-1615033161185-2f9a00e0b04c?auto=format&fit=crop&q=80&w=300" class="object-contain hover:scale-105 transition">
-                </div>
-                <div class="space-y-1">
-                    <h4 class="text-xs font-semibold">Vanilla Dusk</h4>
-                    <p class="text-[10px] text-gray-500">SoftScent Lab</p>
-                    <p class="text-xs mt-2">₹1,750</p>
-                </div>
-            </div>
-            <div class="space-y-4">
-                <div class="bg-[#111] p-4 rounded-sm flex justify-center h-64">
-                    <img src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=300" class="object-contain hover:scale-105 transition">
-                </div>
-                <div class="space-y-1">
-                    <h4 class="text-xs font-semibold">Velour Night</h4>
-                    <p class="text-[10px] text-gray-500">Noir Essence</p>
-                    <p class="text-xs mt-2">₹2,799</p>
-                </div>
-            </div>
-            <div class="space-y-4">
-                <div class="bg-[#111] p-4 rounded-sm flex justify-center h-64">
-                    <img src="https://images.unsplash.com/photo-1616948055600-a12117d86301?auto=format&fit=crop&q=80&w=300" class="object-contain hover:scale-105 transition">
-                </div>
-                <div class="space-y-1">
-                    <h4 class="text-xs font-semibold">Desert Oudh</h4>
-                    <p class="text-[10px] text-gray-500">Petal & Co.</p>
-                    <p class="text-xs mt-2">₹5,100</p>
-                </div>
-            </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
+            <% if (typeof newArrivals !== 'undefined' && newArrivals.length > 0) { %>
+                <% newArrivals.forEach(p => { %>
+                    <% 
+                       const img = p.primaryImage || (p.galleryImages && p.galleryImages.length > 0 ? p.galleryImages[0] : 'https://images.unsplash.com/photo-1519669011783-4eaa95fa1b7d?auto=format&fit=crop&q=80&w=400');
+                       let priceDisplay = 'N/A';
+                       let oldPriceDisplay = null;
+                       let discountPercent = 0;
+                       if (p.variants && p.variants.length > 0) {
+                           const v = p.variants[0];
+                           if (v.salePrice > 0 && v.salePrice < v.regularPrice) {
+                               priceDisplay = '₹' + v.salePrice.toLocaleString('en-IN');
+                               oldPriceDisplay = '₹' + v.regularPrice.toLocaleString('en-IN');
+                               discountPercent = Math.round(((v.regularPrice - v.salePrice) / v.regularPrice) * 100);
+                           } else {
+                               priceDisplay = '₹' + (v.regularPrice || 0).toLocaleString('en-IN');
+                           }
+                       }
+                    %>
+                    <a href="/productDetail/<%= p._id %>" class="group block no-underline">
+                        <div class="relative bg-gradient-to-b from-[#0e1626] to-[#060a12] p-6 rounded-2xl flex justify-center items-center h-80 overflow-hidden border border-white/10 group-hover:border-[#C5A267]/50 group-hover:shadow-[0_12px_35px_rgba(197,162,103,0.2)] transition-all duration-500">
+                            <% if (discountPercent > 0) { %>
+                                <span class="absolute top-3 left-3 z-10 px-2.5 py-1 bg-[#C5A267] text-[#04080e] text-[10px] font-extrabold tracking-wider rounded-lg uppercase shadow-md">
+                                    <%= discountPercent %>% OFF
+                                </span>
+                            <% } %>
+                            <img src="<%= img %>" alt="<%= p.productName %>" class="object-contain max-h-full max-w-full drop-shadow-[0_12px_24px_rgba(0,0,0,0.8)] group-hover:scale-110 transition-transform duration-700 ease-out">
+                            <div class="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-[#060a12] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex justify-center">
+                                <span class="px-4 py-2 bg-gradient-to-r from-[#C5A267] to-[#f0d08a] text-[#04080e] text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                                    View Details
+                                </span>
+                            </div>
+                        </div>
+                        <div class="space-y-1 mt-3 px-1">
+                            <p class="text-[11px] font-bold tracking-[0.2em] uppercase text-[#C5A267] m-0"><%= p.brand || p.category || 'Nafahath Luxury' %></p>
+                            <h4 class="text-base font-semibold text-slate-100 group-hover:text-[#C5A267] transition-colors duration-300 line-clamp-1 m-0"><%= p.productName %></h4>
+                            <div class="flex items-center space-x-2.5 pt-1">
+                                <span class="text-base font-bold text-[#28c9f4]"><%= priceDisplay %></span>
+                                <% if (oldPriceDisplay) { %>
+                                    <span class="text-xs text-gray-400 line-through"><%= oldPriceDisplay %></span>
+                                <% } %>
+                            </div>
+                        </div>
+                    </a>
+                <% }) %>
+            <% } else { %>
+                <p class="text-sm text-gray-400 col-span-4 text-center">No new arrivals available.</p>
+            <% } %>
         </div>
     </section>
 
+    <!-- 3D HERO INTERACTIVE SCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const heroCard = document.getElementById('heroImageCard');
+            const heroImg = document.getElementById('heroPerfumeImg');
+            if (!heroCard || !heroImg) return;
 
+            heroCard.addEventListener('mousemove', function(e) {
+                const rect = heroCard.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
 
+                const rotateX = (-y / rect.height) * 22;
+                const rotateY = (x / rect.width) * 22;
+
+                heroImg.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+            });
+
+            heroCard.addEventListener('mouseleave', function() {
+                heroImg.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+            });
+        });
+    </script>
 </body>
 </html>

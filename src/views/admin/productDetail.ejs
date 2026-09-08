@@ -1,0 +1,1396 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  .pdetail-container {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #f8fafc;
+    padding: 24px 32px 48px;
+    min-height: 100vh;
+    background: #060b13;
+  }
+
+  /* Header Bar */
+  .pdetail-header-bar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    margin-bottom: 28px;
+  }
+
+  .pdetail-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #3b82f6;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    width: fit-content;
+  }
+
+  .pdetail-back-link:hover {
+    color: #60a5fa;
+    transform: translateX(-3px);
+  }
+
+  .pdetail-page-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    text-align: center;
+  }
+
+  .pdetail-header-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  .pdetail-edit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #ffffff;
+    padding: 9px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+    transition: all 0.2s ease;
+  }
+
+  .pdetail-edit-btn:hover {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+    transform: translateY(-1px);
+  }
+
+  /* Two Column Main Grid */
+  .pdetail-main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 28px;
+  }
+
+  @media (max-width: 992px) {
+    .pdetail-main-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Detail Card Frame */
+  .pdetail-card {
+    background: #0d1527;
+    border: 1px solid #1e293b;
+    border-radius: 16px;
+    padding: 28px 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pdetail-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+  }
+
+  .pdetail-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 22px;
+    letter-spacing: -0.01em;
+  }
+
+  .pdetail-card-header .pdetail-card-title {
+    margin-bottom: 0;
+  }
+
+  /* Add Variant Button */
+  .pdetail-add-vbtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    transition: all 0.2s ease;
+  }
+
+  .pdetail-add-vbtn:hover {
+    background: linear-gradient(135deg, #34d399, #10b981);
+    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.45);
+    transform: translateY(-1px);
+  }
+
+  /* Product Information Fields */
+  .pdetail-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .pdetail-info-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .pdetail-info-label {
+    color: #94a3b8;
+    width: 100px;
+    flex-shrink: 0;
+  }
+
+  .pdetail-info-value {
+    color: #ffffff;
+    font-weight: 500;
+    word-break: break-word;
+  }
+
+  /* Status Badge */
+  .pdetail-status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .pdetail-status-pill.--listed {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  .pdetail-status-pill.--unlisted {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+
+  /* Product ID Copy Bar */
+  .pdetail-id-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid #1e293b;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    color: #cbd5e1;
+  }
+
+  .pdetail-copy-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+  }
+
+  .pdetail-copy-btn:hover {
+    color: #3b82f6;
+    background: rgba(59, 130, 246, 0.1);
+  }
+
+  /* Toast notification */
+  .pdetail-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #10b981;
+    color: #ffffff;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.25s ease;
+    pointer-events: none;
+    z-index: 2000;
+  }
+
+  .pdetail-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .pdetail-toast.--error {
+    background: #ef4444;
+  }
+
+  /* Metrics 2x2 Grid */
+  .pdetail-metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    flex: 1;
+  }
+
+  .pdetail-metric-box {
+    background: #080f1e;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: border-color 0.2s ease;
+  }
+
+  .pdetail-metric-box:hover {
+    border-color: rgba(59, 130, 246, 0.4);
+  }
+
+  .pdetail-metric-label {
+    font-size: 13px;
+    color: #94a3b8;
+    font-weight: 400;
+    margin-bottom: 8px;
+  }
+
+  .pdetail-metric-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+  }
+
+  /* Product Gallery & Specs Section */
+  .pdetail-section-card {
+    background: #0d1527;
+    border: 1px solid #1e293b;
+    border-radius: 16px;
+    padding: 28px 30px;
+    margin-bottom: 28px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  .pdetail-gallery-grid {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  @media (max-width: 850px) {
+    .pdetail-gallery-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .pdetail-media-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pdetail-img-main {
+    width: 100%;
+    height: 160px;
+    object-fit: contain;
+    background: #080f1e;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+
+  .pdetail-thumbs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 2px;
+  }
+
+  .pdetail-thumbs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pdetail-thumb-img {
+    width: 44px;
+    height: 44px;
+    object-fit: cover;
+    background: #080f1e;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .pdetail-thumb-img:hover,
+  .pdetail-thumb-img.active {
+    border-color: #3b82f6;
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+  }
+
+  .pdetail-desc-col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pdetail-desc-box {
+    background: #080f1e;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 16px 18px;
+    color: #cbd5e1;
+    box-sizing: border-box;
+  }
+
+  .pdetail-desc-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #00e5ff;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .pdetail-desc-text {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #e2e8f0;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* Variants Table */
+  .pdetail-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+  }
+
+  .pdetail-table th {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #00e5ff;
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid #1e293b;
+    background: #080f1e;
+  }
+
+  .pdetail-table td {
+    padding: 16px;
+    font-size: 14px;
+    color: #e2e8f0;
+    border-bottom: 1px solid rgba(30, 41, 59, 0.6);
+  }
+
+  .pdetail-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .pdetail-table tr:hover td {
+    background: rgba(15, 23, 42, 0.4);
+  }
+
+  /* Variant Row Action Buttons */
+  .vaction-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .vaction-btn.--edit {
+    color: #3b82f6;
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.25);
+    margin-right: 6px;
+  }
+
+  .vaction-btn.--edit:hover {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.5);
+    transform: translateY(-1px);
+  }
+
+  .vaction-btn.--remove {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.08);
+    border-color: rgba(248, 113, 113, 0.25);
+  }
+
+  .vaction-btn.--remove:hover {
+    background: rgba(248, 113, 113, 0.18);
+    border-color: rgba(248, 113, 113, 0.45);
+    transform: translateY(-1px);
+  }
+
+  /* Modal Dialog Backdrop & Frame */
+  .vmodal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 8, 16, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.25s ease;
+    z-index: 1500;
+  }
+
+  .vmodal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .vmodal-card {
+    background: #0d1527;
+    border: 1px solid #1e293b;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 480px;
+    padding: 28px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+    transform: scale(0.95);
+    transition: transform 0.25s ease;
+  }
+
+  .vmodal-overlay.active .vmodal-card {
+    transform: scale(1);
+  }
+
+  .vmodal-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .vmodal-close-btn {
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+    transition: color 0.15s ease;
+  }
+
+  .vmodal-close-btn:hover {
+    color: #ffffff;
+  }
+
+  .vform-group {
+    margin-bottom: 18px;
+  }
+
+  .vform-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #00e5ff;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+
+  .vform-input {
+    width: 100%;
+    background: #080f1e;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: #ffffff;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    font-family: inherit;
+    box-sizing: border-box;
+  }
+
+  .vform-input:focus {
+    border-color: #3b82f6;
+  }
+
+  .vform-input.is-invalid {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+  }
+
+  /* Custom Inline Red Error Message Directly Below Input Field */
+  .vfield-error {
+    color: #f87171;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 6px;
+    display: none;
+    line-height: 1.4;
+  }
+
+  select.vform-input {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg fill='%2364748b' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+    cursor: pointer;
+  }
+
+  select.vform-input option {
+    background: #0d1527;
+    color: #ffffff;
+  }
+
+  .vmodal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .vbtn {
+    flex: 1;
+    padding: 11px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: all 0.2s ease;
+  }
+
+  .vbtn.--cancel {
+    background: rgba(255, 255, 255, 0.05);
+    color: #94a3b8;
+    border: 1px solid #1e293b;
+  }
+
+  .vbtn.--cancel:hover {
+    background: rgba(255, 255, 255, 0.09);
+    color: #ffffff;
+  }
+
+  .vbtn.--save {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  }
+
+  .vbtn.--save:hover {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+  }
+
+  .vbtn.--delete {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+  }
+
+  .vbtn.--delete:hover {
+    background: linear-gradient(135deg, #f87171, #ef4444);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.45);
+  }
+</style>
+
+<div class="pdetail-container">
+  
+  <!-- Header Bar with Back Link, Centered Title, and Actions -->
+  <div class="pdetail-header-bar">
+    <a href="/admin/products" class="pdetail-back-link">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      Back To Products
+    </a>
+    
+    <h1 class="pdetail-page-title">Product Details</h1>
+    
+    <div class="pdetail-header-actions">
+      <a href="/admin/products/edit?id=<%= product._id %>" class="pdetail-edit-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+        </svg>
+        Edit Product
+      </a>
+    </div>
+  </div>
+
+  <!-- Flash Messages -->
+  <% if (error) { %>
+    <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 12px 18px; border-radius: 10px; margin-bottom: 20px; font-size: 14px;">
+      <%= error %>
+    </div>
+  <% } %>
+  <% if (success) { %>
+    <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; padding: 12px 18px; border-radius: 10px; margin-bottom: 20px; font-size: 14px;">
+      <%= success %>
+    </div>
+  <% } %>
+
+  <!-- Main Top Grid: Product Info Card & Product Metrics Card -->
+  <div class="pdetail-main-grid">
+    
+    <!-- Left Card: Product Information -->
+    <div class="pdetail-card">
+      <h2 class="pdetail-card-title">Product Information</h2>
+      
+      <div class="pdetail-info-list">
+        <div class="pdetail-info-item">
+          <span class="pdetail-info-label">Name:</span>
+          <span class="pdetail-info-value"><%= product.productName %></span>
+        </div>
+
+        <div class="pdetail-info-item">
+          <span class="pdetail-info-label">Brand:</span>
+          <span class="pdetail-info-value"><%= product.brand || '—' %></span>
+        </div>
+
+        <div class="pdetail-info-item">
+          <span class="pdetail-info-label">Category:</span>
+          <span class="pdetail-info-value"><%= product.category %></span>
+        </div>
+
+        <div class="pdetail-info-item">
+          <span class="pdetail-info-label">Status:</span>
+          <span class="pdetail-status-pill <%= product.isDeleted ? '--unlisted' : '--listed' %>">
+            <%= product.isDeleted ? 'Unlisted' : 'Listed' %>
+          </span>
+        </div>
+
+        <div class="pdetail-info-item">
+          <span class="pdetail-info-label">Created:</span>
+          <span class="pdetail-info-value"><%= createdAtFormatted %></span>
+        </div>
+
+        <div class="pdetail-info-item">
+          <span class="pdetail-info-label">Updated:</span>
+          <span class="pdetail-info-value"><%= updatedAtFormatted %></span>
+        </div>
+
+        <div class="pdetail-info-item" style="margin-top: 4px;">
+          <span class="pdetail-info-label">Product ID:</span>
+          <div class="pdetail-id-wrap">
+            <span><%= product._id %></span>
+            <button class="pdetail-copy-btn" id="copyIdBtn" title="Copy Product ID">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Card: Product Metrics -->
+    <div class="pdetail-card">
+      <h2 class="pdetail-card-title">Product Metrics</h2>
+      
+      <div class="pdetail-metrics-grid">
+        <div class="pdetail-metric-box">
+          <span class="pdetail-metric-label">Total Variants</span>
+          <span class="pdetail-metric-value"><%= totalVariants %></span>
+        </div>
+
+        <div class="pdetail-metric-box">
+          <span class="pdetail-metric-label">Minimum Price</span>
+          <span class="pdetail-metric-value">₹<%= minPrice %></span>
+        </div>
+
+        <div class="pdetail-metric-box">
+          <span class="pdetail-metric-label">Total Stock</span>
+          <span class="pdetail-metric-value"><%= totalStock %></span>
+        </div>
+
+        <div class="pdetail-metric-box">
+          <span class="pdetail-metric-label">In Stock</span>
+          <span class="pdetail-metric-value"><%= inStock %></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Media Gallery & Description Section -->
+  <div class="pdetail-section-card">
+    <h2 class="pdetail-card-title">Media & Description</h2>
+    
+    <div class="pdetail-gallery-grid">
+      <!-- Media Left Column -->
+      <div class="pdetail-media-col">
+        <% const mainImg = product.primaryImage || (product.galleryImages && product.galleryImages.length > 0 ? product.galleryImages[0] : null); %>
+        <% if (mainImg) { %>
+          <img id="mainImageDisplay" src="<%= mainImg %>" alt="<%= product.productName %>" class="pdetail-img-main">
+          <% if (product.galleryImages && product.galleryImages.length > 1) { %>
+            <div class="pdetail-thumbs">
+              <% product.galleryImages.forEach((img, idx) => { %>
+                <img src="<%= img %>" alt="Thumbnail <%= idx + 1 %>" class="pdetail-thumb-img <%= img === mainImg ? 'active' : '' %>" onclick="changeMainImg(this, '<%= img %>')">
+              <% }) %>
+            </div>
+          <% } %>
+        <% } else { %>
+          <div class="pdetail-img-main" style="display: flex; align-items: center; justify-content: center; color: #64748b;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Description Right Column -->
+      <div class="pdetail-desc-col">
+        <div class="pdetail-desc-box">
+          <div class="pdetail-desc-heading">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+            Product Overview & Description
+          </div>
+          <p class="pdetail-desc-text"><%= product.description %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Centralized Variants Breakdown Section with Add, Edit & Remove Options -->
+  <div class="pdetail-section-card">
+    <div class="pdetail-card-header">
+      <h2 class="pdetail-card-title">Variants Breakdown (<%= product.variants ? product.variants.length : 0 %>)</h2>
+      <button type="button" class="pdetail-add-vbtn" id="openAddModalBtn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        Add Variant
+      </button>
+    </div>
+    
+    <div style="overflow-x: auto;">
+      <table class="pdetail-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>SIZE / VARIANT</th>
+            <th>STOCK</th>
+            <th>REGULAR PRICE</th>
+            <th>SALE PRICE</th>
+            <th>STATUS</th>
+            <th style="text-align: right;">ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (product.variants && product.variants.length > 0) { %>
+            <% product.variants.forEach((v, index) => { %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td style="font-weight: 600; color: #ffffff;"><%= v.size %></td>
+                <td>
+                  <span style="font-weight: 600; color: <%= v.stock === 0 ? '#f87171' : v.stock < 10 ? '#fbbf24' : '#34d399' %>;">
+                    <%= v.stock %>
+                  </span>
+                </td>
+                <td>₹<%= v.regularPrice.toFixed(2) %></td>
+                <td>
+                  <% if (v.salePrice > 0) { %>
+                    <span style="color: #34d399; font-weight: 600;">₹<%= v.salePrice.toFixed(2) %></span>
+                  <% } else { %>
+                    <span style="color: #64748b;">—</span>
+                  <% } %>
+                </td>
+                <td>
+                  <% if (v.stock === 0) { %>
+                    <span style="color: #f87171; font-size: 12px; font-weight: 600;">Out of Stock</span>
+                  <% } else if (v.stock < 10) { %>
+                    <span style="color: #fbbf24; font-size: 12px; font-weight: 600;">Low Stock</span>
+                  <% } else { %>
+                    <span style="color: #34d399; font-size: 12px; font-weight: 600;">In Stock</span>
+                  <% } %>
+                </td>
+                <td style="text-align: right;">
+                  <div style="display: flex; justify-content: flex-end; align-items: center;">
+                    <button type="button" class="vaction-btn --edit" title="Edit Variant"
+                      data-id="<%= v._id %>"
+                      data-size="<%= v.size %>"
+                      data-stock="<%= v.stock %>"
+                      data-regprice="<%= v.regularPrice %>"
+                      data-saleprice="<%= v.salePrice %>"
+                      onclick="handleEditVariantClick(this)">
+                      Edit
+                    </button>
+                    <button type="button" class="vaction-btn --remove" title="Remove Variant"
+                      data-id="<%= v._id %>"
+                      data-size="<%= v.size %>"
+                      onclick="handleDeleteVariantClick(this)">
+                      ✕ REMOVE
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="7" style="text-align: center; color: #64748b; padding: 24px;">No variants defined</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal 1: Add Variant -->
+<div class="vmodal-overlay" id="addVariantModal">
+  <div class="vmodal-card">
+    <div class="vmodal-title">
+      <span>Add New Variant</span>
+      <button type="button" class="vmodal-close-btn" onclick="closeModal('addVariantModal')">✕</button>
+    </div>
+    
+    <form id="addVariantForm" novalidate>
+      <div class="vform-group">
+        <label class="vform-label">Format / Size</label>
+        <select id="addSizeSelect" class="vform-input" onchange="toggleCustomSizeInput(this, 'addCustomSize')">
+          <option value="5ml">5 ml</option>
+          <option value="15ml">15 ml</option>
+          <option value="30ml">30 ml</option>
+          <option value="50ml">50 ml</option>
+          <option value="100ml">100 ml</option>
+          <option value="200ml">200 ml</option>
+          <option value="custom">-- Custom Size --</option>
+        </select>
+        <input type="text" id="addCustomSize" class="vform-input" style="margin-top: 8px; display: none;" placeholder="Enter custom size (e.g. 250ml)">
+        <div class="vfield-error" id="addSizeError"></div>
+      </div>
+
+      <div class="vform-group">
+        <label class="vform-label">Stock Quantity</label>
+        <input type="number" id="addStock" class="vform-input" placeholder="e.g. 18">
+        <div class="vfield-error" id="addStockError"></div>
+      </div>
+
+      <div class="vform-group">
+        <label class="vform-label">Regular Price (MRP) ₹</label>
+        <input type="number" id="addRegularPrice" class="vform-input" step="0.01" placeholder="e.g. 9000">
+        <div class="vfield-error" id="addRegularPriceError"></div>
+      </div>
+
+      <div class="vform-group">
+        <label class="vform-label">Sale Price ₹ <span style="font-weight: 400; color: #64748b;">(Optional)</span></label>
+        <input type="number" id="addSalePrice" class="vform-input" step="0.01" placeholder="e.g. 8300">
+        <div class="vfield-error" id="addSalePriceError"></div>
+      </div>
+
+      <div class="vmodal-actions">
+        <button type="button" class="vbtn --cancel" onclick="closeModal('addVariantModal')">Cancel</button>
+        <button type="submit" class="vbtn --save" id="addVariantSubmitBtn">Save Variant</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal 2: Edit Variant -->
+<div class="vmodal-overlay" id="editVariantModal">
+  <div class="vmodal-card">
+    <div class="vmodal-title">
+      <span>Edit Variant</span>
+      <button type="button" class="vmodal-close-btn" onclick="closeModal('editVariantModal')">✕</button>
+    </div>
+    
+    <form id="editVariantForm" novalidate>
+      <input type="hidden" id="editVariantId">
+
+      <div class="vform-group">
+        <label class="vform-label">Format / Size</label>
+        <select id="editSizeSelect" class="vform-input" onchange="toggleCustomSizeInput(this, 'editCustomSize')">
+          <option value="5ml">5 ml</option>
+          <option value="15ml">15 ml</option>
+          <option value="30ml">30 ml</option>
+          <option value="50ml">50 ml</option>
+          <option value="100ml">100 ml</option>
+          <option value="200ml">200 ml</option>
+          <option value="custom">-- Custom Size --</option>
+        </select>
+        <input type="text" id="editCustomSize" class="vform-input" style="margin-top: 8px; display: none;" placeholder="Enter custom size">
+        <div class="vfield-error" id="editSizeError"></div>
+      </div>
+
+      <div class="vform-group">
+        <label class="vform-label">Stock Quantity</label>
+        <input type="number" id="editStock" class="vform-input" placeholder="e.g. 18">
+        <div class="vfield-error" id="editStockError"></div>
+      </div>
+
+      <div class="vform-group">
+        <label class="vform-label">Regular Price (MRP) ₹</label>
+        <input type="number" id="editRegularPrice" class="vform-input" step="0.01" placeholder="e.g. 9000">
+        <div class="vfield-error" id="editRegularPriceError"></div>
+      </div>
+
+      <div class="vform-group">
+        <label class="vform-label">Sale Price ₹ <span style="font-weight: 400; color: #64748b;">(Optional)</span></label>
+        <input type="number" id="editSalePrice" class="vform-input" step="0.01" placeholder="e.g. 8300">
+        <div class="vfield-error" id="editSalePriceError"></div>
+      </div>
+
+      <div class="vmodal-actions">
+        <button type="button" class="vbtn --cancel" onclick="closeModal('editVariantModal')">Cancel</button>
+        <button type="submit" class="vbtn --save" id="editVariantSubmitBtn">Update Variant</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal 3: Remove Variant Confirmation -->
+<div class="vmodal-overlay" id="deleteVariantModal">
+  <div class="vmodal-card">
+    <div class="vmodal-title">
+      <span>Remove Variant</span>
+      <button type="button" class="vmodal-close-btn" onclick="closeModal('deleteVariantModal')">✕</button>
+    </div>
+    
+    <p style="font-size: 14px; color: #cbd5e1; line-height: 1.5; margin-bottom: 20px;">
+      Are you sure you want to remove variant <strong id="deleteVariantSizeName" style="color: #ffffff;"></strong>? This action cannot be undone.
+    </p>
+    <input type="hidden" id="deleteVariantId">
+
+    <div class="vfield-error" id="deleteVariantError" style="margin-bottom: 16px;"></div>
+
+    <div class="vmodal-actions">
+      <button type="button" class="vbtn --cancel" onclick="closeModal('deleteVariantModal')">Cancel</button>
+      <button type="button" class="vbtn --delete" id="confirmDeleteVariantBtn">Remove Variant</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="pdetail-toast" id="pdetailToast">Notification message</div>
+
+<script>
+  const productId = '<%= product._id %>';
+
+  // Toast Helper
+  function showToast(msg, isError = false) {
+    const toast = document.getElementById('pdetailToast');
+    if (!toast) return;
+    toast.textContent = msg;
+    if (isError) {
+      toast.classList.add('--error');
+    } else {
+      toast.classList.remove('--error');
+    }
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2500);
+  }
+
+  // Copy Product ID to clipboard
+  const copyBtn = document.getElementById('copyIdBtn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', function() {
+      navigator.clipboard.writeText(productId).then(() => {
+        showToast('Product ID copied to clipboard!');
+      }).catch(err => {
+        console.error('Could not copy product ID: ', err);
+      });
+    });
+  }
+
+  // Switch image on thumbnail click
+  window.changeMainImg = function(thumbElem, imgUrl) {
+    const mainDisplay = document.getElementById('mainImageDisplay');
+    if (mainDisplay) {
+      mainDisplay.src = imgUrl;
+    }
+    document.querySelectorAll('.pdetail-thumb-img').forEach(t => t.classList.remove('active'));
+    thumbElem.classList.add('active');
+  };
+
+  // Toggle Custom Size Input
+  window.toggleCustomSizeInput = function(selectElem, customInputId) {
+    const customInput = document.getElementById(customInputId);
+    if (!customInput) return;
+    if (selectElem.value === 'custom') {
+      customInput.style.display = 'block';
+      customInput.focus();
+    } else {
+      customInput.style.display = 'none';
+    }
+  };
+
+  // Custom Frontend Inline Error Validation Helpers
+  function clearFieldErrors(prefix) {
+    ['SizeSelect', 'CustomSize', 'Stock', 'RegularPrice', 'SalePrice'].forEach(id => {
+      const elem = document.getElementById(prefix + id);
+      if (elem) elem.classList.remove('is-invalid');
+    });
+    ['Size', 'Stock', 'RegularPrice', 'SalePrice'].forEach(id => {
+      const errElem = document.getElementById(prefix + id + 'Error');
+      if (errElem) {
+        errElem.textContent = '';
+        errElem.style.display = 'none';
+      }
+    });
+  }
+
+  function showFieldError(inputId, errorId, message) {
+    const inputElem = document.getElementById(inputId);
+    const errorElem = document.getElementById(errorId);
+    if (inputElem) inputElem.classList.add('is-invalid');
+    if (errorElem) {
+      errorElem.textContent = message;
+      errorElem.style.display = 'block';
+    }
+  }
+
+  function validateVariantForm(prefix) {
+    clearFieldErrors(prefix);
+    let isValid = true;
+
+    // 1. Format / Size
+    const selectElem = document.getElementById(prefix + 'SizeSelect');
+    const customElem = document.getElementById(prefix + 'CustomSize');
+    const selectVal = selectElem ? selectElem.value : '';
+    const customVal = customElem ? customElem.value.trim() : '';
+    const size = selectVal === 'custom' ? customVal : selectVal;
+
+    if (!size) {
+      showFieldError(prefix + (selectVal === 'custom' ? 'CustomSize' : 'SizeSelect'), prefix + 'SizeError', 'Format / Size is required');
+      isValid = false;
+    }
+
+    // 2. Stock Quantity
+    const stockVal = document.getElementById(prefix + 'Stock').value.trim();
+    if (stockVal === '') {
+      showFieldError(prefix + 'Stock', prefix + 'StockError', 'Stock quantity is required');
+      isValid = false;
+    } else {
+      const stockNum = Number(stockVal);
+      if (isNaN(stockNum) || stockNum < 0) {
+        showFieldError(prefix + 'Stock', prefix + 'StockError', 'Value must be greater than or equal to 0.');
+        isValid = false;
+      } else if (!Number.isInteger(stockNum)) {
+        showFieldError(prefix + 'Stock', prefix + 'StockError', 'Stock quantity must be a whole integer');
+        isValid = false;
+      }
+    }
+
+    // 3. Regular Price (MRP)
+    const regVal = document.getElementById(prefix + 'RegularPrice').value.trim();
+    if (regVal === '') {
+      showFieldError(prefix + 'RegularPrice', prefix + 'RegularPriceError', 'Regular price is required');
+      isValid = false;
+    } else {
+      const regNum = Number(regVal);
+      if (isNaN(regNum) || regNum <= 0) {
+        showFieldError(prefix + 'RegularPrice', prefix + 'RegularPriceError', 'Regular price must be greater than 0');
+        isValid = false;
+      }
+    }
+
+    // 4. Sale Price
+    const saleVal = document.getElementById(prefix + 'SalePrice').value.trim();
+    if (saleVal !== '') {
+      const saleNum = Number(saleVal);
+      const regNum = Number(regVal);
+      if (isNaN(saleNum) || saleNum < 0) {
+        showFieldError(prefix + 'SalePrice', prefix + 'SalePriceError', 'Sale price cannot be negative');
+        isValid = false;
+      } else if (saleNum > 0 && regNum > 0 && saleNum >= regNum) {
+        showFieldError(prefix + 'SalePrice', prefix + 'SalePriceError', 'Sale price must be less than regular price');
+        isValid = false;
+      }
+    }
+
+    return isValid;
+  }
+
+  // Handle Server API Response Errors by Routing directly to Column Field Error Below Input
+  function handleServerError(prefix, message) {
+    const msgLower = (message || '').toLowerCase();
+    const selectElem = document.getElementById(prefix + 'SizeSelect');
+    const selectVal = selectElem ? selectElem.value : '';
+    const sizeInputId = prefix + (selectVal === 'custom' ? 'CustomSize' : 'SizeSelect');
+
+    if (msgLower.includes('stock')) {
+      showFieldError(prefix + 'Stock', prefix + 'StockError', message);
+    } else if (msgLower.includes('regular price') || msgLower.includes('regularprice')) {
+      showFieldError(prefix + 'RegularPrice', prefix + 'RegularPriceError', message);
+    } else if (msgLower.includes('sale price') || msgLower.includes('saleprice')) {
+      showFieldError(prefix + 'SalePrice', prefix + 'SalePriceError', message);
+    } else {
+      showFieldError(sizeInputId, prefix + 'SizeError', message);
+    }
+  }
+
+  // Attach live clear of errors on input change
+  ['add', 'edit'].forEach(prefix => {
+    ['SizeSelect', 'CustomSize', 'Stock', 'RegularPrice', 'SalePrice'].forEach(field => {
+      const input = document.getElementById(prefix + field);
+      if (input) {
+        input.addEventListener('input', () => {
+          input.classList.remove('is-invalid');
+          const err = document.getElementById(prefix + (field === 'SizeSelect' || field === 'CustomSize' ? 'Size' : field) + 'Error');
+          if (err) err.style.display = 'none';
+        });
+      }
+    });
+  });
+
+  // Modal Open/Close Helpers
+  window.openModal = function(modalId) {
+    const el = document.getElementById(modalId);
+    if (el) el.classList.add('active');
+  };
+
+  window.closeModal = function(modalId) {
+    const el = document.getElementById(modalId);
+    if (el) el.classList.remove('active');
+    const prefix = modalId === 'addVariantModal' ? 'add' : modalId === 'editVariantModal' ? 'edit' : '';
+    if (prefix) clearFieldErrors(prefix);
+  };
+
+  const openAddBtn = document.getElementById('openAddModalBtn');
+  if (openAddBtn) {
+    openAddBtn.addEventListener('click', () => {
+      clearFieldErrors('add');
+      const addFormElem = document.getElementById('addVariantForm');
+      if (addFormElem) addFormElem.reset();
+      const customInput = document.getElementById('addCustomSize');
+      if (customInput) customInput.style.display = 'none';
+      openModal('addVariantModal');
+    });
+  }
+
+  // Open Edit Modal with prefilled values
+  window.openEditModal = function(vId, size, stock, regPrice, salePrice) {
+    clearFieldErrors('edit');
+    const editIdElem = document.getElementById('editVariantId');
+    if (editIdElem) editIdElem.value = vId;
+
+    const selectElem = document.getElementById('editSizeSelect');
+    const customInput = document.getElementById('editCustomSize');
+
+    let matched = false;
+    if (selectElem) {
+      for (let i = 0; i < selectElem.options.length; i++) {
+        if (selectElem.options[i].value === size || selectElem.options[i].text.toLowerCase() === size.toLowerCase()) {
+          selectElem.selectedIndex = i;
+          matched = true;
+          break;
+        }
+      }
+      if (!matched) {
+        selectElem.value = 'custom';
+        if (customInput) {
+          customInput.value = size;
+          customInput.style.display = 'block';
+        }
+      } else {
+        if (customInput) customInput.style.display = 'none';
+      }
+    }
+
+    const editStock = document.getElementById('editStock');
+    if (editStock) editStock.value = stock;
+    const editReg = document.getElementById('editRegularPrice');
+    if (editReg) editReg.value = regPrice;
+    const editSale = document.getElementById('editSalePrice');
+    if (editSale) editSale.value = salePrice || 0;
+
+    openModal('editVariantModal');
+  };
+
+  // Open Delete Modal
+  window.openDeleteModal = function(vId, size) {
+    const deleteIdElem = document.getElementById('deleteVariantId');
+    if (deleteIdElem) deleteIdElem.value = vId;
+    const deleteNameElem = document.getElementById('deleteVariantSizeName');
+    if (deleteNameElem) deleteNameElem.textContent = size;
+    openModal('deleteVariantModal');
+  };
+
+  // Table Row Button Click Handlers (via data-attributes)
+  window.handleEditVariantClick = function(btn) {
+    const vId = btn.getAttribute('data-id');
+    const size = btn.getAttribute('data-size');
+    const stock = btn.getAttribute('data-stock');
+    const regPrice = btn.getAttribute('data-regprice');
+    const salePrice = btn.getAttribute('data-saleprice');
+    openEditModal(vId, size, stock, regPrice, salePrice);
+  };
+
+  window.handleDeleteVariantClick = function(btn) {
+    const vId = btn.getAttribute('data-id');
+    const size = btn.getAttribute('data-size');
+    openDeleteModal(vId, size);
+  };
+
+  // Add Variant Form Submit
+  const addFormElem = document.getElementById('addVariantForm');
+  if (addFormElem) {
+    addFormElem.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      if (!validateVariantForm('add')) return;
+
+      const selectVal = document.getElementById('addSizeSelect').value;
+      const customVal = document.getElementById('addCustomSize').value.trim();
+      const size = selectVal === 'custom' ? customVal : selectVal;
+
+      const stock = Number(document.getElementById('addStock').value);
+      const regularPrice = Number(document.getElementById('addRegularPrice').value);
+      const salePrice = Number(document.getElementById('addSalePrice').value) || 0;
+
+      try {
+        const res = await fetch(`/admin/products/${productId}/variants/add`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ size, stock, regularPrice, salePrice })
+        });
+        const data = await res.json();
+
+        if (!data.success) {
+          handleServerError('add', data.message || 'Failed to add variant');
+        } else {
+          closeModal('addVariantModal');
+          showToast(data.message || 'Variant added!');
+          setTimeout(() => window.location.reload(), 600);
+        }
+      } catch (err) {
+        console.error(err);
+        handleServerError('add', 'Network error while adding variant');
+      }
+    });
+  }
+
+  // Edit Variant Form Submit
+  const editFormElem = document.getElementById('editVariantForm');
+  if (editFormElem) {
+    editFormElem.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      if (!validateVariantForm('edit')) return;
+
+      const variantId = document.getElementById('editVariantId').value;
+      const selectVal = document.getElementById('editSizeSelect').value;
+      const customVal = document.getElementById('editCustomSize').value.trim();
+      const size = selectVal === 'custom' ? customVal : selectVal;
+
+      const stock = Number(document.getElementById('editStock').value);
+      const regularPrice = Number(document.getElementById('editRegularPrice').value);
+      const salePrice = Number(document.getElementById('editSalePrice').value) || 0;
+
+      try {
+        const res = await fetch(`/admin/products/${productId}/variants/${variantId}/edit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ size, stock, regularPrice, salePrice })
+        });
+        const data = await res.json();
+
+        if (!data.success) {
+          handleServerError('edit', data.message || 'Failed to update variant');
+        } else {
+          closeModal('editVariantModal');
+          showToast(data.message || 'Variant updated!');
+          setTimeout(() => window.location.reload(), 600);
+        }
+      } catch (err) {
+        console.error(err);
+        handleServerError('edit', 'Network error while updating variant');
+      }
+    });
+  }
+
+  // Delete Variant Submit
+  const confirmDeleteBtnElem = document.getElementById('confirmDeleteVariantBtn');
+  if (confirmDeleteBtnElem) {
+    confirmDeleteBtnElem.addEventListener('click', async function() {
+      const errDiv = document.getElementById('deleteVariantError');
+      if (errDiv) errDiv.style.display = 'none';
+      const variantId = document.getElementById('deleteVariantId').value;
+
+      try {
+        const res = await fetch(`/admin/products/${productId}/variants/${variantId}/delete`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await res.json();
+
+        if (!data.success) {
+          if (errDiv) {
+            errDiv.textContent = data.message || 'Failed to delete variant';
+            errDiv.style.display = 'block';
+          } else {
+            showToast(data.message || 'Failed to delete variant', true);
+          }
+        } else {
+          closeModal('deleteVariantModal');
+          showToast(data.message || 'Variant removed!');
+          setTimeout(() => window.location.reload(), 600);
+        }
+      } catch (err) {
+        console.error(err);
+        if (errDiv) {
+          errDiv.textContent = 'Network error while removing variant';
+          errDiv.style.display = 'block';
+        }
+      }
+    });
+  }
+</script>

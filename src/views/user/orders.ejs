@@ -207,9 +207,16 @@
                                         </a>
 
                                         <!-- Invoice Button -->
-                                        <a href="/orders/<%= order._id %>/invoice" class="px-4 py-2.5 rounded-xl border border-gray-800 hover:border-[#22d3ee]/40 bg-white/[0.02] hover:bg-[#22d3ee]/10 text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-[#22d3ee] transition-all flex items-center gap-1.5 text-center">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
-                                        </a>
+                                        <% 
+                                            const isOrderCancelled = order.status && /cancelled/i.test(order.status);
+                                            const hasActiveItems = order.items && order.items.some(item => item.status && !/cancelled/i.test(item.status));
+                                            const showInvoice = !isOrderCancelled && hasActiveItems;
+                                        %>
+                                        <% if (showInvoice) { %>
+                                            <a href="/orders/<%= order._id %>/invoice" class="px-4 py-2.5 rounded-xl border border-gray-800 hover:border-[#22d3ee]/40 bg-white/[0.02] hover:bg-[#22d3ee]/10 text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-[#22d3ee] transition-all flex items-center gap-1.5 text-center">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                                            </a>
+                                        <% } %>
                                     </div>
                                 </div>
                                 
@@ -345,9 +352,13 @@
                 </label>
             </div>
 
-            <div class="mb-6">
-                <label class="block text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1.5">Comments (optional)</label>
-                <textarea id="cancelCommentsInput" placeholder="Additional details..." class="w-full bg-[#161618] border border-gray-800 focus:border-red-500 text-slate-100 text-xs rounded-xl p-3 focus:outline-none transition-all h-20 resize-none"></textarea>
+            <div id="cancelCommentsBlock" class="mb-6 hidden">
+                <label class="block text-[10px] uppercase tracking-wider text-red-400 font-bold mb-1.5">Reason Details (Required)</label>
+                <textarea id="cancelCommentsInput" oninput="hideCancelCommentsError()" placeholder="Please enter your cancellation details..." class="w-full bg-[#161618] border border-gray-800 focus:border-red-500 text-slate-100 text-xs rounded-xl p-3 focus:outline-none transition-all h-20 resize-none"></textarea>
+                <p id="cancelCommentsError" class="text-xs text-red-400 font-medium mt-1.5 hidden flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    <span id="cancelCommentsErrorText">Please enter your cancellation reason details before proceeding.</span>
+                </p>
             </div>
 
             <button onclick="goToCancelStep3()" class="w-full py-3.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-red-600/20">
@@ -570,12 +581,40 @@
     // ───────────────────────────────────────────────────────────────────────────
     let currentCancelDbId = "";
 
+    function showCancelCommentsError(msg) {
+        const errEl = document.getElementById('cancelCommentsError');
+        const txtEl = document.getElementById('cancelCommentsErrorText');
+        const input = document.getElementById('cancelCommentsInput');
+        if (txtEl) txtEl.textContent = msg || 'Please enter your cancellation reason details before proceeding.';
+        if (errEl) errEl.classList.remove('hidden');
+        if (input) {
+            input.classList.add('border-red-500');
+            input.focus();
+        }
+    }
+
+    function hideCancelCommentsError() {
+        const errEl = document.getElementById('cancelCommentsError');
+        const input = document.getElementById('cancelCommentsInput');
+        if (errEl) errEl.classList.add('hidden');
+        if (input) input.classList.remove('border-red-500');
+    }
+
     function startCancelWizard(dbId, orderId, totalAmount) {
         currentCancelDbId = dbId;
         document.getElementById('cancelWizardOrderId').value = dbId;
         document.getElementById('cancelWizardDisplayId1').textContent = orderId;
         document.getElementById('cancelWizardDisplayId2').textContent = orderId;
-        document.getElementById('cancelCommentsInput').value = '';
+        
+        const commentsInput = document.getElementById('cancelCommentsInput');
+        if (commentsInput) commentsInput.value = '';
+        hideCancelCommentsError();
+
+        const defaultRadio = document.querySelector('input[name="cancelReasonRadio"][value="Ordered by mistake"]');
+        if (defaultRadio) {
+            defaultRadio.checked = true;
+            highlightCancelReason(defaultRadio);
+        }
         
         showCancelStep(2);
         document.getElementById('cancelWizardModal').classList.remove('hidden');
@@ -607,15 +646,36 @@
     }
 
     function highlightCancelReason(radio) {
+        hideCancelCommentsError();
         document.querySelectorAll('.cancel-reason-option').forEach(el => {
             el.className = 'cancel-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-gray-800 bg-[#161618] hover:border-red-500/40 cursor-pointer transition-all';
         });
         if (radio && radio.checked) {
             radio.closest('label').className = 'cancel-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-red-500 bg-red-500/10 cursor-pointer transition-all';
         }
+
+        const commentsBlock = document.getElementById('cancelCommentsBlock');
+        const commentsInput = document.getElementById('cancelCommentsInput');
+        if (commentsBlock) {
+            if (radio && radio.value === 'Other reason') {
+                commentsBlock.classList.remove('hidden');
+                if (commentsInput) commentsInput.focus();
+            } else {
+                commentsBlock.classList.add('hidden');
+                if (commentsInput) commentsInput.value = '';
+            }
+        }
     }
 
     function goToCancelStep3() {
+        const selectedReason = document.querySelector('input[name="cancelReasonRadio"]:checked')?.value || 'Ordered by mistake';
+        const comments = document.getElementById('cancelCommentsInput')?.value.trim() || '';
+
+        if (selectedReason === 'Other reason' && !comments) {
+            showCancelCommentsError('Please enter your cancellation reason details before proceeding.');
+            return;
+        }
+
         showCancelStep(3);
     }
 
@@ -628,6 +688,12 @@
         const dbId = document.getElementById('cancelWizardOrderId').value;
         const selectedReason = document.querySelector('input[name="cancelReasonRadio"]:checked')?.value || 'Ordered by mistake';
         const comments = document.getElementById('cancelCommentsInput').value.trim();
+
+        if (selectedReason === 'Other reason' && !comments) {
+            showCancelStep(2);
+            showCancelCommentsError('Please enter your cancellation reason details before proceeding.');
+            return;
+        }
 
         btn.disabled = true;
         btn.textContent = 'Processing...';

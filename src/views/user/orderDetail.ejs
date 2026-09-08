@@ -66,10 +66,16 @@
 
                     <div class="flex flex-wrap items-center gap-3">
                         <!-- Invoice Download Link -->
-                        <a href="/orders/<%= order._id %>/invoice" class="px-5 py-3 rounded-xl border border-[#22d3ee]/20 hover:border-[#22d3ee]/40 bg-[#22d3ee]/5 hover:bg-[#22d3ee]/10 text-xs font-bold uppercase tracking-wider text-[#22d3ee] hover:text-cyan-300 transition-all flex items-center gap-1.5">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
-                            Invoice PDF
-                        </a>
+                        <% 
+                            const isOrderCancelled = order.status && /cancelled/i.test(order.status);
+                            const hasActiveItems = order.items && order.items.some(item => item.status && !/cancelled/i.test(item.status));
+                        %>
+                        <% if (!isOrderCancelled && hasActiveItems) { %>
+                            <a href="/orders/<%= order._id %>/invoice" class="px-5 py-3 rounded-xl border border-[#22d3ee]/20 hover:border-[#22d3ee]/40 bg-[#22d3ee]/5 hover:bg-[#22d3ee]/10 text-xs font-bold uppercase tracking-wider text-[#22d3ee] hover:text-cyan-300 transition-all flex items-center gap-1.5">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                                Invoice PDF
+                            </a>
+                        <% } %>
 
                         <!-- Return Order Action (Only if delivered) -->
                         <% if (order.status === "Delivered") { %>
@@ -353,7 +359,7 @@
                                     <div class="sm:text-right w-full sm:w-auto flex sm:flex-col items-center sm:items-end justify-between gap-3 shrink-0">
                                         <span class="text-sm font-extrabold text-white">₹<%= item.totalPrice.toLocaleString() %></span>
                                         
-                                        <% if (["Pending", "Processing"].includes(order.status) && !["Cancelled", "Returned"].includes(item.status)) { %>
+                                        <% if (order.items && order.items.length > 1 && ["Pending", "Processing"].includes(order.status) && !["Cancelled", "Returned"].includes(item.status)) { %>
                                             <button onclick="openCancelItemModal('<%= item._id %>')" class="text-[9px] font-bold uppercase tracking-widest text-red-400 hover:text-red-300 bg-red-500/5 border border-red-500/10 px-2.5 py-1.5 rounded-lg hover:border-red-500/30 transition-all cursor-pointer">
                                                 Cancel Item
                                             </button>
@@ -484,30 +490,34 @@
 
             <div class="space-y-2 mb-5">
                 <label class="cancel-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-gray-800 bg-[#161618] cursor-pointer transition-all">
-                    <input type="radio" name="cancelReasonRadio" value="Ordered by mistake" checked class="accent-red-500 w-4 h-4 cursor-pointer">
+                    <input type="radio" name="cancelReasonRadio" value="Ordered by mistake" checked onchange="highlightCancelReason(this)" class="accent-red-500 w-4 h-4 cursor-pointer">
                     <span class="text-xs font-semibold text-gray-200">Ordered by mistake</span>
                 </label>
                 <label class="cancel-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-gray-800 bg-[#161618] cursor-pointer transition-all">
-                    <input type="radio" name="cancelReasonRadio" value="Price is too high" class="accent-red-500 w-4 h-4 cursor-pointer">
+                    <input type="radio" name="cancelReasonRadio" value="Price is too high" onchange="highlightCancelReason(this)" class="accent-red-500 w-4 h-4 cursor-pointer">
                     <span class="text-xs font-semibold text-gray-200">Price is too high</span>
                 </label>
                 <label class="cancel-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-gray-800 bg-[#161618] cursor-pointer transition-all">
-                    <input type="radio" name="cancelReasonRadio" value="Delivery is too slow" class="accent-red-500 w-4 h-4 cursor-pointer">
+                    <input type="radio" name="cancelReasonRadio" value="Delivery is too slow" onchange="highlightCancelReason(this)" class="accent-red-500 w-4 h-4 cursor-pointer">
                     <span class="text-xs font-semibold text-gray-200">Delivery is too slow</span>
                 </label>
                 <label class="cancel-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-gray-800 bg-[#161618] cursor-pointer transition-all">
-                    <input type="radio" name="cancelReasonRadio" value="Change in requirements" class="accent-red-500 w-4 h-4 cursor-pointer">
+                    <input type="radio" name="cancelReasonRadio" value="Change in requirements" onchange="highlightCancelReason(this)" class="accent-red-500 w-4 h-4 cursor-pointer">
                     <span class="text-xs font-semibold text-gray-200">Change in requirements</span>
                 </label>
                 <label class="cancel-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-gray-800 bg-[#161618] cursor-pointer transition-all">
-                    <input type="radio" name="cancelReasonRadio" value="Other reason" class="accent-red-500 w-4 h-4 cursor-pointer">
+                    <input type="radio" name="cancelReasonRadio" value="Other reason" onchange="highlightCancelReason(this)" class="accent-red-500 w-4 h-4 cursor-pointer">
                     <span class="text-xs font-semibold text-gray-200">Other reason</span>
                 </label>
             </div>
 
-            <div class="mb-6">
-                <label class="block text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1.5">Comments (optional)</label>
-                <textarea id="cancelCommentsInput" placeholder="Additional details..." class="w-full bg-[#161618] border border-gray-800 focus:border-red-500 text-slate-100 text-xs rounded-xl p-3 focus:outline-none transition-all h-20 resize-none"></textarea>
+            <div id="cancelCommentsBlock" class="mb-6 hidden">
+                <label class="block text-[10px] uppercase tracking-wider text-red-400 font-bold mb-1.5">Reason Details (Required)</label>
+                <textarea id="cancelCommentsInput" oninput="hideCancelCommentsError()" placeholder="Please enter your cancellation details..." class="w-full bg-[#161618] border border-gray-800 focus:border-red-500 text-slate-100 text-xs rounded-xl p-3 focus:outline-none transition-all h-20 resize-none"></textarea>
+                <p id="cancelCommentsError" class="text-xs text-red-400 font-medium mt-1.5 hidden flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    <span id="cancelCommentsErrorText">Please enter your cancellation reason details before proceeding.</span>
+                </p>
             </div>
 
             <button onclick="goToCancelStep3()" class="w-full py-3.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs uppercase tracking-wider transition-all cursor-pointer">
@@ -661,7 +671,36 @@
         if (input) input.value = `${yyyy}-${mm}-${dd}`;
     });
 
+    function showCancelCommentsError(msg) {
+        const errEl = document.getElementById('cancelCommentsError');
+        const txtEl = document.getElementById('cancelCommentsErrorText');
+        const input = document.getElementById('cancelCommentsInput');
+        if (txtEl) txtEl.textContent = msg || 'Please enter your cancellation reason details before proceeding.';
+        if (errEl) errEl.classList.remove('hidden');
+        if (input) {
+            input.classList.add('border-red-500');
+            input.focus();
+        }
+    }
+
+    function hideCancelCommentsError() {
+        const errEl = document.getElementById('cancelCommentsError');
+        const input = document.getElementById('cancelCommentsInput');
+        if (errEl) errEl.classList.add('hidden');
+        if (input) input.classList.remove('border-red-500');
+    }
+
     function startCancelWizard() {
+        const commentsInput = document.getElementById('cancelCommentsInput');
+        if (commentsInput) commentsInput.value = '';
+        hideCancelCommentsError();
+
+        const defaultRadio = document.querySelector('input[name="cancelReasonRadio"][value="Ordered by mistake"]');
+        if (defaultRadio) {
+            defaultRadio.checked = true;
+            highlightCancelReason(defaultRadio);
+        }
+
         showCancelStep(2);
         document.getElementById('cancelWizardModal').classList.remove('hidden');
     }
@@ -674,13 +713,52 @@
         else if (step === 3) document.getElementById('cancelStep3View').classList.remove('hidden');
         else if (step === 4) document.getElementById('cancelStep4View').classList.remove('hidden');
     }
-    function goToCancelStep3() { showCancelStep(3); }
+    function highlightCancelReason(radio) {
+        hideCancelCommentsError();
+        document.querySelectorAll('.cancel-reason-option').forEach(el => {
+            el.className = 'cancel-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-gray-800 bg-[#161618] cursor-pointer transition-all';
+        });
+        if (radio && radio.checked) {
+            radio.closest('label').className = 'cancel-reason-option flex items-center gap-3 p-3.5 rounded-2xl border border-red-500 bg-red-500/10 cursor-pointer transition-all';
+        }
+
+        const commentsBlock = document.getElementById('cancelCommentsBlock');
+        const commentsInput = document.getElementById('cancelCommentsInput');
+        if (commentsBlock) {
+            if (radio && radio.value === 'Other reason') {
+                commentsBlock.classList.remove('hidden');
+                if (commentsInput) commentsInput.focus();
+            } else {
+                commentsBlock.classList.add('hidden');
+                if (commentsInput) commentsInput.value = '';
+            }
+        }
+    }
+
+    function goToCancelStep3() {
+        const selectedReason = document.querySelector('input[name="cancelReasonRadio"]:checked')?.value || 'Ordered by mistake';
+        const comments = document.getElementById('cancelCommentsInput')?.value.trim() || '';
+
+        if (selectedReason === 'Other reason' && !comments) {
+            showCancelCommentsError('Please enter your cancellation reason details before proceeding.');
+            return;
+        }
+
+        showCancelStep(3);
+    }
     function goToCancelStep2() { showCancelStep(2); }
 
     async function submitCancelWizard() {
         const btn = document.getElementById('cancelConfirmBtn');
         const selectedReason = document.querySelector('input[name="cancelReasonRadio"]:checked')?.value || 'Ordered by mistake';
         const comments = document.getElementById('cancelCommentsInput').value.trim();
+
+        if (selectedReason === 'Other reason' && !comments) {
+            showCancelStep(2);
+            showCancelCommentsError('Please enter your cancellation reason details before proceeding.');
+            return;
+        }
+
         btn.disabled = true;
         try {
             const res = await fetch('/orders/<%= order._id %>/cancel', {

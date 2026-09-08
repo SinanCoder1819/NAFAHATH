@@ -1,3 +1,4 @@
+import CartModel from "../../models/Cart.model.js";
 import Product from "../../models/Product.model.js";
 import Wishlist from "../../models/Wishlist.model.js"; 
 
@@ -83,3 +84,5 @@ export const removeFromWishlist = async (req, res) => {
         res.status(500).json({ success: false, message: "Internal server error." });
     }
 };
+
+

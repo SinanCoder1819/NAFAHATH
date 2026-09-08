@@ -206,7 +206,7 @@
                 </button>
                 <!-- Buy this now -->
                 <a 
-                  href="/checkout"
+                  href="/checkout?singleItem=true&productId=<%= item.productId._id %>&variantId=<%= item.variantId %>"
                   class="justify-self-end text-xs sm:text-sm font-extrabold uppercase tracking-wider text-[#00FFFF] hover:underline transition-colors flex items-center gap-1 no-underline"
                 >
                   Buy this now
@@ -592,6 +592,20 @@
           // Remove from cart once successfully added to wishlist
           await removeFromCart(productId, variantId);
           showToast('Item saved for later!', 'success');
+
+          // Update navbar wishlist badge count
+          const badge = document.getElementById('navWishlistBadge');
+          if (badge) {
+            let count;
+            if (typeof data.wishlistCount !== 'undefined') {
+              count = data.wishlistCount;
+            } else {
+              count = (parseInt(badge.textContent) || 0) + 1;
+            }
+            badge.textContent = count > 99 ? '99+' : count;
+            if (count > 0) badge.classList.remove('hidden');
+            else badge.classList.add('hidden');
+          }
         } else {
           showToast(data.message || 'Error saving item', 'error');
         }

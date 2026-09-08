@@ -16,6 +16,23 @@
     <p class="text-[12px] text-[#374151] tracking-[0.1em]">Verify your delivery coordinates and finalize purchase</p>
   </div>
 
+  <input type="hidden" id="singleItemInput" value="<%= typeof isSingleItem !== 'undefined' && isSingleItem ? 'true' : 'false' %>">
+  <input type="hidden" id="productIdInput" value="<%= typeof singleProductId !== 'undefined' ? singleProductId : '' %>">
+  <input type="hidden" id="variantIdInput" value="<%= typeof singleVariantId !== 'undefined' ? singleVariantId : '' %>">
+
+  <% if (typeof isSingleItem !== 'undefined' && isSingleItem) { %>
+    <!-- SINGLE ITEM CHECKOUT BANNER -->
+    <div class="mb-6 p-4 bg-[#00FFFF]/10 border border-[#00FFFF]/30 rounded-2xl flex items-center justify-between text-[#00FFFF] text-xs font-bold shadow-[0_0_20px_rgba(0,255,255,0.08)]">
+      <div class="flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        <span>Single Item Checkout — You are checking out 1 selected fragrance from your cart.</span>
+      </div>
+      <a href="/cart" class="text-xs text-[#00FFFF] hover:underline flex items-center gap-1 no-underline font-semibold">
+        View Full Cart &rarr;
+      </a>
+    </div>
+  <% } %>
+
   <% if (typeof isMockData !== 'undefined' && isMockData) { %>
     <!-- MOCK DATA PREVIEW BANNER -->
     <div class="mb-8 p-4 bg-yellow-950/20 border border-yellow-800/40 rounded-2xl flex items-center gap-3 text-yellow-300/90 text-xs">
@@ -851,10 +868,14 @@
     `;
 
     try {
+      const singleItem = document.getElementById('singleItemInput')?.value === 'true';
+      const productId = document.getElementById('productIdInput')?.value || '';
+      const variantId = document.getElementById('variantIdInput')?.value || '';
+
       const response = await fetch('/checkout/place-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ addressId, paymentMethod })
+        body: JSON.stringify({ addressId, paymentMethod, singleItem, productId, variantId })
       });
 
       const data = await response.json();
@@ -862,7 +883,7 @@
         showToast(data.message || 'Order placed successfully!', 'success');
         
         // Decode details for redirect
-        const finalPrice = document.getElementById('orderFinalPrice').value;
+        const finalPrice = data.finalTotal !== undefined ? data.finalTotal : document.getElementById('orderFinalPrice').value;
         setTimeout(() => {
           window.location.href = `/checkout/success?orderId=${encodeURIComponent(data.orderId)}&name=${encodeURIComponent(data.deliveryName)}&address=${encodeURIComponent(data.deliveryAddress)}&total=${encodeURIComponent(finalPrice)}&paymentMethod=${encodeURIComponent(data.paymentMethod)}`;
         }, 1200);

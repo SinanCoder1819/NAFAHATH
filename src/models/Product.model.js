@@ -20,6 +20,11 @@ const variantSchema = new mongoose.Schema({
         type: Number,
         min: 0,
         default: 0
+    },
+    cancelledCount: {
+        type: Number,
+        min: 0,
+        default: 0
     }
 })
 

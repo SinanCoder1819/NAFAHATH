@@ -750,33 +750,31 @@ document.addEventListener('DOMContentLoaded', function () {
   ───────────────────────────── */
   const addVariantBtn     = document.querySelector('.ap-add-variant-btn');
   const variantsContainer = document.getElementById('variantsContainer');
-  
 
-  
+  if (addVariantBtn && variantsContainer) {
+    addVariantBtn.addEventListener('click', function () {
+      const allRows  = variantsContainer.querySelectorAll('.ap-variant-row');
+      const newRow   = allRows[0].cloneNode(true);
+      const num      = allRows.length + 1;
+      newRow.querySelector('.ap-variant-badge').textContent = 'Variant ' + num;
+      newRow.querySelectorAll('input').forEach(inp => inp.value = '');
+      variantsContainer.appendChild(newRow);
+    });
 
-  addVariantBtn.addEventListener('click', function () {
-    const allRows  = variantsContainer.querySelectorAll('.ap-variant-row');
-    const newRow   = allRows[0].cloneNode(true);
-    const num      = allRows.length + 1;
-    newRow.querySelector('.ap-variant-badge').textContent = 'Variant ' + num;
-    newRow.querySelectorAll('input').forEach(inp => inp.value = '');
-    variantsContainer.appendChild(newRow);
-  });
-
-  variantsContainer.addEventListener('click', function (e) {
-    const btn = e.target.closest('.ap-remove-btn');
-    if (!btn) return;
-    const allRows = variantsContainer.querySelectorAll('.ap-variant-row');
-    if (allRows.length > 1) {
-      btn.closest('.ap-variant-row').remove();
-      // Re-number badges
-      variantsContainer.querySelectorAll('.ap-variant-row').forEach((row, i) => {
-        row.querySelector('.ap-variant-badge').textContent = 'Variant ' + (i + 1);
-      });
-    } else {
-      alert('You must keep at least one variant.');
-    }
-  });
+    variantsContainer.addEventListener('click', function (e) {
+      const btn = e.target.closest('.ap-remove-btn');
+      if (!btn) return;
+      const allRows = variantsContainer.querySelectorAll('.ap-variant-row');
+      if (allRows.length > 1) {
+        btn.closest('.ap-variant-row').remove();
+        variantsContainer.querySelectorAll('.ap-variant-row').forEach((row, i) => {
+          row.querySelector('.ap-variant-badge').textContent = 'Variant ' + (i + 1);
+        });
+      } else {
+        alert('You must keep at least one variant.');
+      }
+    });
+  }
 
   /* ─────────────────────────────
      2. IMAGE CROPPING

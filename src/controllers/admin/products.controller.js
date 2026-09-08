@@ -88,17 +88,32 @@ export const getAddProduct = async (req, res) => {
 
 export const postAddProduct = async (req, res) => {
   try {
-    const { productName, description, category, brand, variantSize, stock, regularPrice, salePrice } = req.body;
+    let { productName, description, category, brand, variantSize, stock, regularPrice, salePrice, redirectToDetails } = req.body;
 
-
-    if (!productName || productName.length < 3) {
-      return res.redirect("/admin/addProducts?error=Product Name must be at least 3 characters");
-    }
-    if (!description || description.length < 10) {
-      return res.redirect("/admin/addProducts?error=Description must be at least 10 characters");
-    }
-    if (!category || !brand) {
-      return res.redirect("/admin/addProducts?error=Category and Brand are required");
+    if (redirectToDetails === 'true') {
+      if (!productName || productName.trim().length < 3) {
+        productName = (productName && productName.trim().length > 0) ? productName.trim() : "New Product " + Date.now().toString().slice(-4);
+      }
+      if (!description || description.trim().length < 10) {
+        description = (description && description.trim().length > 0) ? description.trim() + " (Product details)" : "Product description details for storefront.";
+      }
+      if (!brand || brand.trim().length < 1) {
+        brand = "Nafahath";
+      }
+      if (!category) {
+        const firstCat = await Category.findOne({ isDeleted: false });
+        category = firstCat ? firstCat.name : "Uncategorized";
+      }
+    } else {
+      if (!productName || productName.length < 3) {
+        return res.redirect("/admin/addProducts?error=Product Name must be at least 3 characters");
+      }
+      if (!description || description.length < 10) {
+        return res.redirect("/admin/addProducts?error=Description must be at least 10 characters");
+      }
+      if (!category || !brand) {
+        return res.redirect("/admin/addProducts?error=Category and Brand are required");
+      }
     }
 
 
@@ -154,13 +169,14 @@ export const postAddProduct = async (req, res) => {
     // 4. Process Uploaded Images (Cloudinary secure_urls uploaded via Multer)
     const galleryImages = [];
     if (req.files) {
-    
       for (let i = 1; i <= 4; i++) {
         const fieldName = `galleryImage${i}`;
-   
         if (req.files[fieldName] && req.files[fieldName].length > 0) {
-          const fileUrl = req.files[fieldName][0].secure_url;
-          galleryImages.push(fileUrl);
+          const fileObj = req.files[fieldName][0];
+          const fileUrl = fileObj.secure_url || fileObj.path || fileObj.url || "";
+          if (fileUrl) {
+            galleryImages.push(fileUrl);
+          }
         }
       }
     }
@@ -186,7 +202,9 @@ export const postAddProduct = async (req, res) => {
   
     await newProduct.save();
 
-
+    if (req.body.redirectToDetails === 'true') {
+      return res.redirect(`/admin/products/details?id=${newProduct._id}&success=Product added successfully. You can now manage variants.`);
+    }
 
     res.redirect("/admin/products?success=Product added successfully");
 
@@ -362,7 +380,9 @@ export const postEditProduct = async (req, res) => {
     existingProduct.description = description;
     existingProduct.category = category;
     existingProduct.brand = brand;
-    existingProduct.variants = variants;
+    if (variantSize) {
+      existingProduct.variants = variants;
+    }
     existingProduct.primaryImage = primaryImage;
 
     
@@ -395,5 +415,223 @@ export const deleteProduct = async (req, res) => {
   } catch (error) {
     console.error("Error deleting product:", error);
     res.status(500).json({ success: false, message: "Failed to update product" });
+  }
+};
+
+
+export const getProductDetail = async (req, res) => {
+  try {
+    const productId = req.params.id || req.query.id;
+
+    if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
+      return res.redirect("/admin/products?error=Invalid or missing Product ID");
+    }
+
+    const product = await Product.findById(productId).lean();
+
+    if (!product) {
+      return res.redirect("/admin/products?error=Product not found");
+    }
+
+    const variants = product.variants || [];
+    const totalVariants = variants.length;
+    const totalStock = variants.reduce((sum, v) => sum + (v.stock || 0), 0);
+    
+    let minPrice = 0;
+    if (variants.length > 0) {
+      const prices = variants.map(v => {
+        if (v.salePrice && v.salePrice > 0 && v.salePrice < v.regularPrice) {
+          return v.salePrice;
+        }
+        return v.regularPrice || 0;
+      });
+      minPrice = Math.min(...prices);
+    }
+
+    const inStock = totalStock > 0 ? "Yes" : "No";
+
+    const createdAtFormatted = product.createdAt ? new Date(product.createdAt).toDateString() : "N/A";
+    const updatedAtFormatted = product.updatedAt ? new Date(product.updatedAt).toDateString() : "N/A";
+
+    res.render("admin/productDetail", {
+      layout: "layouts/admin",
+      admin: req.session.admin,
+      activePage: "products",
+      product,
+      totalVariants,
+      minPrice,
+      totalStock,
+      inStock,
+      createdAtFormatted,
+      updatedAtFormatted,
+      success: req.query.success || "",
+      error: req.query.error || ""
+    });
+
+  } catch (error) {
+    console.error("Error fetching product details:", error);
+    res.redirect("/admin/products?error=Server error loading product details");
+  }
+};
+
+
+// POST /admin/products/:productId/variants/add
+export const addVariant = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const { size, stock, regularPrice, salePrice } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ success: false, message: "Invalid Product ID" });
+    }
+
+    if (!size || size.trim().length === 0) {
+      return res.status(400).json({ success: false, message: "Variant Size/Name is required" });
+    }
+
+    const stockNum = Number(stock);
+    if (isNaN(stockNum) || stockNum < 0 || !Number.isInteger(stockNum)) {
+      return res.status(400).json({ success: false, message: "Stock must be a non-negative integer" });
+    }
+
+    const regPriceNum = Number(regularPrice);
+    if (isNaN(regPriceNum) || regPriceNum <= 0) {
+      return res.status(400).json({ success: false, message: "Regular price must be greater than 0" });
+    }
+
+    const salePriceNum = Number(salePrice) || 0;
+    if (salePriceNum < 0) {
+      return res.status(400).json({ success: false, message: "Sale price cannot be negative" });
+    }
+
+    if (salePriceNum > 0 && salePriceNum >= regPriceNum) {
+      return res.status(400).json({ success: false, message: "Sale price must be less than regular price" });
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+
+    // Check duplicate variant size
+    const duplicate = product.variants.find(
+      v => v.size.trim().toLowerCase() === size.trim().toLowerCase()
+    );
+    if (duplicate) {
+      return res.status(400).json({ success: false, message: `Variant '${size.trim()}' already exists` });
+    }
+
+    product.variants.push({
+      size: size.trim(),
+      stock: stockNum,
+      regularPrice: regPriceNum,
+      salePrice: salePriceNum
+    });
+
+    await product.save();
+
+    res.json({ success: true, message: "Variant added successfully" });
+  } catch (error) {
+    console.error("Error adding variant:", error);
+    res.status(500).json({ success: false, message: "Server error while adding variant" });
+  }
+};
+
+// POST /admin/products/:productId/variants/:variantId/edit
+export const editVariant = async (req, res) => {
+  try {
+    const { productId, variantId } = req.params;
+    const { size, stock, regularPrice, salePrice } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(productId) || !mongoose.Types.ObjectId.isValid(variantId)) {
+      return res.status(400).json({ success: false, message: "Invalid Product or Variant ID" });
+    }
+
+    if (!size || size.trim().length === 0) {
+      return res.status(400).json({ success: false, message: "Variant Size/Name is required" });
+    }
+
+    const stockNum = Number(stock);
+    if (isNaN(stockNum) || stockNum < 0 || !Number.isInteger(stockNum)) {
+      return res.status(400).json({ success: false, message: "Stock must be a non-negative integer" });
+    }
+
+    const regPriceNum = Number(regularPrice);
+    if (isNaN(regPriceNum) || regPriceNum <= 0) {
+      return res.status(400).json({ success: false, message: "Regular price must be greater than 0" });
+    }
+
+    const salePriceNum = Number(salePrice) || 0;
+    if (salePriceNum < 0) {
+      return res.status(400).json({ success: false, message: "Sale price cannot be negative" });
+    }
+
+    if (salePriceNum > 0 && salePriceNum >= regPriceNum) {
+      return res.status(400).json({ success: false, message: "Sale price must be less than regular price" });
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+
+    const variantIndex = product.variants.findIndex(
+      v => (v._id && v._id.toString() === variantId.toString()) || (v.id && v.id.toString() === variantId.toString())
+    );
+    if (variantIndex === -1) {
+      return res.status(404).json({ success: false, message: "Variant not found" });
+    }
+
+    // Check duplicate variant size (excluding current variant)
+    const duplicate = product.variants.find(
+      (v, idx) => idx !== variantIndex && v.size.trim().toLowerCase() === size.trim().toLowerCase()
+    );
+    if (duplicate) {
+      return res.status(400).json({ success: false, message: `Variant '${size.trim()}' already exists` });
+    }
+
+    product.variants[variantIndex].size = size.trim();
+    product.variants[variantIndex].stock = stockNum;
+    product.variants[variantIndex].regularPrice = regPriceNum;
+    product.variants[variantIndex].salePrice = salePriceNum;
+
+    await product.save();
+
+    res.json({ success: true, message: "Variant updated successfully" });
+  } catch (error) {
+    console.error("Error editing variant:", error);
+    res.status(500).json({ success: false, message: "Server error while updating variant" });
+  }
+};
+
+// POST /admin/products/:productId/variants/:variantId/delete
+export const deleteVariant = async (req, res) => {
+  try {
+    const { productId, variantId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(productId) || !mongoose.Types.ObjectId.isValid(variantId)) {
+      return res.status(400).json({ success: false, message: "Invalid Product or Variant ID" });
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+
+    const initialLength = product.variants.length;
+    product.variants = product.variants.filter(
+      v => !((v._id && v._id.toString() === variantId.toString()) || (v.id && v.id.toString() === variantId.toString()))
+    );
+
+    if (product.variants.length === initialLength) {
+      return res.status(404).json({ success: false, message: "Variant not found" });
+    }
+
+    await product.save();
+
+    res.json({ success: true, message: "Variant deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting variant:", error);
+    res.status(500).json({ success: false, message: "Server error while deleting variant" });
   }
 };

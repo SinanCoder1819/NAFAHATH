@@ -120,11 +120,20 @@ export const cancelOrder = async (req, res) => {
       });
     }
 
+    if (reason === "Other reason" && (!comments || comments.trim() === "")) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter your cancellation reason in the comments field."
+      });
+    }
+
+    const displayReason = (reason === "Other reason" && comments) ? comments : (reason || "Cancelled by customer");
+
     // Process each item and increment stock back
     for (const item of order.items) {
       if (item.status !== "Cancelled" && item.status !== "Returned") {
         item.status = "Cancelled";
-        item.cancellationReason = reason || "Cancelled by customer";
+        item.cancellationReason = displayReason;
         item.cancellationComments = comments || "";
 
         // Increment stock in database for real product variants
@@ -136,6 +145,7 @@ export const cancelOrder = async (req, res) => {
             ) || product.variants[0];
             if (variantObj) {
               variantObj.stock += item.quantity;
+              variantObj.cancelledCount = (variantObj.cancelledCount || 0) + item.quantity;
               await product.save();
             }
           }
@@ -144,7 +154,7 @@ export const cancelOrder = async (req, res) => {
     }
 
     order.status = "Cancelled";
-    order.cancellationReason = reason || "Cancelled by customer";
+    order.cancellationReason = displayReason;
     order.cancellationComments = comments || "";
     if (order.paymentStatus === "Paid") {
       order.paymentStatus = "Refunded";
@@ -194,9 +204,17 @@ export const cancelOrderItem = async (req, res) => {
       return res.status(400).json({ success: false, message: "This item has already been cancelled or returned." });
     }
 
+    if (reason === "Other reason" && (!comments || comments.trim() === "")) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter your cancellation reason in the comments field."
+      });
+    }
+
     // Cancel item and update stock
+    const itemDisplayReason = (reason === "Other reason" && comments) ? comments : (reason || "Cancelled by customer");
     item.status = "Cancelled";
-    item.cancellationReason = reason || "Cancelled by customer";
+    item.cancellationReason = itemDisplayReason;
     item.cancellationComments = comments || "";
 
     // Increment variant stock
@@ -208,6 +226,7 @@ export const cancelOrderItem = async (req, res) => {
         ) || product.variants[0];
         if (variantObj) {
           variantObj.stock += item.quantity;
+          variantObj.cancelledCount = (variantObj.cancelledCount || 0) + item.quantity;
           await product.save();
         }
       }
@@ -332,6 +351,24 @@ export const downloadInvoice = async (req, res) => {
       return res.redirect("/orders?error=Order not found");
     }
 
+    // Filter non-cancelled items
+    const activeItems = (order.items || []).filter(item => item.status !== "Cancelled");
+
+    // If order status is Cancelled or no active items remain, block invoice download
+    if (activeItems.length === 0 || order.status === "Cancelled") {
+      return res.redirect("/orders?error=Invoice is not available for cancelled orders");
+    }
+
+    // Calculate active subtotal and active financials
+    const activeSubtotal = activeItems.reduce((sum, item) => sum + (item.totalPrice || (item.price * item.quantity)), 0);
+    const originalSubtotal = order.subtotal || activeSubtotal;
+    const ratio = originalSubtotal > 0 ? (activeSubtotal / originalSubtotal) : 1;
+    
+    const activeDiscount = (order.discount || 0) * ratio;
+    const activeShipping = order.shipping || 0;
+    const activeTaxes = (order.taxes || 0) * ratio;
+    const activeFinalTotal = Math.max(0, activeSubtotal - activeDiscount + activeShipping + activeTaxes);
+
     const doc = new PDFDocument({ margin: 50 });
     
     // Set response headers to prompt download of file
@@ -388,14 +425,13 @@ export const downloadInvoice = async (req, res) => {
     doc.font("Helvetica").fontSize(8.5).fillColor("#4a5568");
     
     let index = 1;
-    for (const item of order.items) {
+    for (const item of activeItems) {
       // Draw border bottom for row
       doc.strokeColor("#e2e8f0").lineWidth(0.8).moveTo(50, yPos + 26).lineTo(562, yPos + 26).stroke();
       
       doc.text(index.toString(), 60, yPos + 9);
       
       let itemTitle = item.productName;
-      if (item.status === "Cancelled") itemTitle += " (Cancelled)";
       if (item.status === "Returned") itemTitle += " (Returned)";
       
       doc.fillColor("#2d3748").font("Helvetica-Bold").text(itemTitle, 95, yPos + 5);
@@ -405,7 +441,7 @@ export const downloadInvoice = async (req, res) => {
       doc.text(item.size, 310, yPos + 9);
       doc.text(`INR ${item.price.toFixed(2)}`, 365, yPos + 9, { width: 50, align: "right" });
       doc.text(item.quantity.toString(), 435, yPos + 9, { width: 30, align: "center" });
-      doc.text(`INR ${item.totalPrice.toFixed(2)}`, 485, yPos + 9, { width: 70, align: "right" });
+      doc.text(`INR ${(item.totalPrice || (item.price * item.quantity)).toFixed(2)}`, 485, yPos + 9, { width: 70, align: "right" });
       
       yPos += 26;
       index++;
@@ -421,16 +457,16 @@ export const downloadInvoice = async (req, res) => {
       yPos += 16;
     };
 
-    drawTotalRow("Subtotal:", order.subtotal);
-    if (order.discount > 0) drawTotalRow("Discount Applied:", -order.discount);
-    if (order.shipping > 0) drawTotalRow("Shipping Fees:", order.shipping);
-    if (order.taxes > 0) drawTotalRow("Estimated Taxes (GST 18%):", order.taxes);
+    drawTotalRow("Subtotal:", activeSubtotal);
+    if (activeDiscount > 0) drawTotalRow("Discount Applied:", -activeDiscount);
+    if (activeShipping > 0) drawTotalRow("Shipping Fees:", activeShipping);
+    if (activeTaxes > 0) drawTotalRow("Estimated Taxes (GST 18%):", activeTaxes);
     
     yPos += 4;
     doc.strokeColor("#cbd5e0").lineWidth(1.2).moveTo(350, yPos).lineTo(562, yPos).stroke();
     yPos += 8;
     
-    drawTotalRow("Final Total Paid:", order.finalTotal, true);
+    drawTotalRow("Final Total Paid:", activeFinalTotal, true);
 
     // ── FOOTER SIGN-OFF ──
     yPos = 710;

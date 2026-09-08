@@ -69,6 +69,7 @@ router.post("/wishlist/add/:productId", isLogin, wishlistController.addToWishlis
 router.delete("/wishlist/remove/:productId", isLogin, wishlistController.removeFromWishlist);
 
 
+
 router.get("/cart", isLogin, noCache, cartController.getCart);
 router.post("/cart/add", isLogin, cartController.addToCart);
 router.put("/cart/update", isLogin, cartController.updateCartQuantity);

@@ -1,9 +1,42 @@
+import Product from "../../models/Product.model.js";
+import Category from "../../models/Category.model.js";
 import CartModel from "../../models/Cart.model.js";
-import User from "../../models/User.model.js";
-import Wishlist from "../../models/Wishlist.model.js"; // Import the Wishlist model
+import Wishlist from "../../models/Wishlist.model.js";
 
-export const getHomePage = (req, res) => {
-  res.render("user/home");
+export const getHomePage = async (req, res) => {
+  try {
+    // 1. Get active categories
+    const categories = await Category.find({ isDeleted: false }).sort({ name: 1 }).lean();
+
+    // 2. Get New Arrivals (latest 4 active products)
+    const newArrivals = await Product.find({ isDeleted: false })
+      .sort({ createdAt: -1 })
+      .limit(4)
+      .lean();
+
+    // 3. Get Best Sellers (active products)
+    let bestSellers = await Product.find({ isDeleted: false })
+      .sort({ updatedAt: -1 })
+      .limit(4)
+      .lean();
+
+    if (!bestSellers || bestSellers.length === 0) {
+      bestSellers = newArrivals;
+    }
+
+    res.render("user/home", {
+      categories: categories || [],
+      newArrivals: newArrivals || [],
+      bestSellers: bestSellers || []
+    });
+  } catch (error) {
+    console.error("Error loading dynamic home page:", error);
+    res.render("user/home", {
+      categories: [],
+      newArrivals: [],
+      bestSellers: []
+    });
+  }
 };
 
 export const setLocals = async (req, res, next) => {

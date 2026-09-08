@@ -17,18 +17,16 @@ const getUserId = (req) => {
 export const getCheckoutPage = async (req, res) => {
   try {
     const userId = getUserId(req);
+    const { singleItem, productId, variantId } = req.query;
+    const isSingleItem = singleItem === "true" && Boolean(productId && variantId);
     
     // Fetch addresses
     const addresses = await Address.find({ userId }).sort({ isDefault: -1, createdAt: -1 });
-
- 
 
     // Fetch user's cart
     let cart = await Cart.findOne({ userId }).populate({
       path: "items.productId",
     });
-
-   
 
     let displayItems = [];
     let originalSubtotal = 0;
@@ -38,8 +36,14 @@ export const getCheckoutPage = async (req, res) => {
 
     // Check if we have active items in the real cart
     if (cart && cart.items && cart.items.length > 0) {
-      const validItems = cart.items.filter(item => item.productId && !item.productId.isDeleted);
+      let validItems = cart.items.filter(item => item.productId && !item.productId.isDeleted);
       
+      if (isSingleItem) {
+        validItems = validItems.filter(
+          item => item.productId._id.toString() === productId && item.variantId.toString() === variantId
+        );
+      }
+
       displayItems = validItems.map(item => {
         const variantObj = item.productId.variants.find(
           v => v._id.toString() === item.variantId.toString()
@@ -153,7 +157,10 @@ export const getCheckoutPage = async (req, res) => {
       finalTotal,
       isMockData,
       user: req.session.user,
-      activePage: "checkout"
+      activePage: "checkout",
+      isSingleItem,
+      singleProductId: isSingleItem ? productId : "",
+      singleVariantId: isSingleItem ? variantId : ""
     });
 
   } catch (error) {
@@ -165,7 +172,8 @@ export const getCheckoutPage = async (req, res) => {
 export const placeOrder = async (req, res) => {
   try {
     const userId = getUserId(req);
-    const { addressId, paymentMethod } = req.body;
+    const { addressId, paymentMethod, singleItem, productId, variantId } = req.body;
+    const isSingleItem = singleItem === true || singleItem === "true";
 
     if (!addressId || !paymentMethod) {
       return res.status(400).json({ success: false, message: "Delivery Address and Payment Method are required." });
@@ -181,7 +189,13 @@ export const placeOrder = async (req, res) => {
       return res.status(400).json({ success: false, message: "Your cart is empty." });
     }
 
-    const displayItems = cart.items.filter(item => item.productId && !item.productId.isDeleted);
+    let displayItems = cart.items.filter(item => item.productId && !item.productId.isDeleted);
+    if (isSingleItem && productId && variantId) {
+      displayItems = displayItems.filter(
+        item => item.productId._id.toString() === productId && item.variantId.toString() === variantId
+      );
+    }
+
     if (displayItems.length === 0) {
       return res.status(400).json({ success: false, message: "No available products to purchase." });
     }
@@ -233,9 +247,15 @@ export const placeOrder = async (req, res) => {
 
       subtotal = orderItems.reduce((acc, curr) => acc + curr.totalPrice, 0);
 
-      // Clear cart
-      cart.items = [];
-      cart.cartTotal = 0;
+      // Remove ordered items from cart (selective for single item, full clear for full cart)
+      if (isSingleItem && productId && variantId) {
+        cart.items = cart.items.filter(
+          item => !(item.productId && item.productId._id.toString() === productId && item.variantId.toString() === variantId)
+        );
+      } else {
+        cart.items = [];
+      }
+      cart.cartTotal = cart.items.reduce((acc, curr) => acc + (curr.totalPrice || 0), 0);
       await cart.save();
     } else {
       // Fallback mock order if cart is empty
@@ -273,7 +293,7 @@ export const placeOrder = async (req, res) => {
       discount = req.session.appliedCoupon.discountAmount || 0;
     }
 
-    const shipping = subtotal > 3000 ? 0 : 99;
+    const shipping = 0;
     const taxes = Math.round(subtotal * 0.18);
     const finalTotal = Math.max(0, subtotal - discount + shipping);
 
@@ -310,6 +330,7 @@ export const placeOrder = async (req, res) => {
       success: true,
       message: "Order placed successfully!",
       orderId,
+      finalTotal,
       paymentMethod,
       deliveryName: address.fullName,
       deliveryAddress: `${address.addressLine}, ${address.city}, ${address.state} - ${address.postalCode}`
@@ -320,7 +341,7 @@ export const placeOrder = async (req, res) => {
   }
 };
 
-// export const postPlaceOrder = placeOrder;
+
 
 // GET /checkout/success
 export const getSuccessPage = (req, res) => {

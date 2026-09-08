@@ -305,6 +305,16 @@
     color: #28c9f4;
   }
 
+  .custom-dropdown-item.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .custom-dropdown-item.disabled:hover {
+    background: transparent;
+    color: #bbb;
+  }
+
   .custom-dropdown-item .dot {
     width: 8px;
     height: 8px;
@@ -474,9 +484,16 @@
           </div>
         </div>
 
-        <% if (order.status === "Cancelled" && order.cancellationReason) { %>
+        <% if (order.status === "Cancelled" && (order.cancellationReason || order.cancellationComments)) { %>
           <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 12px; padding: 14px 18px; margin-top: 16px; font-size: 13.5px; color: #f87171;">
-            <strong>Cancellation Reason:</strong> <%= order.cancellationReason %>
+            <strong>Cancellation Reason:</strong> 
+            <% if (order.cancellationReason === "Other reason" && order.cancellationComments) { %>
+              <%= order.cancellationComments %>
+            <% } else if (order.cancellationComments && order.cancellationReason !== order.cancellationComments) { %>
+              <%= order.cancellationReason %> (<%= order.cancellationComments %>)
+            <% } else { %>
+              <%= order.cancellationReason || order.cancellationComments %>
+            <% } %>
           </div>
         <% } %>
 
@@ -605,19 +622,31 @@
                 
                 <div class="custom-dropdown-menu">
                   <% 
+                    const returnRanks = {
+                      "Return Requested": 1,
+                      "Pick Up Scheduled": 2,
+                      "Picked Up": 3,
+                      "Under Review": 4,
+                      "Refund Initiated": 5,
+                      "Refund Completed": 6
+                    };
+                    const currentReturnRank = returnRanks[currentRStatus] || 1;
                     const returnOptionsList = [
-                      { value: "Return Requested", color: "#28c9f4", label: "1. Return Requested" },
-                      { value: "Pick Up Scheduled", color: "#fbbf24", label: "2. Pick Up Scheduled" },
-                      { value: "Picked Up", color: "#06b6d4", label: "3. Picked Up" },
-                      { value: "Under Review", color: "#3b82f6", label: "4. Under Review" },
-                      { value: "Refund Initiated", color: "#a855f7", label: "5. Refund Initiated" },
-                      { value: "Refund Completed", color: "#22c55e", label: "6. Refund Completed" }
+                      { value: "Return Requested", color: "#28c9f4", label: "1. Return Requested", rank: 1 },
+                      { value: "Pick Up Scheduled", color: "#fbbf24", label: "2. Pick Up Scheduled", rank: 2 },
+                      { value: "Picked Up", color: "#06b6d4", label: "3. Picked Up", rank: 3 },
+                      { value: "Under Review", color: "#3b82f6", label: "4. Under Review", rank: 4 },
+                      { value: "Refund Initiated", color: "#a855f7", label: "5. Refund Initiated", rank: 5 },
+                      { value: "Refund Completed", color: "#22c55e", label: "6. Refund Completed", rank: 6 }
                     ];
                   %>
-                  <% returnOptionsList.forEach(opt => { %>
-                    <div class="custom-dropdown-item <%= currentRStatus === opt.value ? 'selected' : '' %>" 
+                  <% returnOptionsList.forEach(opt => { 
+                    const isPreviousReturn = currentReturnRank > 0 && opt.rank < currentReturnRank;
+                  %>
+                    <div class="custom-dropdown-item <%= currentRStatus === opt.value ? 'selected' : '' %> <%= isPreviousReturn ? 'disabled' : '' %>" 
                          data-value="<%= opt.value %>" 
                          data-color="<%= opt.color %>"
+                         data-disabled="<%= isPreviousReturn %>"
                          onclick="selectReturnOption(this)">
                       <span class="dot" style="background: <%= opt.color %>;"></span>
                       <%= opt.label %>
@@ -669,20 +698,31 @@
                 
                 <div class="custom-dropdown-menu">
                   <% 
+                    const statusRanks = {
+                      "Pending": 1,
+                      "Processing": 2,
+                      "Shipped": 3,
+                      "Out for Delivery": 4,
+                      "Delivered": 5
+                    };
+                    const currentRank = statusRanks[order.status] || 0;
                     const optionsList = [
-                      { value: "Pending", color: "#fbbf24" },
-                      { value: "Processing", color: "#3b82f6" },
-                      { value: "Shipped", color: "#a855f7" },
-                      { value: "Out for Delivery", color: "#06b6d4" },
-                      { value: "Delivered", color: "#22c55e" },
-                      { value: "Cancelled", color: "#ef4444" },
-                      { value: "Returned", color: "#94a3b8" }
+                      { value: "Pending", color: "#fbbf24", rank: 1 },
+                      { value: "Processing", color: "#3b82f6", rank: 2 },
+                      { value: "Shipped", color: "#a855f7", rank: 3 },
+                      { value: "Out for Delivery", color: "#06b6d4", rank: 4 },
+                      { value: "Delivered", color: "#22c55e", rank: 5 },
+                      { value: "Cancelled", color: "#ef4444", rank: 99 },
+                      { value: "Returned", color: "#94a3b8", rank: 99 }
                     ];
                   %>
-                  <% optionsList.forEach(opt => { %>
-                    <div class="custom-dropdown-item <%= order.status === opt.value ? 'selected' : '' %>" 
+                  <% optionsList.forEach(opt => { 
+                    const isPreviousStatus = currentRank > 0 && opt.rank < currentRank;
+                  %>
+                    <div class="custom-dropdown-item <%= order.status === opt.value ? 'selected' : '' %> <%= isPreviousStatus ? 'disabled' : '' %>" 
                          data-value="<%= opt.value %>" 
                          data-color="<%= opt.color %>"
+                         data-disabled="<%= isPreviousStatus %>"
                          onclick="selectOption(this)">
                       <span class="dot" style="background: <%= opt.color %>;"></span>
                       <%= opt.value %>
@@ -793,6 +833,11 @@
   }
 
   function selectOption(element) {
+    if (element.getAttribute('data-disabled') === 'true') {
+      alert('Order status cannot be reverted to a previous stage.');
+      return;
+    }
+
     const value = element.getAttribute('data-value');
     const color = element.getAttribute('data-color');
     
@@ -823,6 +868,11 @@
   }
 
   function selectReturnOption(element) {
+    if (element.getAttribute('data-disabled') === 'true') {
+      alert('Return status stage cannot be reverted to a previous stage.');
+      return;
+    }
+
     const value = element.getAttribute('data-value');
     const color = element.getAttribute('data-color');
     

@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 
 const PAGE_SIZE = 10;
 
-// Helper to escape regex special characters
+
 const escapeRegex = (string) => {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 };
@@ -20,7 +20,7 @@ export const getOrders = async (req, res) => {
 
     const filter = {};
 
-    // 1. Status Filter
+    
     if (statusFilter) {
       filter.status = statusFilter;
     }
@@ -42,16 +42,22 @@ export const getOrders = async (req, res) => {
         ]
       }).select("_id");
 
+
+     
+
       if (matchedUsers.length > 0) {
         const userIds = matchedUsers.map(u => u._id);
         searchConditions.push({ userId: { $in: userIds } });
       }
 
       filter.$or = searchConditions;
+      console.log("Safe search : ",safeSearch)
     }
+
 
     // 3. Sorting (Default: Descending by order date)
     let sortOption = { createdAt: -1 };
+
     if (sortBy === "createdAt_asc") {
       sortOption = { createdAt: 1 };
     } else if (sortBy === "total_desc") {
@@ -104,6 +110,8 @@ export const getOrderDetail = async (req, res) => {
       .populate("userId", "name email phone")
       .lean();
 
+
+
     if (!order) {
       return res.redirect("/admin/orders?error=Order not found");
     }
@@ -122,6 +130,9 @@ export const getOrderDetail = async (req, res) => {
   }
 };
 
+
+
+
 // POST /admin/orders/:id/status - Change order status
 export const updateOrderStatus = async (req, res) => {
   try {
@@ -134,6 +145,9 @@ export const updateOrderStatus = async (req, res) => {
       return res.redirect(`/admin/orders/${orderId}?error=Invalid status selection`);
     }
 
+
+    console.log("New Status : ",newStatus)
+
     const order = await Order.findById(orderId);
     if (!order) {
       return res.redirect(`/admin/orders?error=Order not found`);
@@ -141,9 +155,24 @@ export const updateOrderStatus = async (req, res) => {
 
     const oldStatus = order.status;
 
-    // If already in final states, limit updates
+
+   
     if (["Cancelled", "Returned"].includes(oldStatus)) {
       return res.redirect(`/admin/orders/${orderId}?error=Cannot change status of a ${oldStatus.toLowerCase()} order.`);
+    }
+
+    // Status progression rank mapping
+    const STATUS_RANK = {
+      "Pending": 1,
+      "Processing": 2,
+      "Shipped": 3,
+      "Out for Delivery": 4,
+      "Delivered": 5
+    };
+
+    // Prevent reverting status to a previous stage (e.g. Processing -> Pending)
+    if (STATUS_RANK[oldStatus] && STATUS_RANK[newStatus] && STATUS_RANK[newStatus] < STATUS_RANK[oldStatus]) {
+      return res.redirect(`/admin/orders/${orderId}?error=Cannot revert order status from ${oldStatus} to ${newStatus}.`);
     }
 
     // Set order status
@@ -175,6 +204,9 @@ export const updateOrderStatus = async (req, res) => {
               ) || product.variants[0];
               if (variantObj) {
                 variantObj.stock += item.quantity;
+                if (newStatus === "Cancelled") {
+                  variantObj.cancelledCount = (variantObj.cancelledCount || 0) + item.quantity;
+                }
                 await product.save();
               }
             }
@@ -182,7 +214,6 @@ export const updateOrderStatus = async (req, res) => {
         }
       }
     } else {
-      // If changing to a normal status, we update items' statuses as well (unless they were explicitly cancelled/returned individually)
       for (const item of order.items) {
         if (item.status !== "Cancelled" && item.status !== "Returned") {
           item.status = newStatus;
@@ -190,7 +221,6 @@ export const updateOrderStatus = async (req, res) => {
       }
     }
 
-    // For Cash on Delivery (COD), mark paymentStatus as Paid ONLY when Delivered; reset to Pending for active pre-delivery stages
     if (newStatus === "Delivered") {
       order.paymentStatus = "Paid";
     } else if (["Pending", "Processing", "Shipped", "Out for Delivery"].includes(newStatus)) {
@@ -205,6 +235,7 @@ export const updateOrderStatus = async (req, res) => {
     res.redirect(`/admin/orders/${req.params.id}?error=Failed to update order status`);
   }
 };
+
 
 // POST /admin/orders/:id/return-status - Update order return stage timeline
 export const updateReturnStatus = async (req, res) => {

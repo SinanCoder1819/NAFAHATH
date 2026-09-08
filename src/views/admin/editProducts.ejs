@@ -567,96 +567,23 @@ textarea.ep-input { min-height: 130px; resize: vertical; line-height: 1.65; }
       <div class="ep-section-label">
         <div class="ep-section-num">2</div>
         <h3 class="ep-section-title">Variants & Stock</h3>
-        <p class="ep-section-desc">Update sizes, inventory, and pricing for each product variant.</p>
+        <p class="ep-section-desc">Manage sizes, inventory, and pricing for each product variant.</p>
       </div>
 
-      <div class="ep-section-body">
-        <div id="variantsContainer">
-
-          <% if (typeof product !== 'undefined' && product.variants && product.variants.length > 0) { %>
-            <% product.variants.forEach((variant, idx) => { %>
-              <div class="ep-variant-row">
-                <input type="hidden" name="variantId[]" value="<%= variant._id %>">
-                <div class="ep-variant-badge">Variant <%= idx + 1 %></div>
-
-                <div class="ep-field">
-                  <label>Format / Size</label>
-                  <select class="ep-input" name="variantSize[]">
-                    <option value="5ml"   <%= variant.size === '5ml'   ? 'selected' : '' %>>5 ml</option>
-                    <option value="15ml"  <%= variant.size === '15ml'  ? 'selected' : '' %>>15 ml</option>
-                    <option value="30ml"  <%= variant.size === '30ml'  ? 'selected' : '' %>>30 ml</option>
-                    <option value="50ml"  <%= variant.size === '50ml'  ? 'selected' : '' %>>50 ml</option>
-                    <option value="100ml" <%= variant.size === '100ml' ? 'selected' : '' %>>100 ml</option>
-                    <option value="200ml" <%= variant.size === '200ml' ? 'selected' : '' %>>200 ml</option>
-                  </select>
-                </div>
-
-                <div class="ep-field">
-                  <div class="ep-variant-header">
-                    <label style="padding-left:0;">Stock Quantity</label>
-                    <button type="button" class="ep-remove-btn">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                      Remove
-                    </button>
-                  </div>
-                  <input type="number" class="ep-input" name="stock[]" placeholder="0" min="0" value="<%= variant.stock %>">
-                </div>
-
-                <div class="ep-field">
-                  <label>Regular Price (MRP)</label>
-                  <input type="number" class="ep-input" name="regularPrice[]" placeholder="0.00" step="0.01" value="<%= variant.regularPrice %>">
-                </div>
-
-                <div class="ep-field">
-                  <label>Sale Price</label>
-                  <input type="number" class="ep-input" name="salePrice[]" placeholder="0.00" step="0.01" value="<%= variant.salePrice %>">
-                </div>
-              </div>
-            <% }) %>
-          <% } else { %>
-            <div class="ep-variant-row">
-              <input type="hidden" name="variantId[]" value="">
-              <div class="ep-variant-badge">Variant 1</div>
-              <div class="ep-field">
-                <label>Format / Size</label>
-                <select class="ep-input" name="variantSize[]">
-                  <option value="5ml">5 ml</option>
-                  <option value="15ml">15 ml</option>
-                  <option value="30ml">30 ml</option>
-                  <option value="50ml">50 ml</option>
-                  <option value="100ml">100 ml</option>
-                  <option value="200ml">200 ml</option>
-                </select>
-              </div>
-              <div class="ep-field">
-                <div class="ep-variant-header">
-                  <label style="padding-left:0;">Stock Quantity</label>
-                  <button type="button" class="ep-remove-btn">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    Remove
-                  </button>
-                </div>
-                <input type="number" class="ep-input" name="stock[]" placeholder="0" min="0">
-              </div>
-              <div class="ep-field">
-                <label>Regular Price (MRP)</label>
-                <input type="number" class="ep-input" name="regularPrice[]" placeholder="0.00" step="0.01">
-              </div>
-              <div class="ep-field">
-                <label>Sale Price</label>
-                <input type="number" class="ep-input" name="salePrice[]" placeholder="0.00" step="0.01">
-              </div>
-            </div>
-          <% } %>
-
+      <div class="ep-section-body" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <p style="font-size: 14px; color: #e2e8f0; font-weight: 500; margin: 0 0 4px 0;">
+            Variant & Stock Management Centralized
+          </p>
+          <p style="font-size: 13px; color: #94a3b8; margin: 0;">
+            All product sizes, stock levels, regular prices, and sale prices are now managed on the Product Details page.
+          </p>
         </div>
-
-        <button type="button" class="ep-add-variant-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/>
-          </svg>
-          Add Variant
-        </button>
+        <% if (typeof product !== 'undefined' && product._id) { %>
+          <a href="/admin/products/details?id=<%= product._id %>" class="ep-add-variant-btn" style="text-decoration: none; margin-top: 0; white-space: nowrap;">
+            MANAGE VARIANTS ON DETAILS PAGE →
+          </a>
+        <% } %>
       </div>
     </div>
 
@@ -824,32 +751,31 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ─────────────────────────────
      1. ADD / REMOVE VARIANT
   ───────────────────────────── */
-  const addVariantBtn = document.querySelector('.ep-add-variant-btn');
-  const variantsContainer = document.getElementById('variantsContainer');
+  if (addVariantBtn && variantsContainer) {
+    addVariantBtn.addEventListener('click', function () {
+      const allRows = variantsContainer.querySelectorAll('.ep-variant-row');
+      if (allRows.length === 0) return;
+      const newRow  = allRows[0].cloneNode(true);
+      const num     = allRows.length + 1;
+      newRow.querySelector('.ep-variant-badge').textContent = 'Variant ' + num;
+      newRow.querySelectorAll('input').forEach(inp => inp.value = '');
+      variantsContainer.appendChild(newRow);
+    });
 
-  addVariantBtn.addEventListener('click', function () {
-    const allRows = variantsContainer.querySelectorAll('.ep-variant-row');
-    const newRow  = allRows[0].cloneNode(true);
-    const num     = allRows.length + 1;
-    newRow.querySelector('.ep-variant-badge').textContent = 'Variant ' + num;
-    // Clear existing image previews inside cloned row if any
-    newRow.querySelectorAll('input').forEach(inp => inp.value = '');
-    variantsContainer.appendChild(newRow);
-  });
-
-  variantsContainer.addEventListener('click', function (e) {
-    const btn = e.target.closest('.ep-remove-btn');
-    if (!btn) return;
-    const allRows = variantsContainer.querySelectorAll('.ep-variant-row');
-    if (allRows.length > 1) {
-      btn.closest('.ep-variant-row').remove();
-      variantsContainer.querySelectorAll('.ep-variant-row').forEach((row, i) => {
-        row.querySelector('.ep-variant-badge').textContent = 'Variant ' + (i + 1);
-      });
-    } else {
-      alert('You must keep at least one variant.');
-    }
-  });
+    variantsContainer.addEventListener('click', function (e) {
+      const btn = e.target.closest('.ep-remove-btn');
+      if (!btn) return;
+      const allRows = variantsContainer.querySelectorAll('.ep-variant-row');
+      if (allRows.length > 1) {
+        btn.closest('.ep-variant-row').remove();
+        variantsContainer.querySelectorAll('.ep-variant-row').forEach((row, i) => {
+          row.querySelector('.ep-variant-badge').textContent = 'Variant ' + (i + 1);
+        });
+      } else {
+        alert('You must keep at least one variant.');
+      }
+    });
+  }
 
   /* ─────────────────────────────
      2. IMAGE CROPPING
