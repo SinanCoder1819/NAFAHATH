@@ -3,6 +3,8 @@ import Cart from "../../models/Cart.model.js";
 import Product from "../../models/Product.model.js";
 import Order from "../../models/Order.model.js";
 import mongoose from "mongoose";
+import * as paymentService from "../../services/payment.service.js";
+import razorpayConfig from "../../config/payment.js";
 
 // Helper to get user ID
 const getUserId = (req) => {
@@ -160,7 +162,8 @@ export const getCheckoutPage = async (req, res) => {
       activePage: "checkout",
       isSingleItem,
       singleProductId: isSingleItem ? productId : "",
-      singleVariantId: isSingleItem ? variantId : ""
+      singleVariantId: isSingleItem ? variantId : "",
+      razorpayKeyId: razorpayConfig.key_id
     });
 
   } catch (error) {
@@ -350,10 +353,7 @@ export const getSuccessPage = (req, res) => {
   // Map code to user-friendly label
   const methodMap = {
     COD: "Cash on Delivery (COD)",
-    CARD: "Credit / Debit Card",
-    UPI: "UPI Transfer",
-    NET_BANKING: "Net Banking",
-    WALLET: "Digital Wallet"
+    UPI: "UPI (Razorpay)",
   };
 
   res.render("user/checkoutSuccess", {
@@ -364,4 +364,258 @@ export const getSuccessPage = (req, res) => {
     finalTotal: total || "5,196",
     paymentMethodName: methodMap[paymentMethod] || "Cash on Delivery (COD)"
   });
+};
+
+// GET /checkout/failure
+export const getFailurePage = (req, res) => {
+  const { orderId, paymentMethod } = req.query;
+
+  const methodMap = {
+    COD: "Cash on Delivery (COD)",
+    UPI: "UPI (Razorpay)",
+  };
+
+  res.render("user/paymentFailure", {
+    title: "Payment Failed | Nafahath Perfumes",
+    orderId: orderId || "N/A",
+    paymentMethodName: methodMap[paymentMethod] || "Online Payment"
+  });
+};
+
+
+// ???????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
+//  RAZORPAY ONLINE PAYMENT FLOW
+// ???????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
+
+/**
+ * POST /checkout/create-razorpay-order
+ * Creates a Razorpay order (does NOT create DB order yet).
+ * Returns razorpay order details to frontend for popup.
+ */
+export const createRazorpayOrder = async (req, res) => {
+  try {
+    const userId = getUserId(req);
+    const { addressId, singleItem, productId, variantId } = req.body;
+    const isSingleItem = singleItem === true || singleItem === "true";
+
+    if (!addressId) {
+      return res.status(400).json({ success: false, message: "Delivery address is required." });
+    }
+
+    const address = await Address.findById(addressId);
+    if (!address) {
+      return res.status(400).json({ success: false, message: "Selected delivery address not found." });
+    }
+
+    const cart = await Cart.findOne({ userId }).populate({ path: 'items.productId' });
+    if (!cart || !cart.items || cart.items.length === 0) {
+      return res.status(400).json({ success: false, message: "Your cart is empty." });
+    }
+
+    let displayItems = cart.items.filter(item => item.productId && !item.productId.isDeleted);
+    if (isSingleItem && productId && variantId) {
+      displayItems = displayItems.filter(
+        item => item.productId._id.toString() === productId && item.variantId.toString() === variantId
+      );
+    }
+
+    if (displayItems.length === 0) {
+      return res.status(400).json({ success: false, message: "No available products to purchase." });
+    }
+
+    // Stock validation
+    for (const item of displayItems) {
+      const variantObj = item.productId.variants.find(
+        v => v._id.toString() === item.variantId.toString()
+      ) || (item.productId.variants && item.productId.variants[0]);
+      if (!variantObj) {
+        return res.status(400).json({ success: false, message: `Variant for product "${item.productId.productName}" not found.` });
+      }
+      if (variantObj.stock < item.quantity) {
+        return res.status(400).json({
+          success: false,
+          message: `Insufficient stock for ${item.productId.productName} (${variantObj.size}). Only ${variantObj.stock} left.`
+        });
+      }
+    }
+
+    // Calculate total
+    const subtotal = displayItems.reduce((acc, item) => acc + item.totalPrice, 0);
+    let discount = 0;
+    if (req.session && req.session.appliedCoupon) {
+      discount = req.session.appliedCoupon.discountAmount || 0;
+    }
+    const finalTotal = Math.max(0, subtotal - discount);
+
+    // Generate internal order ID for receipt
+    const randNum = Math.floor(100000 + Math.random() * 900000);
+    const internalOrderId = `NF-2026-${randNum}`;
+
+    // Create Razorpay order
+    const razorpayOrder = await paymentService.createOrder(finalTotal, 'INR', internalOrderId);
+
+    // Store pending order data in session for verification step
+    req.session.pendingRazorpayOrder = {
+      razorpayOrderId: razorpayOrder.id,
+      internalOrderId,
+      addressId,
+      finalTotal,
+      subtotal,
+      discount,
+      isSingleItem,
+      productId: productId || '',
+      variantId: variantId || ''
+    };
+
+    res.status(200).json({
+      success: true,
+      razorpayOrderId: razorpayOrder.id,
+      amount: razorpayOrder.amount,
+      currency: razorpayOrder.currency,
+      keyId: razorpayConfig.key_id,
+      internalOrderId
+    });
+
+  } catch (error) {
+    console.error("Error creating Razorpay order:", error);
+    res.status(500).json({ success: false, message: "Failed to initiate payment. Please try again." });
+  }
+};
+
+
+/**
+ * POST /checkout/verify-payment
+ * Verifies Razorpay payment signature, creates DB order if valid.
+ */
+export const verifyRazorpayPayment = async (req, res) => {
+  try {
+    const userId = getUserId(req);
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res.status(400).json({ success: false, message: "Missing payment verification data." });
+    }
+
+    // Verify signature
+    const isValid = paymentService.verifySignature(razorpay_order_id, razorpay_payment_id, razorpay_signature);
+    if (!isValid) {
+      return res.status(400).json({ success: false, message: "Payment verification failed. Invalid signature." });
+    }
+
+    // Retrieve pending order data from session
+    const pending = req.session.pendingRazorpayOrder;
+    if (!pending || pending.razorpayOrderId !== razorpay_order_id) {
+      return res.status(400).json({ success: false, message: "No matching pending order found. Please try again." });
+    }
+
+    const { internalOrderId, addressId, finalTotal, subtotal, discount, isSingleItem, productId, variantId } = pending;
+
+    const address = await Address.findById(addressId);
+    if (!address) {
+      return res.status(400).json({ success: false, message: "Delivery address not found." });
+    }
+
+    const cart = await Cart.findOne({ userId }).populate({ path: 'items.productId' });
+    if (!cart || !cart.items || cart.items.length === 0) {
+      return res.status(400).json({ success: false, message: "Cart is empty." });
+    }
+
+    let displayItems = cart.items.filter(item => item.productId && !item.productId.isDeleted);
+    if (isSingleItem && productId && variantId) {
+      displayItems = displayItems.filter(
+        item => item.productId._id.toString() === productId && item.variantId.toString() === variantId
+      );
+    }
+
+    if (displayItems.length === 0) {
+      return res.status(400).json({ success: false, message: "No available products to purchase." });
+    }
+
+    // Decrement stock & build order items
+    let orderItems = [];
+    for (const item of displayItems) {
+      const variantObj = item.productId.variants.find(
+        v => v._id.toString() === item.variantId.toString()
+      ) || (item.productId.variants && item.productId.variants[0]);
+      if (!variantObj) continue;
+
+      variantObj.stock -= item.quantity;
+      await item.productId.save();
+
+      orderItems.push({
+        productId: item.productId._id,
+        variantId: item.variantId,
+        productName: item.productId.productName,
+        brand: item.productId.brand,
+        size: variantObj.size,
+        primaryImage: item.productId.primaryImage,
+        quantity: item.quantity,
+        price: item.price,
+        totalPrice: item.totalPrice,
+        status: "Pending"
+      });
+    }
+
+    const shipping = 0;
+    const taxes = Math.round(subtotal * 0.18);
+
+    // Create Order with Razorpay payment details
+    const newOrder = new Order({
+      orderId: internalOrderId,
+      userId,
+      items: orderItems,
+      shippingAddress: {
+        fullName: address.fullName,
+        addressLine: address.addressLine,
+        city: address.city,
+        state: address.state,
+        postalCode: address.postalCode,
+        phone: address.phone
+      },
+      paymentMethod: "UPI",
+      paymentStatus: "Paid",
+      razorpayOrderId: razorpay_order_id,
+      razorpayPaymentId: razorpay_payment_id,
+      razorpaySignature: razorpay_signature,
+      subtotal,
+      discount,
+      shipping,
+      taxes,
+      finalTotal,
+      status: "Pending"
+    });
+
+    await newOrder.save();
+
+    // Remove ordered items from cart
+    if (isSingleItem && productId && variantId) {
+      cart.items = cart.items.filter(
+        item => !(item.productId && item.productId._id.toString() === productId && item.variantId.toString() === variantId)
+      );
+    } else {
+      cart.items = [];
+    }
+    cart.cartTotal = cart.items.reduce((acc, curr) => acc + (curr.totalPrice || 0), 0);
+    await cart.save();
+
+    // Clear session data
+    delete req.session.pendingRazorpayOrder;
+    if (req.session.appliedCoupon) {
+      delete req.session.appliedCoupon;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Payment verified & order placed successfully!",
+      orderId: internalOrderId,
+      finalTotal,
+      paymentMethod: "UPI",
+      deliveryName: address.fullName,
+      deliveryAddress: `${address.addressLine}, ${address.city}, ${address.state} - ${address.postalCode}`
+    });
+
+  } catch (error) {
+    console.error("Error verifying Razorpay payment:", error);
+    res.status(500).json({ success: false, message: "Payment verification failed. Please contact support." });
+  }
 };

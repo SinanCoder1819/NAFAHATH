@@ -80,6 +80,9 @@ router.get("/checkout", isLogin, noCache, checkoutController.getCheckoutPage);
 router.post("/checkout/place-order", isLogin, checkoutController.placeOrder);
 router.get("/checkout/success", isLogin, noCache, checkoutController.getSuccessPage);
 
+router.post("/checkout/create-razorpay-order", isLogin, checkoutController.createRazorpayOrder);
+router.post("/checkout/verify-payment", isLogin, checkoutController.verifyRazorpayPayment);
+
 router.get("/orders", isLogin, noCache, orderController.getOrders);
 router.get("/orders/:id", isLogin, noCache, orderController.getOrderDetail);
 router.post("/orders/:id/cancel", isLogin, orderController.cancelOrder);

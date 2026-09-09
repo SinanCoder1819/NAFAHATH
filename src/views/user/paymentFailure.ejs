@@ -1,0 +1,51 @@
+<% /* paymentFailure.ejs */ '' %>
+<div class="max-w-[800px] mx-auto px-7 py-16 min-h-[80vh] text-[#c8cdd8] font-['Inter',sans-serif] flex flex-col items-center justify-center">
+  <!-- Card Container -->
+  <div class="w-full bg-[#0a0e16]/60 backdrop-blur-xl border border-white/[0.06] rounded-[32px] p-8 md:p-12 shadow-[0_12px_40px_rgba(0,0,0,0.5)] text-center relative overflow-hidden">
+    <!-- Decorative background glow -->
+    <div class="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-[#ff4d4d]/5 blur-3xl"></div>
+    <div class="absolute -bottom-24 -right-24 w-48 h-48 rounded-full bg-red-500/5 blur-3xl"></div>
+
+    <!-- Illustration: animated neon cross -->
+    <div class="w-24 h-24 rounded-full bg-[#ff4d4d]/10 border border-[#ff4d4d]/30 flex items-center justify-center mx-auto mb-8 shadow-[0_0_30px_rgba(255,77,77,0.15)] animate-pulse">
+      <svg class="w-12 h-12 text-[#ff4d4d]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </div>
+
+    <!-- Failure statement -->
+    <div class="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.16em] uppercase text-[#ff4d4d] mb-3">
+      Payment Failed
+    </div>
+    <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-br from-white to-slate-400 bg-clip-text text-transparent m-0 mb-3">
+      Oops! Something Went Wrong.
+    </h1>
+    <p class="text-sm text-gray-400 max-w-md mx-auto mb-10 leading-relaxed">
+      Your payment could not be completed. Please try again or choose an alternative method.
+    </p>
+
+    <!-- Order Info Block (optional, shows same data as success) -->
+    <div class="bg-[#0f1624]/60 border border-white/[0.04] rounded-2xl p-6 text-left max-w-lg mx-auto mb-10 space-y-4">
+      <div class="flex justify-between items-center text-xs pb-3 border-b border-white/[0.04]">
+        <span class="text-gray-500 uppercase tracking-wider text-[9px] font-bold">Order Reference</span>
+        <span class="text-[#ff4d4d] font-mono font-bold tracking-wider"><%= orderId %></span>
+      </div>
+      <div class="flex justify-between items-center text-xs pb-3 border-b border-white/[0.04]">
+        <span class="text-gray-500 uppercase tracking-wider text-[9px] font-bold">Payment Method</span>
+        <span class="text-white font-semibold"><%= paymentMethodName %></span>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto">
+      <!-- Retry button -->
+      <a href="/checkout?retry=true" class="w-full sm:flex-1 py-4 rounded-xl bg-gradient-to-r from-[#ff4d4d] to-[#e91e63] text-[#03111a] text-xs font-extrabold tracking-widest uppercase text-center hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(255,77,77,0.45)] active:scale-98 transition-all duration-300 no-underline shadow-[0_4px_15px_rgba(255,77,77,0.2)]">
+        Retry Payment
+      </a>
+      <!-- Redirect to cart or shop -->
+      <a href="/cart" class="w-full sm:flex-1 py-4 rounded-xl bg-[#0c121d]/40 border border-white/[0.08] text-white text-xs font-extrabold tracking-widest uppercase text-center hover:bg-white/[0.04] hover:border-white/[0.2] hover:-translate-y-0.5 active:scale-98 transition-all duration-300 no-underline">
+        Go to Cart
+      </a>
+    </div>
+  </div>
+</div>

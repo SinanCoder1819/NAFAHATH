@@ -93,6 +93,18 @@ const orderSchema = new mongoose.Schema({
     enum: ["Pending", "Paid", "Failed", "Refunded"],
     default: "Pending"
   },
+  razorpayOrderId: {
+    type: String,
+    default: ""
+  },
+  razorpayPaymentId: {
+    type: String,
+    default: ""
+  },
+  razorpaySignature: {
+    type: String,
+    default: ""
+  },
   subtotal: {
     type: Number,
     required: true
